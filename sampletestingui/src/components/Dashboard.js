@@ -80,56 +80,6 @@ const Dashboard = () => {
         ))}
       </Grid>
 
-      <Typography variant="h5" sx={{ mt: 4 }}>
-        Item List
-      </Typography>
-      <Grid container spacing={2} sx={{ mt: 1 }}>
-        {itemCards.map((card, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card
-              sx={{
-                height: "150px",
-                position: "relative",
-                transition: "0.3s ease",
-                "&:hover": {
-                  boxShadow: 3,
-                  transform: "scale(1.05)",
-                },
-              }}
-            >
-              <CardContent>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  {card.title === "Office Supplies" || card.title === "Janitorial Supplies" ? (
-                    <Box>
-                      <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
-                        {card.title.split(" ")[0]}
-                      </Typography>
-                      <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
-                        {card.title.split(" ")[1]}
-                      </Typography>
-                    </Box>
-                  ) : (
-                    <Typography
-                      variant="subtitle1"
-                      sx={{
-                        fontSize:
-                          (
-                            card.title === "Electronics" ||
-                            card.title === "IT Supplies"
-                          ) ? "1.7rem" : "1rem"
-                      }}
-                    >
-                      {card.title}
-                    </Typography>
-                  )}
-                  {card.icon}
-                </Box>
-                <Typography variant="h4" sx={{ fontSize: "1rem" }}>{card.value}</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
 
       {/* Item List Section */}
       <Typography variant="h5" sx={{ mt: 4 }}>
@@ -182,6 +132,8 @@ const Dashboard = () => {
           </Grid>
         ))}
       </Grid>
+
+
 
       {/* Requests List Section */}
       <Typography variant="h5" sx={{ mt: 4 }}>
