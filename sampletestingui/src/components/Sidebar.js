@@ -75,12 +75,12 @@ const Sidebar = ({ drawerWidth }) => {
         </ListItem>
         <Collapse in={openSection === "requests"} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem button sx={{ pl: 7 }}>
-              <ListItemText primary="Request Item" sx={{ color: 'gray' }} />
-            </ListItem>
-            <ListItem button sx={{ pl: 7 }}>
-              <ListItemText primary="Request List" sx={{ color: 'gray' }} />
-            </ListItem>
+          <ListItem button component={Link} to="/request-item" sx={{ pl: 7 }}>
+  <ListItemText primary="Request Item" sx={{ color: 'gray' }} />
+</ListItem>
+<ListItem button component={Link} to="/request-list" sx={{ pl: 7 }}>
+  <ListItemText primary="Request List" sx={{ color: 'gray' }} />
+</ListItem>
           </List>
         </Collapse>
 
