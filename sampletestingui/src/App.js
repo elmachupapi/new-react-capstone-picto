@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import Dashboard from "./components/Dashboard";
 import RequestItem from "./pages/RequestItem"; // Import RequestItem component
 import RequestList from "./pages/RequestList"; // Import RequestItem component
+import UserRequest from "./pages/UserRequest";
 
 
 
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/request-item" element={<RequestItem />} /> {/* New route for RequestItem */}
                 <Route path="/request-list" element={<RequestList />} /> {/* New route for RequestList */}
+                <Route path="/user-requests" element={<UserRequest />} /> {/* New route for RequestList */}
               </Routes>
             </Box>
           </Box>

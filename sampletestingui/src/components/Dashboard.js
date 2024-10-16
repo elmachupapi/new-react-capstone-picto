@@ -6,22 +6,28 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import CreateIcon from "@mui/icons-material/Create";
 import PrintIcon from '@mui/icons-material/Print';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
-import { Link } from 'react-router-dom'; // Import Link
+import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-  // Array containing data for each card
   const requestCards = [
     {
       title: "Request Item",
       value: "$60,000",
       icon: <CreateIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
-      link: "/request-item", // Add link here
+      link: "/request-item",
     },
     {
       title: "Request List",
       value: "650",
       icon: <ListIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
-      link: "/request-list", // Update link for request list
+      link: "/request-list",
+    },
+    {
+      title: ["List of Requests", "from Users"],
+      value: "300",
+      icon: <ChecklistRtlIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
+      link: "/user-requests",
     },
   ];
 
@@ -32,23 +38,21 @@ const Dashboard = () => {
     { title: "Janitorial Supplies", value: "1000", icon: <CleaningServicesIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} /> },
   ];
 
-  // Sample data for Requests List
   const requestsList = [
     { name: "Laptop", number: "REQ-001", date: "2024-10-10" },
     { name: "Mouse", number: "REQ-002", date: "2024-10-11" },
     { name: "Printer", number: "REQ-003", date: "2024-10-12" },
     { name: "Broom", number: "REQ-004", date: "2024-10-13" },
   ];
-  
+
   return (
     <Box sx={{ mt: 10 }}>
-      {/* Request List Section */}
       <Typography variant="h5" gutterBottom>
         Request List
       </Typography>
       <Grid container spacing={2}>
         {requestCards.map((card, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+          <Grid item xs={12} sm={6} md={4} key={index}>
             <Link to={card.link} style={{ textDecoration: "none" }}>
               <Card
                 sx={{
@@ -62,26 +66,30 @@ const Dashboard = () => {
                 }}
               >
                 <CardContent>
-                  <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Box>
-                      {card.title.split(" ").map((line, i) => (
-                        <Typography key={i} variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
-                          {line}
-                        </Typography>
-                      ))}
-                    </Box>
-                    {card.icon}
-                  </Box>
-                  <Typography variant="h4" sx={{ fontSize: "1rem" }}>{card.value}</Typography>
-                </CardContent>
+  <Box display="flex" justifyContent="space-between" alignItems="center">
+    <Box>
+      {Array.isArray(card.title) ? (
+        card.title.map((line, i) => (
+          <Typography key={i} variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
+            {line}
+          </Typography>
+        ))
+      ) : (
+        <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
+          {card.title}
+        </Typography>
+      )}
+    </Box>
+    {card.icon}
+  </Box>
+  <Typography variant="h4" sx={{ fontSize: "1rem" }}>{card.value}</Typography>
+</CardContent>
               </Card>
             </Link>
           </Grid>
         ))}
       </Grid>
 
-
-      {/* Item List Section */}
       <Typography variant="h5" sx={{ mt: 4 }}>
         Item List
       </Typography>
@@ -133,9 +141,6 @@ const Dashboard = () => {
         ))}
       </Grid>
 
-
-
-      {/* Requests List Section */}
       <Typography variant="h5" sx={{ mt: 4 }}>
         Request Lists
       </Typography>
