@@ -81,6 +81,9 @@ const Sidebar = ({ drawerWidth }) => {
 <ListItem button component={Link} to="/request-list" sx={{ pl: 7 }}>
   <ListItemText primary="Request List" sx={{ color: 'gray' }} />
 </ListItem>
+<ListItem button component={Link} to="/user-requests" sx={{ pl: 7 }}>
+  <ListItemText primary="Requests from Users" sx={{ color: 'gray' }} />
+</ListItem>
           </List>
         </Collapse>
 
@@ -98,16 +101,16 @@ const Sidebar = ({ drawerWidth }) => {
         </ListItem>
         <Collapse in={openSection === "items"} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem button sx={{ pl: 7 }}>
+            <ListItem component={Link} to="/electronics-list" sx={{ pl: 7 }}>
               <ListItemText primary="Electronics" sx={{ color: 'gray' }} />
             </ListItem>
-            <ListItem button sx={{ pl: 7 }}>
+            <ListItem component={Link} to="/IT-supplies-list" sx={{ pl: 7 }}>
               <ListItemText primary="IT Supplies" sx={{ color: 'gray' }} />
             </ListItem>
-            <ListItem button sx={{ pl: 7 }}>
+            <ListItem component={Link} to="/office-list" sx={{ pl: 7 }}>
               <ListItemText primary="Office Supplies" sx={{ color: 'gray' }} />
             </ListItem>
-            <ListItem button sx={{ pl: 7 }}>
+            <ListItem component={Link} to="/janitorial-list" sx={{ pl: 7 }}>
               <ListItemText primary="Janitorial Supplies" sx={{ color: 'gray' }} />
             </ListItem>
           </List>

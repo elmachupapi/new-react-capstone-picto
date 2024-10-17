@@ -8,6 +8,11 @@ import Dashboard from "./components/Dashboard";
 import RequestItem from "./pages/RequestItem"; // Import RequestItem component
 import RequestList from "./pages/RequestList"; // Import RequestItem component
 import UserRequest from "./pages/UserRequest";
+import ElectronicsList from "./pages/ElectronicsList";
+import ITSuppliesList from "./pages/ITSuppliesList";
+import OfficeList from "./pages/OfficeList";
+import JanitorialList from "./pages/JanitorialList";
+
 
 
 
@@ -42,6 +47,10 @@ function App() {
                 <Route path="/request-item" element={<RequestItem />} /> {/* New route for RequestItem */}
                 <Route path="/request-list" element={<RequestList />} /> {/* New route for RequestList */}
                 <Route path="/user-requests" element={<UserRequest />} /> {/* New route for RequestList */}
+                <Route path="/electronics-list" element={<ElectronicsList />} /> {/* New route for RequestList */}
+                <Route path="/IT-supplies-list" element={<ITSuppliesList />} /> {/* New route for RequestList */}
+                <Route path="/office-list" element={<OfficeList />} /> {/* New route for RequestList */}
+                <Route path="/janitorial-list" element={<JanitorialList />} /> {/* New route for RequestList */}
               </Routes>
             </Box>
           </Box>
