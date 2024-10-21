@@ -6,6 +6,7 @@ import RequestPageIcon from "@mui/icons-material/RequestPage";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import HistoryIcon from '@mui/icons-material/History';
 import logo from './PGC logo.png';
 
 const Sidebar = ({ drawerWidth }) => {
@@ -60,6 +61,7 @@ const Sidebar = ({ drawerWidth }) => {
           </ListItemIcon>
           <ListItemText primary="Dashboard" sx={{ ml: -2, color: 'gray' }} />
         </ListItem>
+        
 
         {/* Requests Collapsible List Item */}
         <ListItem button onClick={() => handleToggle("requests")}>
@@ -115,6 +117,14 @@ const Sidebar = ({ drawerWidth }) => {
             </ListItem>
           </List>
         </Collapse>
+
+        <ListItem button component={Link} to="/logs">
+          <ListItemIcon>
+            <HistoryIcon />
+          </ListItemIcon>
+          <ListItemText primary="Logs" sx={{ ml: -2, color: 'gray' }} />
+        </ListItem>
+   
       </List>
     </Drawer>
   );

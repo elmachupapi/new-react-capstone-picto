@@ -13,6 +13,7 @@ import OfficeList from "./pages/OfficeList";
 import JanitorialList from "./pages/JanitorialList";
 import SignUp from "./pages/SignUp";
 import Login from "./LogIn";
+import Logs from "./pages/Logs";
 
 
 
@@ -54,6 +55,8 @@ function App() {
                 <Route path="/janitorial-list" element={<JanitorialList />} />
                 <Route path="/signup" element={<SignUp />} /> 
                 <Route path="/login" element={<Login />} /> 
+                <Route path="/logs" element={<Logs />} /> 
+
               </Routes>
             </Box>
           </Box>
