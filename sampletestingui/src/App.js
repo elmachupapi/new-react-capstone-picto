@@ -1,17 +1,18 @@
-// App.js
 import React from "react";
 import { Box, CssBaseline, createTheme, ThemeProvider } from "@mui/material";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import Dashboard from "./components/Dashboard";
-import RequestItem from "./pages/RequestItem"; // Import RequestItem component
-import RequestList from "./pages/RequestList"; // Import RequestItem component
+import RequestItem from "./pages/RequestItem"; 
+import RequestList from "./pages/RequestList"; 
 import UserRequest from "./pages/UserRequest";
 import ElectronicsList from "./pages/ElectronicsList";
 import ITSuppliesList from "./pages/ITSuppliesList";
 import OfficeList from "./pages/OfficeList";
 import JanitorialList from "./pages/JanitorialList";
+import SignUp from "./pages/SignUp";
+import Login from "./LogIn";
 
 
 
@@ -44,13 +45,15 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/request-item" element={<RequestItem />} /> {/* New route for RequestItem */}
-                <Route path="/request-list" element={<RequestList />} /> {/* New route for RequestList */}
-                <Route path="/user-requests" element={<UserRequest />} /> {/* New route for RequestList */}
-                <Route path="/electronics-list" element={<ElectronicsList />} /> {/* New route for RequestList */}
-                <Route path="/IT-supplies-list" element={<ITSuppliesList />} /> {/* New route for RequestList */}
-                <Route path="/office-list" element={<OfficeList />} /> {/* New route for RequestList */}
-                <Route path="/janitorial-list" element={<JanitorialList />} /> {/* New route for RequestList */}
+                <Route path="/request-item" element={<RequestItem />} /> 
+                <Route path="/request-list" element={<RequestList />} /> 
+                <Route path="/user-requests" element={<UserRequest />} /> 
+                <Route path="/electronics-list" element={<ElectronicsList />} /> 
+                <Route path="/IT-supplies-list" element={<ITSuppliesList />} /> 
+                <Route path="/office-list" element={<OfficeList />} /> 
+                <Route path="/janitorial-list" element={<JanitorialList />} />
+                <Route path="/signup" element={<SignUp />} /> 
+                <Route path="/login" element={<Login />} /> 
               </Routes>
             </Box>
           </Box>
