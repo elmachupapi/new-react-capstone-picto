@@ -14,6 +14,7 @@ import JanitorialList from "./pages/JanitorialList";
 import SignUp from "./pages/SignUp";
 import Login from "./LogIn";
 import Logs from "./pages/Logs";
+import Accounts from "./pages/Accounts";
 
 
 
@@ -56,6 +57,7 @@ function App() {
                 <Route path="/signup" element={<SignUp />} /> 
                 <Route path="/login" element={<Login />} /> 
                 <Route path="/logs" element={<Logs />} /> 
+                <Route path="/accounts" element={<Accounts />} /> 
 
               </Routes>
             </Box>

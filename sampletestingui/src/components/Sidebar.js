@@ -7,6 +7,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HistoryIcon from '@mui/icons-material/History';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import logo from './PGC logo.png';
 
 const Sidebar = ({ drawerWidth }) => {
@@ -123,6 +124,13 @@ const Sidebar = ({ drawerWidth }) => {
             <HistoryIcon />
           </ListItemIcon>
           <ListItemText primary="Logs" sx={{ ml: -2, color: 'gray' }} />
+        </ListItem>
+
+        <ListItem button component={Link} to="/accounts">
+          <ListItemIcon>
+            <PeopleAltIcon />
+          </ListItemIcon>
+          <ListItemText primary="Accounts" sx={{ ml: -2, color: 'gray' }} />
         </ListItem>
    
       </List>
