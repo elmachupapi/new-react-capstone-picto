@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Link, Container } from '@mui/material';
+import { TextField, Button, Box, Typography, Container } from '@mui/material';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const Login = () => {
   const [loginData, setLoginData] = useState({
@@ -62,7 +63,7 @@ const Login = () => {
         
         <Typography variant="body2" sx={{ mt: 2 }}>
           Don't have an account?{' '}
-          <Link href="/signup" variant="body2">
+          <Link to="/signup" style={{ textDecoration: 'none', color: '#1976d2' }}>
             Sign Up
           </Link>
         </Typography>

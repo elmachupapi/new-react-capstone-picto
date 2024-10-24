@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, Box, Avatar, Menu, MenuItem } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import LogoutIcon from '@mui/icons-material/Logout'; 
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Header = ({ drawerWidth }) => {
   const username = "Mark Kim"; // Sample username
@@ -9,6 +10,9 @@ const Header = ({ drawerWidth }) => {
   // State for handling dropdown menu
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
+  // Create a navigate function
+  const navigate = useNavigate();
 
   // Handlers for opening and closing the dropdown menu
   const handleMenuOpen = (event) => {
@@ -22,7 +26,10 @@ const Header = ({ drawerWidth }) => {
   const handleLogout = () => {
     // Handle logout functionality here
     console.log("User logged out");
+
+    // Close the menu and navigate to the login page
     handleMenuClose();
+    navigate("/login"); // Redirect to the login page
   };
 
   return (
@@ -53,32 +60,32 @@ const Header = ({ drawerWidth }) => {
           <ArrowDropDownIcon sx={{ color: 'white', ml: 0.5 }} />
         </Box>
 
-        {/* Dropdown Menu with increased width */}
+        {/* Dropdown Menu */}
         <Menu
-  anchorEl={anchorEl}
-  open={open}
-  onClose={handleMenuClose}
-  anchorOrigin={{
-    vertical: 'bottom',
-    horizontal: 'right',
-  }}
-  transformOrigin={{
-    vertical: 'top',
-    horizontal: 'right',
-  }}
-  sx={{
-    '& .MuiPaper-root': {
-      minWidth: '200px', // Set the minimum width for the dropdown
-      marginTop: '12px', // Increase the margin to move the menu further from the username
-    },
-  }}
-  disableScrollLock // Add this prop to prevent the scrollbar from disappearing
->
-  <MenuItem onClick={handleLogout}>
-    <LogoutIcon sx={{ mr: 1, color: "gray" }} /> {/* Add the Logout icon with margin */}
-    Log Out
-  </MenuItem>
-</Menu>
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          sx={{
+            '& .MuiPaper-root': {
+              minWidth: '200px',
+              marginTop: '12px',
+            },
+          }}
+          disableScrollLock
+        >
+          <MenuItem onClick={handleLogout}>
+            <LogoutIcon sx={{ mr: 1, color: "gray" }} />
+            Log Out
+          </MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );
