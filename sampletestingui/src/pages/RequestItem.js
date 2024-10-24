@@ -15,7 +15,6 @@ const RequestItem = () => {
   const [formData, setFormData] = useState({
     itemCategory: '',
     itemDescription: '',
-    serialNumber: '',
     quantity: '',
     unit: '',
     date: '',
@@ -80,16 +79,7 @@ const RequestItem = () => {
               required
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Serial Number"
-              name="serialNumber"
-              value={formData.serialNumber}
-              onChange={handleChange}
-              fullWidth
-              required
-            />
-          </Grid>
+         
           <Grid item xs={12} sm={6}>
             <TextField
               label="Quantity"

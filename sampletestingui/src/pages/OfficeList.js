@@ -18,22 +18,18 @@ const OfficeList = () => {
     {
       itemCategory: "Electronics",
       itemDescription: "Laptop",
-      serialNumber: "SN12345",
       quantity: 2,
       unit: "pcs",
       date: "2024-10-10",
-      purpose: "Office Use",
       rfNumber: "RF001",
     },
     {
       itemCategory: "IT Supplies",
       itemDescription: "Mouse",
-      serialNumber: "SN67890",
       quantity: 10,
       unit: "pcs",
       date: "2024-10-11",
-      purpose: "Stock Replenishment",
-      rfNumber: "RF002",
+     rfNumber: "RF002",
     },
     // Add more items here if needed
   ];
@@ -49,11 +45,9 @@ const OfficeList = () => {
             <TableRow>
               <TableCell>Item Category</TableCell>
               <TableCell>Item Description</TableCell>
-              <TableCell>Serial Number</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Unit</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell>Purpose</TableCell>
               <TableCell>RF Number</TableCell>
             </TableRow>
           </TableHead>
@@ -62,11 +56,9 @@ const OfficeList = () => {
               <TableRow key={index}>
                 <TableCell>{request.itemCategory}</TableCell>
                 <TableCell>{request.itemDescription}</TableCell>
-                <TableCell>{request.serialNumber}</TableCell>
                 <TableCell>{request.quantity}</TableCell>
                 <TableCell>{request.unit}</TableCell>
                 <TableCell>{request.date}</TableCell>
-                <TableCell>{request.purpose}</TableCell>
                 <TableCell>{request.rfNumber}</TableCell>
               </TableRow>
             ))}

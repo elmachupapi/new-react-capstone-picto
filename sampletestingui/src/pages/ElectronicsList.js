@@ -18,21 +18,17 @@ const ElectronicsList = () => {
     {
       itemCategory: "Electronics",
       itemDescription: "Laptop",
-      serialNumber: "SN12345",
       quantity: 5,
       unit: "pcs",
       date: "2024-10-12",
-      purpose: "Office Use",
       rfNumber: "RF-001",
     },
     {
       itemCategory: "Electronics",
       itemDescription: "Projector",
-      serialNumber: "SN54321",
       quantity: 2,
       unit: "pcs",
       date: "2024-10-13",
-      purpose: "Meeting Room",
       rfNumber: "RF-002",
     },
   ]);
@@ -48,11 +44,9 @@ const ElectronicsList = () => {
             <TableRow>
               <TableCell>Item Category</TableCell>
               <TableCell>Item Description</TableCell>
-              <TableCell>Serial Number</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Unit</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell>Purpose</TableCell>
               <TableCell>RF Number</TableCell>
             </TableRow>
           </TableHead>
@@ -61,11 +55,9 @@ const ElectronicsList = () => {
               <TableRow key={index}>
                 <TableCell>{item.itemCategory}</TableCell>
                 <TableCell>{item.itemDescription}</TableCell>
-                <TableCell>{item.serialNumber}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>{item.unit}</TableCell>
                 <TableCell>{item.date}</TableCell>
-                <TableCell>{item.purpose}</TableCell>
                 <TableCell>{item.rfNumber}</TableCell>
               </TableRow>
             ))}
