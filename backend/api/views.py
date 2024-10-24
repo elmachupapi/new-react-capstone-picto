@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, RequestSerializer
+from .serializers import UserSerializer, RequestSerializer, ElectronicsSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Request
+from .models import Request, Electronics
 
 class RequestListCreate(generics.ListCreateAPIView):
     serializer_class = RequestSerializer
@@ -32,4 +32,17 @@ class RequestDelete(generics.DestroyAPIView):
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+
+
+
+
+class CreateElectronicItem(generics.CreateAPIView):
+    queryset = Electronics.objects.all()
+    serializer_class = ElectronicsSerializer
+    permission_classes = [AllowAny]
+
+class DeleteElectronicItem(generics.DestroyAPIView):
+    serializer_class = ElectronicsSerializer
     permission_classes = [AllowAny]
