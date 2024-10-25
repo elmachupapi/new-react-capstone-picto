@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Request, Electronics, ITSupplies
+from .models import Request, Electronics, ITSupplies, Office, Janitorial
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,5 +27,15 @@ class ElectronicsSerializer(serializers.ModelSerializer):
 class ITSuppliesSerializer(serializers.ModelSerializer):
     class Meta:
         model = ITSupplies
+        fields = ["id", "item_name", "quantity", "unit", "date_added", "RF_number"]
+
+class OfficeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Office
+        fields = ["id", "item_name", "quantity", "unit", "date_added", "RF_number"]
+
+class JanitorialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Janitorial
         fields = ["id", "item_name", "quantity", "unit", "date_added", "RF_number"]
 

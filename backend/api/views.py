@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, RequestSerializer, ElectronicsSerializer, ITSuppliesSerializer
+from .serializers import UserSerializer, RequestSerializer, ElectronicsSerializer, ITSuppliesSerializer, OfficeSerializer, JanitorialSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Request, Electronics, ITSupplies
+from .models import Request, Electronics, ITSupplies, Office, Janitorial
 
 class RequestListCreate(generics.ListCreateAPIView):
     serializer_class = RequestSerializer
@@ -38,7 +38,7 @@ class CreateUserView(generics.CreateAPIView):
 
 
 
-class CreateElectronicItem(generics.ListCreateAPIView):
+class ListCreateElectronicItem(generics.ListCreateAPIView):
     queryset = Electronics.objects.all()
     serializer_class = ElectronicsSerializer
     permission_classes = [AllowAny]
@@ -47,11 +47,29 @@ class DeleteElectronicItem(generics.DestroyAPIView):
     serializer_class = ElectronicsSerializer
     permission_classes = [AllowAny]
 
-class CreateITSupplyItem(generics.ListCreateAPIView):
+class ListCreateITSupplyItem(generics.ListCreateAPIView):
     queryset = ITSupplies.objects.all()
     serializer_class = ITSuppliesSerializer
     permission_classes = [AllowAny]
 
 class DeleteITSupplyItem(generics.DestroyAPIView):
     serializer_class = ITSuppliesSerializer
+    permission_classes = [AllowAny]
+
+class ListCreateOfficeItem(generics.ListCreateAPIView):
+    queryset = Office.objects.all()
+    serializer_class = OfficeSerializer
+    permission_classes = [AllowAny]
+
+class DeleteOfficeItem(generics.DestroyAPIView):
+    serializer_class = OfficeSerializer
+    permission_classes = [AllowAny]
+
+class ListCreateJanitorialItem(generics.ListCreateAPIView):
+    queryset = Janitorial.objects.all()
+    serializer_class = JanitorialSerializer
+    permission_classes = [AllowAny]
+
+class DeleteJanitorialItem(generics.DestroyAPIView):
+    serializer_class = JanitorialSerializer
     permission_classes = [AllowAny]

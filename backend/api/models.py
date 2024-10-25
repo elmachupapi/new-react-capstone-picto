@@ -28,4 +28,17 @@ class ITSupplies(models.Model):
     date_added = models.DateField()
     RF_number = models.CharField(max_length=50)
 
+class Office(models.Model):
+    item_name = models.CharField(max_length=100)
+    quantity = models.IntegerField()
+    unit = models.CharField(max_length=20)
+    date_added = models.DateField()
+    RF_number = models.CharField(max_length=50)
+
+class Janitorial(models.Model):
+    item_name = models.CharField(max_length=100)
+    quantity = models.IntegerField()
+    unit = models.CharField(max_length=20)
+    date_added = models.DateField()
+    RF_number = models.CharField(max_length=50)
 # Create your models here.
