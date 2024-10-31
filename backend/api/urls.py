@@ -12,4 +12,7 @@ urlpatterns = [
     path("item/office/delete/<int:pk>/", views.DeleteOfficeItem.as_view(), name = "item-delete-office"),
     path("item/janitorial", views.ListCreateJanitorialItem.as_view(), name = "item-janitorial"),
     path("item/janitorial/delete/<int:pk>/", views.DeleteJanitorialItem.as_view(), name = "item-delete-janitorial"),
+    path("logs/request", views.ListCreateRequestLog.as_view(), name = "request-log"),
+    path("logs/item", views.ListCreateItemLog.as_view(), name = "item-log"),
+
 ]

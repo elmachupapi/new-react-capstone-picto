@@ -41,4 +41,18 @@ class Janitorial(models.Model):
     unit = models.CharField(max_length=20)
     date_added = models.DateField()
     RF_number = models.CharField(max_length=50)
+
+class RequestLogs(models.Model):
+    item_name = models.CharField(max_length=100)
+    requestor = models.CharField(max_length=50)
+    request_number = models.IntegerField()
+    date = models.DateTimeField(auto_now_add=True)
+    action = models.CharField(max_length=50)
+    admin = models.CharField(max_length=50)
+
+class ItemLogs(models.Model):
+    item_name = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
+    action = models.CharField(max_length=50)
+    current_quantity = models.IntegerField()
 # Create your models here.
