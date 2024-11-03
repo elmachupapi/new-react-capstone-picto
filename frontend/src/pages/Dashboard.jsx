@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Card, CardContent, Grid, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import ListIcon from "@mui/icons-material/List";
 import CableIcon from '@mui/icons-material/Cable';
@@ -8,6 +7,8 @@ import PrintIcon from '@mui/icons-material/Print';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import api from "../api";
 
 const Dashboard = () => {
   const requestCards = [
@@ -35,7 +36,7 @@ const Dashboard = () => {
     {
       title: "Electronics",
       value: "200",
-      icon: <CableIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px"}} />,
+      icon: <CableIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
       link: "/electronics-list",
     },
     {
@@ -71,6 +72,20 @@ const Dashboard = () => {
     { name: "Stapler", quantity: 2 },
     { name: "Notebook", quantity: 1 },
   ];
+
+  const [requests, setRequests] = useState([]);
+
+  useEffect(() => {
+    getRequests();
+  }, [])
+
+  const getRequests = () => {
+    api
+      .get("/api/requests/")
+      .then((res) => res.data)
+      .then((data) => {setRequests(data); console.log(data)})
+      .catch((err) => alert(err));
+  }
 
   return (
     <Box sx={{ mt: 8 }}>
