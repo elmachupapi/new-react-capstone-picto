@@ -5,6 +5,9 @@ import Signup from "./pages/Signup"
 import Dashboard from "./pages/Dashboard"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
+import { Box, CssBaseline, createTheme, ThemeProvider } from "@mui/material";
+
+const theme = createTheme();
 
 function Logout() {
   localStorage.clear()
