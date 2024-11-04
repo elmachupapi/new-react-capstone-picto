@@ -4,6 +4,16 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import ElectronicsList from "./pages/ElectronicsList";
+import ITSuppliesList from "./pages/ITSuppliesList";
+import OfficeList from "./pages/OfficeList";
+import JanitorialList from "./pages/JanitorialList";
+import RequestItem from "./pages/RequestItem";
+import RequestList from "./pages/RequestList";
+import UserRequest from "./pages/UserRequest";
+import RequestLog from "./pages/RequestLog";
+import ItemLog from "./pages/ItemLog";
+import Accounts from "./pages/Accounts";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Box, CssBaseline, createTheme, ThemeProvider } from "@mui/material";
 import Sidebar from "./components/Sidebar";
@@ -63,6 +73,16 @@ function App() {
               />
               <Route path="/login" element={<Login />} />
               <Route path="/logout" element={<Logout />} />
+              <Route path="/item/electronics" element={<ElectronicsList />} />
+              <Route path="/item/itsupplies" element={<ITSuppliesList />} />
+              <Route path="/item/office" element={<OfficeList />} />
+              <Route path="/item/janitorial" element={<JanitorialList />} />
+              <Route path="/request" element={<RequestItem />} />
+              <Route path="/request/list" element={<RequestList />} />
+              <Route path="/request/approvals" element={<UserRequest />} />
+              <Route path="/logs/request" element={<RequestLog />} />
+              <Route path="/logs/item" element={<ItemLog />} />
+              <Route path="/accounts" element={<Accounts />} />
               <Route path="/signup" element={<SignupAndLogout />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
