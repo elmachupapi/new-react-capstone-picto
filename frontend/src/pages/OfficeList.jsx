@@ -1,5 +1,5 @@
 // src/pages/OfficeList.js
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -10,11 +10,26 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Button,
+  Modal,
+  TextField,
+  IconButton,
+  TablePagination,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const OfficeList = () => {
-  // Sample data for the submitted requests
-  const requests = [
+  const [open, setOpen] = useState(false);
+  const [newItem, setNewItem] = useState({
+    itemCategory: "",
+    itemDescription: "",
+    quantity: "",
+    unit: "",
+    date: "",
+    rfNumber: "",
+  });
+
+  const [requests, setRequests] = useState([
     {
       itemCategory: "Electronics",
       itemDescription: "Laptop",
@@ -29,16 +44,74 @@ const OfficeList = () => {
       quantity: 10,
       unit: "pcs",
       date: "2024-10-11",
-     rfNumber: "RF002",
+      rfNumber: "RF002",
     },
-    // Add more items here if needed
-  ];
+    // Add more items for testing pagination and search
+  ]);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "quantity" && value < 0) return;
+    setNewItem((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSearchChange = (e) => setSearchQuery(e.target.value);
+
+  const filteredRequests = requests.filter((request) =>
+    request.itemDescription.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleSubmit = () => {
+    setRequests((prevRequests) => [...prevRequests, newItem]);
+    setNewItem({
+      itemCategory: "",
+      itemDescription: "",
+      quantity: "",
+      unit: "",
+      date: "",
+      rfNumber: "",
+    });
+    handleClose();
+  };
 
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
-      <Typography variant="h4" gutterBottom>
-        Office List
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+        <Typography variant="h4" gutterBottom>
+          Office List
+        </Typography>
+        <Button variant="contained" color="primary" sx={{ width: '200px' }} onClick={handleOpen}>
+          Add Item
+        </Button>
+      </Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 2 }}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          sx={{ width: '400px', mt: -1, backgroundColor: 'white' }}
+        />
+      </Box>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -52,7 +125,7 @@ const OfficeList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {requests.map((request, index) => (
+            {filteredRequests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((request, index) => (
               <TableRow key={index}>
                 <TableCell>{request.itemCategory}</TableCell>
                 <TableCell>{request.itemDescription}</TableCell>
@@ -65,6 +138,110 @@ const OfficeList = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredRequests.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={{ 
+          position: 'absolute', 
+          top: '50%', 
+          left: '50%', 
+          transform: 'translate(-50%, -50%)', 
+          width: 1400, 
+          bgcolor: 'background.paper', 
+          boxShadow: 24, 
+          p: 4 
+        }}>
+          <IconButton 
+            aria-label="close" 
+            onClick={handleClose} 
+            sx={{ position: 'absolute', top: 16, right: 16 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="h6" gutterBottom>
+            Add New Item
+          </Typography>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Item Category</TableCell>
+                <TableCell>Item Description</TableCell>
+                <TableCell>Quantity</TableCell>
+                <TableCell>Unit</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>RF Number</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  <TextField 
+                    fullWidth 
+                    name="itemCategory" 
+                    value={newItem.itemCategory} 
+                    onChange={handleInputChange} 
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField 
+                    fullWidth 
+                    name="itemDescription" 
+                    value={newItem.itemDescription} 
+                    onChange={handleInputChange} 
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField 
+                    fullWidth 
+                    name="quantity" 
+                    type="number" 
+                    value={newItem.quantity} 
+                    onChange={handleInputChange} 
+                    inputProps={{ min: 0 }} 
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField 
+                    fullWidth 
+                    name="unit" 
+                    value={newItem.unit} 
+                    onChange={handleInputChange} 
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField 
+                    fullWidth 
+                    name="date" 
+                    type="date" 
+                    value={newItem.date} 
+                    onChange={handleInputChange} 
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField 
+                    fullWidth 
+                    name="rfNumber" 
+                    value={newItem.rfNumber} 
+                    onChange={handleInputChange} 
+                  />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 2 }}>
+            Submit
+          </Button>
+        </Box>
+      </Modal>
     </Box>
   );
 };

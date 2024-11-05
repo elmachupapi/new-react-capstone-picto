@@ -1,5 +1,5 @@
 // src/pages/UserRequest.js
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -11,6 +11,8 @@ import {
   TableRow,
   Paper,
   Button,
+  TextField,
+  TablePagination,
 } from "@mui/material";
 
 const UserRequest = () => {
@@ -21,6 +23,11 @@ const UserRequest = () => {
     { itemName: "Printer", requestNumber: "REQ-003", dateRequested: "2024-10-12" },
     { itemName: "Broom", requestNumber: "REQ-004", dateRequested: "2024-10-13" },
   ];
+
+  // State for search term, pagination, and rows per page
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Function to handle approval
   const handleApprove = (requestNumber) => {
@@ -34,11 +41,44 @@ const UserRequest = () => {
     // Add additional logic for denial here
   };
 
+  // Handle search input change
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setPage(0); // Reset to the first page on search
+  };
+
+  // Filter requests based on the search term
+  const filteredRequests = requests.filter((request) =>
+    request.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Handle pagination page change
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to the first page when changing rows per page
+  };
+
+  // Get the current requests to display
+  const currentRequests = filteredRequests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
       <Typography variant="h4" gutterBottom>
         User Requests
       </Typography>
+      <TextField
+        label="Search by Item Name"
+        variant="outlined"
+        fullWidth
+        value={searchTerm}
+        onChange={handleSearchChange}
+        sx={{ mb: 2, width: '400px', backgroundColor: 'white' }}
+      />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -50,7 +90,7 @@ const UserRequest = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {requests.map((request) => (
+            {currentRequests.map((request) => (
               <TableRow key={request.requestNumber}>
                 <TableCell>{request.itemName}</TableCell>
                 <TableCell>{request.requestNumber}</TableCell>
@@ -77,6 +117,15 @@ const UserRequest = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredRequests.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Box>
   );
 };

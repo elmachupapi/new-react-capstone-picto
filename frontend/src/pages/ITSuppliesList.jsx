@@ -13,8 +13,9 @@ import {
   Modal,
   TextField,
   IconButton,
+  TablePagination,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon
+import CloseIcon from "@mui/icons-material/Close";
 
 const sampleSubmittedRequests = [
   {
@@ -33,6 +34,7 @@ const sampleSubmittedRequests = [
     date: "2024-10-11",
     rfNumber: "RF-002",
   },
+  // Add more items as needed for testing
 ];
 
 const ITSuppliesList = () => {
@@ -45,17 +47,35 @@ const ITSuppliesList = () => {
     date: "",
     rfNumber: "",
   });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
     // Prevent setting a negative value for quantity
     if (name === "quantity" && value < 0) return;
-
     setNewItem((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredRequests = sampleSubmittedRequests.filter((request) =>
+    request.itemDescription.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   const handleSubmit = () => {
@@ -74,6 +94,17 @@ const ITSuppliesList = () => {
         </Button>
       </Box>
 
+      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 2 }}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          sx={{ width: '400px', mt: -1, backgroundColor: 'white' }}
+        />
+      </Box>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -87,7 +118,7 @@ const ITSuppliesList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sampleSubmittedRequests.map((request, index) => (
+            {filteredRequests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((request, index) => (
               <TableRow key={index}>
                 <TableCell>{request.itemCategory}</TableCell>
                 <TableCell>{request.itemDescription}</TableCell>
@@ -101,22 +132,31 @@ const ITSuppliesList = () => {
         </Table>
       </TableContainer>
 
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredRequests.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+
       {/* Modal for Adding Item */}
       <Modal open={open} onClose={handleClose}>
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
+        <Box sx={{ 
+          position: 'absolute', 
+          top: '50%', 
+          left: '50%', 
+          transform: 'translate(-50%, -50%)', 
           width: 1400, // Increased width for the modal
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4
+          bgcolor: 'background.paper', 
+          boxShadow: 24, 
+          p: 4 
         }}>
-          {/* Close Icon Button */}
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
+          <IconButton 
+            aria-label="close" 
+            onClick={handleClose} 
             sx={{ position: 'absolute', top: 16, right: 16 }} // Positioning the icon in the top right corner
           >
             <CloseIcon />
@@ -139,54 +179,54 @@ const ITSuppliesList = () => {
             <TableBody>
               <TableRow>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    name="itemCategory"
-                    value={newItem.itemCategory}
-                    onChange={handleInputChange}
+                  <TextField 
+                    fullWidth 
+                    name="itemCategory" 
+                    value={newItem.itemCategory} 
+                    onChange={handleInputChange} 
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    name="itemDescription"
-                    value={newItem.itemDescription}
-                    onChange={handleInputChange}
+                  <TextField 
+                    fullWidth 
+                    name="itemDescription" 
+                    value={newItem.itemDescription} 
+                    onChange={handleInputChange} 
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    name="quantity"
-                    type="number"
-                    value={newItem.quantity}
-                    onChange={handleInputChange}
+                  <TextField 
+                    fullWidth 
+                    name="quantity" 
+                    type="number" 
+                    value={newItem.quantity} 
+                    onChange={handleInputChange} 
                     inputProps={{ min: 0 }} // Set minimum value to 0
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    name="unit"
-                    value={newItem.unit}
-                    onChange={handleInputChange}
+                  <TextField 
+                    fullWidth 
+                    name="unit" 
+                    value={newItem.unit} 
+                    onChange={handleInputChange} 
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    name="date"
-                    type="date"
-                    value={newItem.date}
-                    onChange={handleInputChange}
+                  <TextField 
+                    fullWidth 
+                    name="date" 
+                    type="date" 
+                    value={newItem.date} 
+                    onChange={handleInputChange} 
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    name="rfNumber"
-                    value={newItem.rfNumber}
-                    onChange={handleInputChange}
+                  <TextField 
+                    fullWidth 
+                    name="rfNumber" 
+                    value={newItem.rfNumber} 
+                    onChange={handleInputChange} 
                   />
                 </TableCell>
               </TableRow>

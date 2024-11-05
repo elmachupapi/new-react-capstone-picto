@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -9,6 +9,8 @@ import {
   TableHead,
   TableRow,
   Paper,
+  TextField,
+  TablePagination,
 } from '@mui/material';
 
 const ItemLog = () => {
@@ -40,11 +42,49 @@ const ItemLog = () => {
     },
   ];
 
+  // State for search term
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // Handle search
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setPage(0); // Reset to the first page on search
+  };
+
+  // Filter logs based on search term
+  const filteredLogs = logs.filter((log) =>
+    log.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Handle pagination change
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to the first page when changing rows per page
+  };
+
+  // Get current logs to display
+  const currentLogs = filteredLogs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
     <Box sx={{ p: 3, backgroundColor: '#f0f4f4', minHeight: '100vh', mt: 5 }}>
       <Typography variant="h4" gutterBottom>
         Item Logs
       </Typography>
+      <TextField
+        label="Search by Item Name"
+        variant="outlined"
+        fullWidth
+        value={searchTerm}
+        onChange={handleSearchChange}
+        sx={{ mb: 2, width: '400px', backgroundColor: 'white' }}
+      />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -56,7 +96,7 @@ const ItemLog = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {logs.map((log, index) => (
+            {currentLogs.map((log, index) => (
               <TableRow key={index}>
                 <TableCell>{log.itemName}</TableCell>
                 <TableCell>{log.date}</TableCell>
@@ -67,6 +107,15 @@ const ItemLog = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={filteredLogs.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Box>
   );
 };
