@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TextField,
   MenuItem,
@@ -10,56 +10,58 @@ import {
   InputLabel,
   Select,
 } from '@mui/material';
+import api from "../api";
 
 const RequestItem = () => {
-  const [formData, setFormData] = useState({
-    itemCategory: '',
-    itemDescription: '',
-    quantity: '',
-    unit: '',
-    date: '',
-    purpose: '',
-    rfNumber: '',
-  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const [requests, setRequests] = useState([]);
+  const [category, setCategory] = useState("");
+  const [item_name, setItemName] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [unit, setUnit] = useState("");
+  const [purpose, setPurpose] = useState("");
+  const [RF_number, setRFNumber] = useState("");
 
-    // Handle quantity validation
-    if (name === 'quantity') {
-      // Only update quantity if the value is a non-negative number
-      if (value < 0) {
-        return; // Prevent negative values
-      }
-    }
+  useEffect(() => {
+    getRequests();
+  }, [])
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const getRequests = () => {
+    api
+      .get("/api/requests/")
+      .then((res) => res.data)
+      .then((data) => {setRequests(data); console.log(data)})
+      .catch((err) => alert(err));
+  }
 
-  const handleSubmit = (e) => {
+  const createRequest = (e) => {
     e.preventDefault();
-    // Handle form submission logic, e.g., send data to an API
-    console.log(formData);
-  };
+    api
+      .post("api/requests/", { category, item_name, quantity, unit, RF_number, status:"Pending" })
+      .then((res) => {
+        if (res.status === 201) alert("Note Created!")
+        else alert("Failed to create note")
+      })
+      .catch((err) => alert(err))
+    getRequests();
+  }
 
   return (
     <Container sx={{ mt: 10 }}>
       <Typography variant="h4" gutterBottom align="center">
         Request Item
       </Typography>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={createRequest}>
         <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel id="item-category-label">Item Category</InputLabel>
               <Select
                 labelId="item-category-label"
-                name="itemCategory"
-                value={formData.itemCategory}
-                onChange={handleChange}
+                id="category"
+                name="category"
+                value={category}
+                onChange={(e)  => setCategory(e.target.value)}
                 required
               >
                 <MenuItem value="electronics">Electronics</MenuItem>
@@ -72,9 +74,10 @@ const RequestItem = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               label="Item Description"
-              name="itemDescription"
-              value={formData.itemDescription}
-              onChange={handleChange}
+              id="item_name"
+              name="item_name"
+              value={item_name}
+              onChange={(e)  => setItemName(e.target.value)}
               fullWidth
               required
             />
@@ -83,10 +86,11 @@ const RequestItem = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               label="Quantity"
+              id="quantity"
               name="quantity"
               type="number"
-              value={formData.quantity}
-              onChange={handleChange}
+              value={quantity}
+              onChange={(e)  => setQuantity(e.target.value)}
               fullWidth
               required
             />
@@ -94,33 +98,21 @@ const RequestItem = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               label="Unit"
+              id="unit"
               name="unit"
-              value={formData.unit}
-              onChange={handleChange}
+              value={unit}
+              onChange={(e)  => setUnit(e.target.value)}
               fullWidth
-              required
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Date"
-              name="date"
-              type="date"
-              value={formData.date}
-              onChange={handleChange}
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
               required
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               label="Purpose"
+              id="purpose"
               name="purpose"
-              value={formData.purpose}
-              onChange={handleChange}
+              value={purpose}
+              onChange={(e)  => setPurpose(e.target.value)}
               fullWidth
               required
             />
@@ -128,15 +120,16 @@ const RequestItem = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               label="RF Number"
-              name="rfNumber"
-              value={formData.rfNumber}
-              onChange={handleChange}
+              id="RF_number"
+              name="RF_number"
+              value={RF_number}
+              onChange={(e)  => setRFNumber(e.target.value)}
               fullWidth
               required
             />
           </Grid>
           <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 3 }}>
+            <Button type="submit" value="Submit" variant="contained" color="primary" fullWidth sx={{ mt: 3 }}>
               Submit
             </Button>
           </Grid>

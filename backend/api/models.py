@@ -6,6 +6,7 @@ class Request(models.Model):
     item_name = models.CharField(max_length=100)
     quantity = models.IntegerField()
     unit = models.CharField(max_length=20)
+    purpose = models.TextField(null = True)
     RF_number = models.CharField(max_length=20)
     date_created = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50)
