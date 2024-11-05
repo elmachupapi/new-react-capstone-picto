@@ -185,52 +185,62 @@ const ElectronicsList = () => {
 
       {/* Modal for Adding or Editing Item */}
       <Modal open={open} onClose={handleClose}>
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 1400,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4
-        }}>
-          <IconButton aria-label="close" onClick={handleClose} sx={{ position: 'absolute', top: 16, right: 16 }}>
-            <CloseIcon />
-          </IconButton>
+  <Box sx={{
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 1400,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4
+  }}>
+    <IconButton aria-label="close" onClick={handleClose} sx={{ position: 'absolute', top: 16, right: 16 }}>
+      <CloseIcon />
+    </IconButton>
 
-          <Typography variant="h6" gutterBottom>
-            {editItem ? "Edit Item" : "Add New Item"}
-          </Typography>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  <TextField fullWidth name="itemCategory" value={newItem.itemCategory} onChange={handleInputChange} />
-                </TableCell>
-                <TableCell>
-                  <TextField fullWidth name="itemDescription" value={newItem.itemDescription} onChange={handleInputChange} />
-                </TableCell>
-                <TableCell>
-                  <TextField fullWidth name="quantity" type="number" value={newItem.quantity} onChange={handleInputChange} inputProps={{ min: 0 }} />
-                </TableCell>
-                <TableCell>
-                  <TextField fullWidth name="unit" value={newItem.unit} onChange={handleInputChange} />
-                </TableCell>
-                <TableCell>
-                  <TextField fullWidth name="date" type="date" value={newItem.date} onChange={handleInputChange} />
-                </TableCell>
-                <TableCell>
-                  <TextField fullWidth name="rfNumber" value={newItem.rfNumber} onChange={handleInputChange} />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 2 }}>
-            {editItem ? "Update Item" : "Submit"}
-          </Button>
-        </Box>
-      </Modal>
+    <Typography variant="h6" gutterBottom>
+      {editItem ? "Edit Item" : "Add New Item"}
+    </Typography>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Item Category</TableCell>
+          <TableCell>Item Description</TableCell>
+          <TableCell>Quantity</TableCell>
+          <TableCell>Unit</TableCell>
+          <TableCell>Date</TableCell>
+          <TableCell>RF Number</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        <TableRow>
+          <TableCell>
+            <TextField fullWidth name="itemCategory" value={newItem.itemCategory} onChange={handleInputChange} />
+          </TableCell>
+          <TableCell>
+            <TextField fullWidth name="itemDescription" value={newItem.itemDescription} onChange={handleInputChange} />
+          </TableCell>
+          <TableCell>
+            <TextField fullWidth name="quantity" type="number" value={newItem.quantity} onChange={handleInputChange} inputProps={{ min: 0 }} />
+          </TableCell>
+          <TableCell>
+            <TextField fullWidth name="unit" value={newItem.unit} onChange={handleInputChange} />
+          </TableCell>
+          <TableCell>
+            <TextField fullWidth name="date" type="date" value={newItem.date} onChange={handleInputChange} />
+          </TableCell>
+          <TableCell>
+            <TextField fullWidth name="rfNumber" value={newItem.rfNumber} onChange={handleInputChange} />
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+    <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 2 }}>
+      {editItem ? "Update Item" : "Submit"}
+    </Button>
+  </Box>
+</Modal>
     </Box>
   );
 };
