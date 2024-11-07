@@ -196,11 +196,11 @@ const Dashboard = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {requestsList.map((request) => (
-              <TableRow key={request.number}>
-                <TableCell>{request.name}</TableCell>
-                <TableCell>{request.number}</TableCell>
-                <TableCell>{request.date}</TableCell>
+            {requests.map((request) => (
+              <TableRow key={request.id}>
+                <TableCell>{request.item_name}</TableCell>
+                <TableCell>{request.RF_number}</TableCell>
+                <TableCell>{request.date_created}</TableCell>
               </TableRow>
             ))}
           </TableBody>
