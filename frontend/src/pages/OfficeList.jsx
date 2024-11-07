@@ -1,4 +1,3 @@
-// src/pages/OfficeList.js
 import React, { useState } from "react";
 import {
   Box,
@@ -17,9 +16,19 @@ import {
   TablePagination,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const OfficeList = () => {
+  const [officeData, setOfficeData] = useState([
+    { itemCategory: "Office Supplies", itemDescription: "Desk", quantity: 5, unit: "pcs", date: "2024-10-12", rfNumber: "RF-001" },
+    { itemCategory: "Office Supplies", itemDescription: "Chair", quantity: 3, unit: "pcs", date: "2024-10-13", rfNumber: "RF-002" },
+  ]);
+
   const [open, setOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({
     itemCategory: "",
     itemDescription: "",
@@ -29,32 +38,25 @@ const OfficeList = () => {
     rfNumber: "",
   });
 
-  const [requests, setRequests] = useState([
-    {
-      itemCategory: "Electronics",
-      itemDescription: "Laptop",
-      quantity: 2,
-      unit: "pcs",
-      date: "2024-10-10",
-      rfNumber: "RF001",
-    },
-    {
-      itemCategory: "IT Supplies",
-      itemDescription: "Mouse",
-      quantity: 10,
-      unit: "pcs",
-      date: "2024-10-11",
-      rfNumber: "RF002",
-    },
-    // Add more items for testing pagination and search
-  ]);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setEditItem(null);  // Reset edit mode
+    setNewItem({
+      itemCategory: "",
+      itemDescription: "",
+      quantity: "",
+      unit: "",
+      date: "",
+      rfNumber: "",
+    });
+    setOpen(true);
+  };
+
   const handleClose = () => setOpen(false);
+  const handleConfirmDeleteClose = () => setConfirmDeleteOpen(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -62,10 +64,13 @@ const OfficeList = () => {
     setNewItem((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSearchChange = (e) => setSearchQuery(e.target.value);
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setPage(0); // Reset to the first page when searching
+  };
 
-  const filteredRequests = requests.filter((request) =>
-    request.itemDescription.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOffice = officeData.filter((item) =>
+    item.itemDescription.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleChangePage = (event, newPage) => {
@@ -77,8 +82,34 @@ const OfficeList = () => {
     setPage(0);
   };
 
+  const handleEdit = (item) => {
+    setEditItem(item);
+    setNewItem(item); // Pre-fill form with selected item's data
+    setOpen(true);
+  };
+
+  const handleDelete = () => {
+    setOfficeData((prevData) => prevData.filter((item) => item !== itemToDelete));
+    setConfirmDeleteOpen(false); // Close confirmation dialog after deleting
+  };
+
+  const handleDeleteClick = (item) => {
+    setItemToDelete(item); // Store item to be deleted
+    setConfirmDeleteOpen(true); // Open delete confirmation modal
+  };
+
   const handleSubmit = () => {
-    setRequests((prevRequests) => [...prevRequests, newItem]);
+    if (editItem) {
+      // Update the existing item
+      setOfficeData((prevData) =>
+        prevData.map((item) => (item === editItem ? newItem : item))
+      );
+    } else {
+      // Add a new item
+      setOfficeData((prevData) => [...prevData, newItem]);
+    }
+
+    setEditItem(null); // Reset edit mode
     setNewItem({
       itemCategory: "",
       itemDescription: "",
@@ -116,23 +147,35 @@ const OfficeList = () => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Edit</TableCell> {/* Move Edit to the first column */}
               <TableCell>Item Category</TableCell>
               <TableCell>Item Description</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Unit</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>RF Number</TableCell>
+              <TableCell>Delete</TableCell> {/* Move Delete to the last column */}
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredRequests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((request, index) => (
+            {filteredOffice.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
               <TableRow key={index}>
-                <TableCell>{request.itemCategory}</TableCell>
-                <TableCell>{request.itemDescription}</TableCell>
-                <TableCell>{request.quantity}</TableCell>
-                <TableCell>{request.unit}</TableCell>
-                <TableCell>{request.date}</TableCell>
-                <TableCell>{request.rfNumber}</TableCell>
+                <TableCell>
+                  <IconButton color="primary" onClick={() => handleEdit(item)}>
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
+                <TableCell>{item.itemCategory}</TableCell>
+                <TableCell>{item.itemDescription}</TableCell>
+                <TableCell>{item.quantity}</TableCell>
+                <TableCell>{item.unit}</TableCell>
+                <TableCell>{item.date}</TableCell>
+                <TableCell>{item.rfNumber}</TableCell>
+                <TableCell>
+                  <IconButton color="error" onClick={() => handleDeleteClick(item)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -142,7 +185,7 @@ const OfficeList = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={filteredRequests.length}
+        count={filteredOffice.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -168,7 +211,7 @@ const OfficeList = () => {
             <CloseIcon />
           </IconButton>
           <Typography variant="h6" gutterBottom>
-            Add New Item
+            {editItem ? "Edit Item" : "Add New Item"}
           </Typography>
           <Table>
             <TableHead>
@@ -187,8 +230,9 @@ const OfficeList = () => {
                   <TextField 
                     fullWidth 
                     name="itemCategory" 
-                    value={newItem.itemCategory} 
+                    value="Office List"
                     onChange={handleInputChange} 
+                    disabled
                   />
                 </TableCell>
                 <TableCell>
@@ -197,6 +241,7 @@ const OfficeList = () => {
                     name="itemDescription" 
                     value={newItem.itemDescription} 
                     onChange={handleInputChange} 
+                    placeholder={editItem ? "" : "Enter Item Description"}
                   />
                 </TableCell>
                 <TableCell>
@@ -207,6 +252,7 @@ const OfficeList = () => {
                     value={newItem.quantity} 
                     onChange={handleInputChange} 
                     inputProps={{ min: 0 }} 
+                    placeholder={editItem ? "" : "Enter Quantity"}
                   />
                 </TableCell>
                 <TableCell>
@@ -215,6 +261,7 @@ const OfficeList = () => {
                     name="unit" 
                     value={newItem.unit} 
                     onChange={handleInputChange} 
+                    placeholder={editItem ? "" : "Enter Unit"}
                   />
                 </TableCell>
                 <TableCell>
@@ -232,13 +279,40 @@ const OfficeList = () => {
                     name="rfNumber" 
                     value={newItem.rfNumber} 
                     onChange={handleInputChange} 
+                    placeholder={editItem ? "" : "Enter RF Number"}
                   />
                 </TableCell>
               </TableRow>
             </TableBody>
           </Table>
-          <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 2 }}>
-            Submit
+
+          <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ mt: 2 }}>
+              {editItem ? "Update Item" : "Add Item"}
+            </Button>
+          </Box>
+      </Modal>
+
+      <Modal open={confirmDeleteOpen} onClose={handleConfirmDeleteClose}>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          p: 4,
+          textAlign: 'center'
+        }}>
+          <Typography variant="h6" gutterBottom>Confirm Deletion</Typography>
+          <Typography variant="body1" gutterBottom>
+            Are you sure you want to delete this item?
+          </Typography>
+          <Button onClick={handleDelete} color="error" variant="contained" sx={{ mt: 2, mr: 2 }}>
+            Delete
+          </Button>
+          <Button onClick={handleConfirmDeleteClose} variant="outlined" sx={{ mt: 2 }}>
+            Cancel
           </Button>
         </Box>
       </Modal>
