@@ -107,7 +107,7 @@ const ElectronicsList = () => {
       );
     } else {
       // Add a new item
-      setElectronics((prevData) => [...prevData, newItem]);
+      addElectronics();
     }
 
     setEditItem(null); // Reset edit mode
@@ -133,10 +133,28 @@ const ElectronicsList = () => {
       .catch((err) => alert(err));
   }
 
-  const addElectronics = (e) => {
-    e.preventDefault();
-    api.post("api/item/electronics", {})
-  }
+  const addElectronics = async () => {
+    const payload = {
+      item_name: newItem.item_name,
+      quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+      unit: newItem.unit,
+      date_added: newItem.date_added,
+      RF_number: newItem.RF_number,
+    };
+  
+    try {
+      const res = await api.post("/api/item/electronics", payload);
+      if (res.status === 201) {
+        alert("Item added!");
+        getElectronics(); // Refresh the list
+      } else {
+        alert("Error: Item not added");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add item. Please check your input and try again.");
+    }
+  };
 
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
