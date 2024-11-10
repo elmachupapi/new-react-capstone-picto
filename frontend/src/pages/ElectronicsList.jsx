@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -18,6 +18,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import api from "../api";
 
 const ElectronicsList = () => {
   const [electronicsData, setElectronicsData] = useState([
@@ -30,12 +31,11 @@ const ElectronicsList = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({
-    itemCategory: "",
-    itemDescription: "",
+    item_name: "",
     quantity: "",
     unit: "",
-    date: "",
-    rfNumber: "",
+    date_added: "",
+    RF_number: "",
   });
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -120,6 +120,20 @@ const ElectronicsList = () => {
     });
     handleClose();
   };
+
+  const [electronics, setElectronics] = useState([]);
+
+  useEffect(() => {
+    getElectronics();
+  }, [])
+
+  const getElectronics = () => {
+    api
+      .get("/api/item/electronics")
+      .then((res) => res.data)
+      .then((data) => {setElectronics(data); console.log(data)})
+      .catch((err) => alert(err));
+  }
 
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
