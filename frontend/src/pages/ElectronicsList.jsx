@@ -21,9 +21,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../api";
 
 const ElectronicsList = () => {
+  const [electronics, setElectronics] = useState([]);
+  
   const [electronicsData, setElectronicsData] = useState([
-    { itemCategory: "Electronics", itemDescription: "Laptop", quantity: 5, unit: "pcs", date: "2024-10-12", rfNumber: "RF-001" },
-    { itemCategory: "Electronics", itemDescription: "Projector", quantity: 2, unit: "pcs", date: "2024-10-13", rfNumber: "RF-002" },
+    { itemDescription: "Laptop", quantity: 5, unit: "pcs", date: "2024-10-12", rfNumber: "RF-001" },
+    { itemDescription: "Projector", quantity: 2, unit: "pcs", date: "2024-10-13", rfNumber: "RF-002" },
   ]);
 
   const [open, setOpen] = useState(false);
@@ -45,12 +47,11 @@ const ElectronicsList = () => {
   const handleOpen = () => {
     setEditItem(null);  // Reset edit mode
     setNewItem({
-      itemCategory: "",
-      itemDescription: "",
+      item_name: "",
       quantity: "",
       unit: "",
-      date: "",
-      rfNumber: "",
+      date_added: "",
+      RF_number: "",
     });
     setOpen(true);
   };
@@ -69,8 +70,8 @@ const ElectronicsList = () => {
     setPage(0); // Reset to the first page when searching
   };
 
-  const filteredElectronics = electronicsData.filter((item) =>
-    item.itemDescription.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredElectronics = electronics.filter((item) =>
+    item.item_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleChangePage = (event, newPage) => {
@@ -89,7 +90,7 @@ const ElectronicsList = () => {
   };
 
   const handleDelete = () => {
-    setElectronicsData((prevData) => prevData.filter((item) => item !== itemToDelete));
+    setElectronics((prevData) => prevData.filter((item) => item !== itemToDelete));
     setConfirmDeleteOpen(false); // Close confirmation dialog after deleting
   };
 
@@ -101,27 +102,24 @@ const ElectronicsList = () => {
   const handleSubmit = () => {
     if (editItem) {
       // Update the existing item
-      setElectronicsData((prevData) =>
+      setElectronics((prevData) =>
         prevData.map((item) => (item === editItem ? newItem : item))
       );
     } else {
       // Add a new item
-      setElectronicsData((prevData) => [...prevData, newItem]);
+      setElectronics((prevData) => [...prevData, newItem]);
     }
 
     setEditItem(null); // Reset edit mode
     setNewItem({
-      itemCategory: "",
-      itemDescription: "",
+      item_name: "",
       quantity: "",
       unit: "",
-      date: "",
-      rfNumber: "",
+      date_added: "",
+      RF_number: "",
     });
     handleClose();
   };
-
-  const [electronics, setElectronics] = useState([]);
 
   useEffect(() => {
     getElectronics();
@@ -133,6 +131,11 @@ const ElectronicsList = () => {
       .then((res) => res.data)
       .then((data) => {setElectronics(data); console.log(data)})
       .catch((err) => alert(err));
+  }
+
+  const addElectronics = (e) => {
+    e.preventDefault();
+    api.post("api/item/electronics", {})
   }
 
   return (
@@ -162,7 +165,6 @@ const ElectronicsList = () => {
           <TableHead>
             <TableRow>
               <TableCell>Edit</TableCell>
-              <TableCell>Item Category</TableCell>
               <TableCell>Item Description</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Unit</TableCell>
@@ -179,12 +181,11 @@ const ElectronicsList = () => {
                     <EditIcon />
                   </IconButton>
                 </TableCell>
-                <TableCell>{item.itemCategory}</TableCell>
-                <TableCell>{item.itemDescription}</TableCell>
+                <TableCell>{item.item_name}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>{item.unit}</TableCell>
-                <TableCell>{item.date}</TableCell>
-                <TableCell>{item.rfNumber}</TableCell>
+                <TableCell>{item.date_added}</TableCell>
+                <TableCell>{item.RF_number}</TableCell>
                 <TableCell>
                   <IconButton color="error" onClick={() => handleDeleteClick(item)}>
                     <DeleteIcon />
@@ -228,7 +229,6 @@ const ElectronicsList = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Item Category</TableCell>
                 <TableCell>Item Description</TableCell>
                 <TableCell>Quantity</TableCell>
                 <TableCell>Unit</TableCell>
@@ -239,10 +239,7 @@ const ElectronicsList = () => {
             <TableBody>
               <TableRow>
                 <TableCell>
-                  <TextField fullWidth name="itemCategory" value="Electronics" onChange={handleInputChange} disabled />
-                </TableCell>
-                <TableCell>
-                  <TextField fullWidth name="itemDescription" value={newItem.itemDescription} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Item Description"}/>
+                  <TextField fullWidth name="item_name" value={newItem.item_name} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Item Description"}/>
                 </TableCell>
                 <TableCell>
                   <TextField fullWidth name="quantity" type="number" value={newItem.quantity} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Quantity"} />
@@ -251,10 +248,10 @@ const ElectronicsList = () => {
                   <TextField fullWidth name="unit" value={newItem.unit} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Unit"}/>
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="date" type="date" value={newItem.date} onChange={handleInputChange} />
+                  <TextField fullWidth name="date_added" type="date" value={newItem.date_added} onChange={handleInputChange} />
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="rfNumber" value={newItem.rfNumber} onChange={handleInputChange} placeholder={editItem ? "" : "Enter RF Number"}/>
+                  <TextField fullWidth name="RF_number" value={newItem.RF_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter RF Number"}/>
                 </TableCell>
               </TableRow>
             </TableBody>
