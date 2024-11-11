@@ -59,6 +59,7 @@ function Form ({ route, method }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    type="password"
                 />
 
                 <Button
