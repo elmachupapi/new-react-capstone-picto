@@ -83,3 +83,29 @@ class ListCreateItemLog(generics.ListCreateAPIView):
     queryset = ItemLogs.objects.all()
     serializer_class = ItemLogSerializer
     permission_classes = [AllowAny]
+
+
+
+class ListCombinedLowItems(generics.ListAPIView):
+    serializer_class = ITSuppliesSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        it_supplies_qs = ITSupplies.objects.filter(quantity__lt=5, quantity__gt=0)
+        electronics_qs = Electronics.objects.filter(quantity__lt=5, quantity__gt=0)
+        office_qs = Office.objects.filter(quantity__lt=5, quantity__gt=0)
+        janitorial_qs = Janitorial.objects.filter(quantity__lt=5, quantity__gt=0)
+        
+        return it_supplies_qs.union(electronics_qs, office_qs, janitorial_qs)
+
+class ListZeroItems(generics.ListAPIView):
+    serializer_class = ITSuppliesSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        it_supplies_qs = ITSupplies.objects.filter(quantity=0)
+        electronics_qs = Electronics.objects.filter(quantity=0)
+        office_qs = Office.objects.filter(quantity=0)
+        janitorial_qs = Janitorial.objects.filter(quantity=0)
+        
+        return it_supplies_qs.union(electronics_qs, office_qs, janitorial_qs)

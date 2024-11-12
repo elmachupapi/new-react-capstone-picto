@@ -14,5 +14,7 @@ urlpatterns = [
     path("item/janitorial/delete/<int:pk>/", views.DeleteJanitorialItem.as_view(), name = "item-delete-janitorial"),
     path("logs/request", views.ListCreateRequestLog.as_view(), name = "request-log"),
     path("logs/item", views.ListCreateItemLog.as_view(), name = "item-log"),
+    path("item/dashboard/lowquantity", views.ListCombinedLowItems.as_view(), name = "low-items"),
+    path("item/dashboard/zeroquantity", views.ListZeroItems.as_view(), name = "zero-items"),
 
 ]
