@@ -109,3 +109,38 @@ class ListZeroItems(generics.ListAPIView):
         janitorial_qs = Janitorial.objects.filter(quantity=0)
         
         return it_supplies_qs.union(electronics_qs, office_qs, janitorial_qs)
+    
+
+class RequestUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Request.objects.all()
+    serializer_class = RequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Request.objects.filter(requestor=user)
+
+class UpdateElectronics(generics.RetrieveUpdateAPIView):
+    queryset = Electronics.objects.all()
+    serializer_class = ElectronicsSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'id'
+
+class UpdateITSupply(generics.RetrieveUpdateAPIView):
+    queryset = ITSupplies.objects.all()
+    serializer_class = ITSuppliesSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'id'
+
+class UpdateOffice(generics.RetrieveUpdateAPIView):
+    queryset = Office.objects.all()
+    serializer_class = OfficeSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'id'
+
+class UpdateJanitorial(generics.RetrieveUpdateAPIView):
+    queryset = Janitorial.objects.all()
+    serializer_class = JanitorialSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'id'
+
