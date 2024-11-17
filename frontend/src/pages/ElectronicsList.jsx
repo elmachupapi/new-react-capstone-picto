@@ -89,9 +89,20 @@ const ElectronicsList = () => {
     setOpen(true);
   };
 
-  const handleDelete = () => {
-    setElectronics((prevData) => prevData.filter((item) => item !== itemToDelete));
-    setConfirmDeleteOpen(false); // Close confirmation dialog after deleting
+  const handleDelete = async () => {
+    try {
+      const res = await api.delete(`api/item/electronics/delete/${itemToDelete.id}/`);
+      if (res.status === 204) {
+        alert("Item deleted successfully!");
+        setElectronics((prevData) => prevData.filter((item) => item.id !== itemToDelete.id));
+      } else {
+        alert("Failed to delete the item.");
+      }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      alert("An error occurred while trying to delete the item.");
+    }
+    setConfirmDeleteOpen(false);
   };
 
   const handleDeleteClick = (item) => {
@@ -127,7 +138,7 @@ const ElectronicsList = () => {
 
   const getElectronics = () => {
     api
-      .get("/api/item/electronics")
+      .get("/api/item/electronics/")
       .then((res) => res.data)
       .then((data) => {setElectronics(data); console.log(data)})
       .catch((err) => alert(err));
@@ -143,7 +154,7 @@ const ElectronicsList = () => {
     };
   
     try {
-      const res = await api.post("/api/item/electronics", payload);
+      const res = await api.post("/api/item/electronics/", payload);
       if (res.status === 201) {
         alert("Item added!");
         getElectronics(); // Refresh the list
