@@ -23,6 +23,16 @@ class ElectronicsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Electronics
         fields = ["id", "item_name", "quantity", "unit", "date_added", "RF_number"]
+        
+    def create(self, validated_data):
+        # Check if the input is a list (batch creation)
+        if isinstance(validated_data, list):
+            # Use bulk_create for efficient batch saving
+            return Electronics.objects.bulk_create(
+                [Electronics(**item) for item in validated_data]
+            )
+        # Handle single object creation
+        return super().create(validated_data)
 
 class ITSuppliesSerializer(serializers.ModelSerializer):
     class Meta:
