@@ -44,8 +44,10 @@ class ListCreateElectronicItem(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
 
 class DeleteElectronicItem(generics.DestroyAPIView):
+    queryset = Electronics.objects.all()
     serializer_class = ElectronicsSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'id'
 
 class ListCreateITSupplyItem(generics.ListCreateAPIView):
     queryset = ITSupplies.objects.all()
@@ -53,8 +55,10 @@ class ListCreateITSupplyItem(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
 
 class DeleteITSupplyItem(generics.DestroyAPIView):
+    queryset = ITSupplies.objects.all()
     serializer_class = ITSuppliesSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'id'
 
 class ListCreateOfficeItem(generics.ListCreateAPIView):
     queryset = Office.objects.all()
@@ -62,8 +66,10 @@ class ListCreateOfficeItem(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
 
 class DeleteOfficeItem(generics.DestroyAPIView):
+    queryset = Office.objects.all()
     serializer_class = OfficeSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'id'
 
 class ListCreateJanitorialItem(generics.ListCreateAPIView):
     queryset = Janitorial.objects.all()
@@ -71,8 +77,10 @@ class ListCreateJanitorialItem(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
 
 class DeleteJanitorialItem(generics.DestroyAPIView):
+    queryset = Janitorial.objects.all()
     serializer_class = JanitorialSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'id'
 
 class ListCreateRequestLog(generics.ListCreateAPIView):
     queryset = RequestLogs.objects.all()
