@@ -56,4 +56,14 @@ class ItemLogs(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     action = models.CharField(max_length=50)
     current_quantity = models.IntegerField()
+
+class Profile(models.Model):
+    ROLE_CHOICES = [
+        ('superadmin', 'Superadmin'),
+        ('admin', 'Admin'),
+        ('viewer', 'Viewer'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='viewer')
+
 # Create your models here.

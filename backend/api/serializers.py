@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Request, Electronics, ITSupplies, Office, Janitorial, RequestLogs, ItemLogs
+from .models import Request, Electronics, ITSupplies, Office, Janitorial, RequestLogs, ItemLogs, Profile
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,7 +11,13 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
-    
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['user', 'role']
+        extra_kwargs = {"user": {"read_only": True}}
+
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
@@ -23,7 +29,7 @@ class ElectronicsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Electronics
         fields = ["id", "item_name", "quantity", "unit", "date_added", "RF_number"]
-        
+
     def create(self, validated_data):
         # Check if the input is a list (batch creation)
         if isinstance(validated_data, list):

@@ -28,4 +28,6 @@ urlpatterns = [
     path("item/dashboard/lowquantity/", views.ListCombinedLowItems.as_view(), name = "low-items"),
     path("item/dashboard/zeroquantity/", views.ListZeroItems.as_view(), name = "zero-items"),
 
+     path('profile/', views.ProfileDetailView.as_view(), name='profile-detail'),
+
 ]

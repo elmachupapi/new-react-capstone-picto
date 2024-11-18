@@ -110,12 +110,32 @@ const ElectronicsList = () => {
     setConfirmDeleteOpen(true); // Open delete confirmation modal
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (editItem) {
-      // Update the existing item
-      setElectronics((prevData) =>
-        prevData.map((item) => (item === editItem ? newItem : item))
-      );
+      try {
+        // Construct payload for the update request
+        const payload = {
+          item_name: newItem.item_name,
+          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+          unit: newItem.unit,
+          date_added: newItem.date_added,
+          RF_number: newItem.RF_number,
+        };
+  
+        // Make PUT request to the update endpoint
+        const res = await api.put(`api/item/electronics/update/${editItem.id}/`, payload);
+  
+        if (res.status === 200) { // Assuming successful update returns HTTP 200
+          alert("Item updated successfully!");
+          // Optional: Fetch updated data from the server
+          getElectronics(); // Refresh list
+        } else {
+          alert("Failed to update the item.");
+        }
+      } catch (error) {
+        console.error("Error updating item:", error);
+        alert("An error occurred while updating the item.");
+      }
     } else {
       // Add a new item
       addElectronics();
