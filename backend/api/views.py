@@ -45,7 +45,10 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
         # Ensure the profile being accessed belongs to the authenticated user
         return self.request.user.profile
 
-
+class ProfileListView(generics.ListAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [AllowAny]
 
 
 class ListCreateElectronicItem(generics.ListCreateAPIView):

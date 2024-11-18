@@ -12,6 +12,17 @@ function Form ({ route, method }) {
 
     const name = method === "login" ? "Login" : "Signup"
 
+    const fetchAndSaveRole = async () => {
+        try {
+            const response = await api.get("api/profile/"); // Endpoint to fetch profile data
+            const { role } = response.data;
+            localStorage.setItem("role", role); // Save the role to localStorage
+        } catch (error) {
+            console.error("Error fetching user role:", error);
+            alert("Failed to retrieve user role. Please try again.");
+        }
+    };
+
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
@@ -21,12 +32,15 @@ function Form ({ route, method }) {
             if (method === "login") {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+
+                await fetchAndSaveRole(); // Fetch and save the role after login
+
                 navigate("/")
             } else {
                 navigate("/login")
             }
         } catch (error) {
-            alert(error)
+            alert(error);
         } finally {
             setLoading(false)
         }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   List,
@@ -22,6 +22,13 @@ import logo from "./PGC logo.png";
 
 const Sidebar = ({ drawerWidth }) => {
   const [openSection, setOpenSection] = useState(null);
+  const [role, setRole] = useState(null); // Store the user's role
+
+  useEffect(() => {
+    // Retrieve the role from localStorage
+    const userRole = localStorage.getItem("role");
+    setRole(userRole);
+  }, []);
 
   const handleToggle = (section) => {
     setOpenSection((prevOpenSection) =>
@@ -80,7 +87,7 @@ const Sidebar = ({ drawerWidth }) => {
 
       {/* Sidebar List */}
       <List>
-        {/* Dashboard List Item */}
+        {/* Always show Dashboard */}
         <ListItem button component={Link} to="/">
           <ListItemIcon>
             <SpeedIcon />
@@ -88,102 +95,160 @@ const Sidebar = ({ drawerWidth }) => {
           <ListItemText primary="Dashboard" sx={{ ml: -2, color: "gray" }} />
         </ListItem>
 
-        {/* Requests Collapsible List Item */}
-        <ListItem button onClick={() => handleToggle("requests")}>
-          <ListItemIcon>
-            <RequestPageIcon />
-          </ListItemIcon>
-          <ListItemText primary="Requests" sx={{ ml: -2, color: "gray" }} />
-          {openSection === "requests" ? (
-            <ExpandLessIcon sx={{ color: "gray" }} />
-          ) : (
-            <ExpandMoreIcon sx={{ color: "gray" }} />
-          )}
-        </ListItem>
-        <Collapse in={openSection === "requests"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem button component={Link} to="/request" sx={{ pl: 7 }}>
-              <ListItemText primary="Request Item" sx={{ color: "gray" }} />
+        {/* Show Requests Section if not "viewer" */}
+        {(role === "viewer" || role !== null) && (
+          <>
+            <ListItem button onClick={() => handleToggle("requests")}>
+              <ListItemIcon>
+                <RequestPageIcon />
+              </ListItemIcon>
+              <ListItemText primary="Requests" sx={{ ml: -2, color: "gray" }} />
+              {openSection === "requests" ? (
+                <ExpandLessIcon sx={{ color: "gray" }} />
+              ) : (
+                <ExpandMoreIcon sx={{ color: "gray" }} />
+              )}
             </ListItem>
-            <ListItem button component={Link} to="/request/list" sx={{ pl: 7 }}>
-              <ListItemText primary="Request List" sx={{ color: "gray" }} />
-            </ListItem>
-            <ListItem
-              button
-              component={Link}
-              to="/request/approvals"
-              sx={{ pl: 7 }}
+            <Collapse
+              in={openSection === "requests"}
+              timeout="auto"
+              unmountOnExit
             >
-              <ListItemText
-                primary="Approvals"
-                sx={{ color: "gray" }}
-              />
-            </ListItem>
-          </List>
-        </Collapse>
+              <List component="div" disablePadding>
+                <ListItem button component={Link} to="/request" sx={{ pl: 7 }}>
+                  <ListItemText primary="Request Item" sx={{ color: "gray" }} />
+                </ListItem>
+                <ListItem
+                  button
+                  component={Link}
+                  to="/request/list"
+                  sx={{ pl: 7 }}
+                >
+                  <ListItemText primary="Request List" sx={{ color: "gray" }} />
+                </ListItem>
+                {role !== "viewer" && (
+                  <ListItem
+                    button
+                    component={Link}
+                    to="/request/approvals"
+                    sx={{ pl: 7 }}
+                  >
+                    <ListItemText
+                      primary="Approvals"
+                      sx={{ color: "gray" }}
+                    />
+                  </ListItem>
+                )}
+              </List>
+            </Collapse>
+          </>
+        )}
 
-        {/* Items Collapsible List Item */}
-        <ListItem button onClick={() => handleToggle("items")}>
-          <ListItemIcon>
-            <InventoryIcon />
-          </ListItemIcon>
-          <ListItemText primary="Items" sx={{ ml: -2, color: "gray" }} />
-          {openSection === "items" ? (
-            <ExpandLessIcon sx={{ color: "gray" }} />
-          ) : (
-            <ExpandMoreIcon sx={{ color: "gray" }} />
-          )}
-        </ListItem>
-        <Collapse in={openSection === "items"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem component={Link} to="/item/electronics" sx={{ pl: 7 }}>
-              <ListItemText primary="Electronics" sx={{ color: "gray" }} />
+        {/* Show Items Section if not "viewer" */}
+        {role !== "viewer" && (
+          <>
+            <ListItem button onClick={() => handleToggle("items")}>
+              <ListItemIcon>
+                <InventoryIcon />
+              </ListItemIcon>
+              <ListItemText primary="Items" sx={{ ml: -2, color: "gray" }} />
+              {openSection === "items" ? (
+                <ExpandLessIcon sx={{ color: "gray" }} />
+              ) : (
+                <ExpandMoreIcon sx={{ color: "gray" }} />
+              )}
             </ListItem>
-            <ListItem component={Link} to="/item/itsupplies" sx={{ pl: 7 }}>
-              <ListItemText primary="IT Supplies" sx={{ color: "gray" }} />
-            </ListItem>
-            <ListItem component={Link} to="/item/office" sx={{ pl: 7 }}>
-              <ListItemText primary="Office Supplies" sx={{ color: "gray" }} />
-            </ListItem>
-            <ListItem component={Link} to="/item/janitorial" sx={{ pl: 7 }}>
-              <ListItemText
-                primary="Janitorial Supplies"
-                sx={{ color: "gray" }}
-              />
-            </ListItem>
-          </List>
-        </Collapse>
+            <Collapse
+              in={openSection === "items"}
+              timeout="auto"
+              unmountOnExit
+            >
+              <List component="div" disablePadding>
+                <ListItem
+                  component={Link}
+                  to="/item/electronics"
+                  sx={{ pl: 7 }}
+                >
+                  <ListItemText primary="Electronics" sx={{ color: "gray" }} />
+                </ListItem>
+                <ListItem
+                  component={Link}
+                  to="/item/itsupplies"
+                  sx={{ pl: 7 }}
+                >
+                  <ListItemText primary="IT Supplies" sx={{ color: "gray" }} />
+                </ListItem>
+                <ListItem
+                  component={Link}
+                  to="/item/office"
+                  sx={{ pl: 7 }}
+                >
+                  <ListItemText primary="Office Supplies" sx={{ color: "gray" }} />
+                </ListItem>
+                <ListItem
+                  component={Link}
+                  to="/item/janitorial"
+                  sx={{ pl: 7 }}
+                >
+                  <ListItemText
+                    primary="Janitorial Supplies"
+                    sx={{ color: "gray" }}
+                  />
+                </ListItem>
+              </List>
+            </Collapse>
+          </>
+        )}
 
-        {/* Logs Collapsible List Item */}
-        <ListItem button onClick={() => handleToggle("logs")}>
-          <ListItemIcon>
-            <HistoryIcon />
-          </ListItemIcon>
-          <ListItemText primary="Logs" sx={{ ml: -2, color: "gray" }} />
-          {openSection === "logs" ? (
-            <ExpandLessIcon sx={{ color: "gray" }} />
-          ) : (
-            <ExpandMoreIcon sx={{ color: "gray" }} />
-          )}
-        </ListItem>
-        <Collapse in={openSection === "logs"} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem button component={Link} to="/logs/request" sx={{ pl: 7 }}>
-              <ListItemText primary="Request Log" sx={{ color: "gray" }} />
+        {/* Show Logs Section if not "viewer" */}
+        {role !== "viewer" && (
+          <>
+            <ListItem button onClick={() => handleToggle("logs")}>
+              <ListItemIcon>
+                <HistoryIcon />
+              </ListItemIcon>
+              <ListItemText primary="Logs" sx={{ ml: -2, color: "gray" }} />
+              {openSection === "logs" ? (
+                <ExpandLessIcon sx={{ color: "gray" }} />
+              ) : (
+                <ExpandMoreIcon sx={{ color: "gray" }} />
+              )}
             </ListItem>
-            <ListItem button component={Link} to="/logs/item" sx={{ pl: 7 }}>
-              <ListItemText primary="Item Log" sx={{ color: "gray" }} />
-            </ListItem>
-          </List>
-        </Collapse>
+            <Collapse in={openSection === "logs"} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  component={Link}
+                  to="/logs/request"
+                  sx={{ pl: 7 }}
+                >
+                  <ListItemText
+                    primary="Request Log"
+                    sx={{ color: "gray" }}
+                  />
+                </ListItem>
+                <ListItem
+                  button
+                  component={Link}
+                  to="/logs/item"
+                  sx={{ pl: 7 }}
+                >
+                  <ListItemText primary="Item Log" sx={{ color: "gray" }} />
+                </ListItem>
+              </List>
+            </Collapse>
+          </>
+        )}
 
-        {/* Accounts List Item */}
-        <ListItem button component={Link} to="/accounts">
-          <ListItemIcon>
-            <PeopleAltIcon />
-          </ListItemIcon>
-          <ListItemText primary="Accounts" sx={{ ml: -2, color: "gray" }} />
-        </ListItem>
+        {/* Show Accounts Section if not "viewer" */}
+        {role !== "viewer" && (
+          <ListItem button component={Link} to="/accounts">
+            <ListItemIcon>
+              <PeopleAltIcon />
+            </ListItemIcon>
+            <ListItemText primary="Accounts" sx={{ ml: -2, color: "gray" }} />
+          </ListItem>
+        )}
       </List>
     </Drawer>
   );
