@@ -55,6 +55,7 @@ class ListCreateElectronicItem(generics.ListCreateAPIView):
     queryset = Electronics.objects.all()
     serializer_class = ElectronicsSerializer
     permission_classes = [AllowAny]
+
     def create(self, request, *args, **kwargs):
         data = request.data
 
@@ -82,6 +83,22 @@ class ListCreateITSupplyItem(generics.ListCreateAPIView):
     serializer_class = ITSuppliesSerializer
     permission_classes = [AllowAny]
 
+    def create(self, request, *args, **kwargs):
+        data = request.data
+
+        # Check if the input is a list for batch creation
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            # Fallback to single object creation
+            return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
 class DeleteITSupplyItem(generics.DestroyAPIView):
     queryset = ITSupplies.objects.all()
     serializer_class = ITSuppliesSerializer
@@ -93,6 +110,22 @@ class ListCreateOfficeItem(generics.ListCreateAPIView):
     serializer_class = OfficeSerializer
     permission_classes = [AllowAny]
 
+    def create(self, request, *args, **kwargs):
+        data = request.data
+
+        # Check if the input is a list for batch creation
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            # Fallback to single object creation
+            return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
 class DeleteOfficeItem(generics.DestroyAPIView):
     queryset = Office.objects.all()
     serializer_class = OfficeSerializer
@@ -103,6 +136,22 @@ class ListCreateJanitorialItem(generics.ListCreateAPIView):
     queryset = Janitorial.objects.all()
     serializer_class = JanitorialSerializer
     permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+
+        # Check if the input is a list for batch creation
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            # Fallback to single object creation
+            return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 class DeleteJanitorialItem(generics.DestroyAPIView):
     queryset = Janitorial.objects.all()
@@ -119,7 +168,6 @@ class ListCreateItemLog(generics.ListCreateAPIView):
     queryset = ItemLogs.objects.all()
     serializer_class = ItemLogSerializer
     permission_classes = [AllowAny]
-
 
 
 class ListCombinedLowItems(generics.ListAPIView):
@@ -151,6 +199,7 @@ class RequestUpdate(generics.RetrieveUpdateAPIView):
     queryset = Request.objects.all()
     serializer_class = RequestSerializer
     permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
 
     def get_queryset(self):
         user = self.request.user

@@ -31,13 +31,10 @@ class ElectronicsSerializer(serializers.ModelSerializer):
         fields = ["id", "item_name", "quantity", "unit", "date_added", "RF_number"]
 
     def create(self, validated_data):
-        # Check if the input is a list (batch creation)
         if isinstance(validated_data, list):
-            # Use bulk_create for efficient batch saving
             return Electronics.objects.bulk_create(
                 [Electronics(**item) for item in validated_data]
             )
-        # Handle single object creation
         return super().create(validated_data)
 
 class ITSuppliesSerializer(serializers.ModelSerializer):
@@ -45,16 +42,40 @@ class ITSuppliesSerializer(serializers.ModelSerializer):
         model = ITSupplies
         fields = ["id", "item_name", "quantity", "unit", "date_added", "RF_number"]
 
+    def create(self, validated_data):
+        if isinstance(validated_data, list):
+            return ITSupplies.objects.bulk_create(
+                [ITSupplies(**item) for item in validated_data]
+            )
+        return super().create(validated_data)
+        
 class OfficeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Office
         fields = ["id", "item_name", "quantity", "unit", "date_added", "RF_number"]
 
+    def create(self, validated_data):
+        if isinstance(validated_data, list):
+            return Office.objects.bulk_create(
+                [Office(**item) for item in validated_data]
+            )
+        return super().create(validated_data)
+
 class JanitorialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Janitorial
         fields = ["id", "item_name", "quantity", "unit", "date_added", "RF_number"]
-
+    
+    def create(self, validated_data):
+        # Check if the input is a list (batch creation)
+        if isinstance(validated_data, list):
+            # Use bulk_create for efficient batch saving
+            return Janitorial.objects.bulk_create(
+                [Janitorial(**item) for item in validated_data]
+            )
+        # Handle single object creation
+        return super().create(validated_data)
+    
 class RequestLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestLogs

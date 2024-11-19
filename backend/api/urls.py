@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     path("requests/", views.RequestListCreate.as_view(), name = "request-list"),
     path("requests/delete/<int:pk>/", views.RequestDelete.as_view(), name = "delete-request"),
-    path("requests/update", views.RequestUpdate.as_view(), name = "update-request"),
+    path("requests/update/<int:id>/", views.RequestUpdate.as_view(), name = "update-request"),
 
 
     path("item/electronics/", views.ListCreateElectronicItem.as_view(), name = "item-electronic"),
