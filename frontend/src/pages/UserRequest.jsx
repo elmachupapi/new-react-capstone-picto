@@ -1,4 +1,3 @@
-// src/pages/UserRequest.js
 import React, { useState } from "react";
 import {
   Box,
@@ -13,32 +12,61 @@ import {
   Button,
   TextField,
   TablePagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
 const UserRequest = () => {
   // Sample data for the user requests
   const requests = [
-    { itemName: "Laptop", requestNumber: "REQ-001", dateRequested: "2024-10-10" },
-    { itemName: "Mouse", requestNumber: "REQ-002", dateRequested: "2024-10-11" },
-    { itemName: "Printer", requestNumber: "REQ-003", dateRequested: "2024-10-12" },
-    { itemName: "Broom", requestNumber: "REQ-004", dateRequested: "2024-10-13" },
+    {
+      itemName: "Laptop",
+      requestNumber: "REQ-001",
+      dateRequested: "2024-10-10",
+      requestor: "John Doe",
+      position: "IT Specialist",
+      division: "ICT Division",
+      serialNumber: "SN-12345",
+      quantity: 1,
+      unit: "Piece",
+      purpose: "For work-from-home setup",
+      rfNumber: "RF-101",
+    },
+    {
+      itemName: "Mouse",
+      requestNumber: "REQ-002",
+      dateRequested: "2024-10-11",
+      requestor: "Jane Smith",
+      position: "Office Assistant",
+      division: "Admin Division",
+      serialNumber: "SN-67890",
+      quantity: 2,
+      unit: "Pieces",
+      purpose: "For office use",
+      rfNumber: "RF-102",
+    },
   ];
 
-  // State for search term, pagination, and rows per page
-  const [searchTerm, setSearchTerm] = useState('');
+  // State for search term, pagination, rows per page, and dialog visibility
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Function to handle approval
-  const handleApprove = (requestNumber) => {
-    console.log(`Approved request: ${requestNumber}`);
-    // Add additional logic for approving here
+  const handleApprove = (request) => {
+    setSelectedRequest(request);
+    setDialogOpen(true);
   };
 
-  // Function to handle denial
-  const handleDeny = (requestNumber) => {
-    console.log(`Denied request: ${requestNumber}`);
-    // Add additional logic for denial here
+  // Function to close the dialog
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedRequest(null);
   };
 
   // Handle search input change
@@ -64,7 +92,19 @@ const UserRequest = () => {
   };
 
   // Get the current requests to display
-  const currentRequests = filteredRequests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const currentRequests = filteredRequests.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  const CustomDialog = styled(Dialog)(({ theme }) => ({
+    "& .MuiDialog-paper": {
+      width: "700px", // Customize width
+      height: "475px", // Optional: customize height
+      maxWidth: "none", // Disable default maxWidth
+    },
+  }));
+
 
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
@@ -77,7 +117,7 @@ const UserRequest = () => {
         fullWidth
         value={searchTerm}
         onChange={handleSearchChange}
-        sx={{ mb: 2, width: '400px', backgroundColor: 'white' }}
+        sx={{ mb: 2, width: "400px", backgroundColor: "white" }}
       />
       <TableContainer component={Paper}>
         <Table>
@@ -99,7 +139,7 @@ const UserRequest = () => {
                   <Button
                     variant="contained"
                     color="success"
-                    onClick={() => handleApprove(request.requestNumber)}
+                    onClick={() => handleApprove(request)}
                     sx={{ mr: 1 }}
                   >
                     Approve
@@ -107,7 +147,9 @@ const UserRequest = () => {
                   <Button
                     variant="contained"
                     color="error"
-                    onClick={() => handleDeny(request.requestNumber)}
+                    onClick={() =>
+                      console.log(`Denied request: ${request.requestNumber}`)
+                    }
                   >
                     Deny
                   </Button>
@@ -126,6 +168,48 @@ const UserRequest = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+      {/* Dialog for Approval Details */}
+      {selectedRequest && (
+  <CustomDialog open={dialogOpen} onClose={handleCloseDialog}>
+    <DialogTitle sx={{ fontSize: "24px", fontWeight: "bold" }}>Approval Details</DialogTitle>
+    <DialogContent>
+      <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
+        <strong>Requestor:</strong> {selectedRequest.requestor}
+      </Typography>
+      <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
+        <strong>Position:</strong> {selectedRequest.position}
+      </Typography>
+      <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
+        <strong>Division:</strong> {selectedRequest.division}
+      </Typography>
+      <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
+        <strong>Item Issued:</strong> {selectedRequest.itemName}
+      </Typography>
+      <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
+        <strong>Serial Number:</strong> {selectedRequest.serialNumber}
+      </Typography>
+      <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
+        <strong>Quantity:</strong> {selectedRequest.quantity}
+      </Typography>
+      <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
+        <strong>Unit:</strong> {selectedRequest.unit}
+      </Typography>
+      <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
+        <strong>Purpose:</strong> {selectedRequest.purpose}
+      </Typography>
+      <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
+        <strong>RF No.:</strong> {selectedRequest.rfNumber}
+      </Typography>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={handleCloseDialog} variant="contained" color="primary">
+        OK
+      </Button>
+    </DialogActions>
+  </CustomDialog>
+)}
+
     </Box>
   );
 };
