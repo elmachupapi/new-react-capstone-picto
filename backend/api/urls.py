@@ -5,7 +5,7 @@ urlpatterns = [
     path("requests/", views.RequestListCreate.as_view(), name = "request-list"),
     path("requests/delete/<int:pk>/", views.RequestDelete.as_view(), name = "delete-request"),
     path("requests/update/<int:id>/", views.RequestUpdate.as_view(), name = "update-request"),
-
+    path("requests/list/pending/", views.PendingRequestListView.as_view(), name = "pending-request"),
 
     path("item/electronics/", views.ListCreateElectronicItem.as_view(), name = "item-electronic"),
     path("item/itsupplies/", views.ListCreateITSupplyItem.as_view(), name = "item-itsupply"),

@@ -37,9 +37,9 @@ const RequestItem = () => {
   const createRequest = (e) => {
     e.preventDefault();
     api
-      .post("api/requests/", { category, item_name, quantity, unit, RF_number, status:"Pending" })
+      .post("api/requests/", { category, item_name, quantity, unit, RF_number, status:"Approved" })
       .then((res) => {
-        if (res.status === 201) alert("Note Created!")
+        if (res.status === 201) alert("Request Created!")
         else alert("Failed to create note")
       })
       .catch((err) => alert(err))

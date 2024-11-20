@@ -229,3 +229,11 @@ class UpdateJanitorial(generics.RetrieveUpdateAPIView):
     permission_classes = [AllowAny]
     lookup_field = 'id'
 
+
+class PendingRequestListView(generics.ListAPIView):
+    serializer_class = RequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Filter by 'pending' status and order by 'date_created' (FIFO)
+        return Request.objects.filter(status="pending").order_by('date_created')

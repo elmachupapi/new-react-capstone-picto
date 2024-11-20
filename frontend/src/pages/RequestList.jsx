@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -16,18 +16,20 @@ import {
   Modal,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import api from "../api";
 
 const RequestList = () => {
   // Initial sample data for the request list
-  const initialRequests = [
-    { itemName: "Laptop", requestNumber: "REQ-001", dateRequested: "2024-10-10", status: "Approved" },
-    { itemName: "Mouse", requestNumber: "REQ-002", dateRequested: "2024-10-11", status: "Pending" },
-    { itemName: "Printer", requestNumber: "REQ-003", dateRequested: "2024-10-12", status: "Denied" },
-    { itemName: "Broom", requestNumber: "REQ-004", dateRequested: "2024-10-13", status: "Pending" },
-  ];
+  // const initialRequests = [
+  //   { itemName: "Laptop", RF_number: "REQ-001", dateRequested: "2024-10-10", status: "Approved" },
+  //   { itemName: "Mouse", RF_number: "REQ-002", dateRequested: "2024-10-11", status: "Pending" },
+  //   { itemName: "Printer", RF_number: "REQ-003", dateRequested: "2024-10-12", status: "Denied" },
+  //   { itemName: "Broom", RF_number: "REQ-004", dateRequested: "2024-10-13", status: "Pending" },
+  // ];
 
-  // State for request data, search term, pagination, and confirmation modal
-  const [requests, setRequests] = useState(initialRequests);
+  // // State for request data, search term, pagination, and confirmation modal
+  // const [requests, setRequests] = useState(initialRequests);
+  const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -37,8 +39,8 @@ const RequestList = () => {
   // Filter requests based on the search term
   const filteredRequests = requests.filter(
     request =>
-      request.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.requestNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.RF_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       request.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -54,8 +56,8 @@ const RequestList = () => {
   };
 
   // Open the confirmation modal
-  const handleOpenConfirmDelete = (requestNumber) => {
-    setRequestToDelete(requestNumber);
+  const handleOpenConfirmDelete = (RF_number) => {
+    setRequestToDelete(RF_number);
     setConfirmDeleteOpen(true);
   };
 
@@ -67,8 +69,24 @@ const RequestList = () => {
 
   // Handle delete action
   const handleDelete = () => {
-    setRequests(requests.filter((request) => request.requestNumber !== requestToDelete));
+    setRequests(requests.filter((request) => request.RF_number !== requestToDelete));
     handleCloseConfirmDelete();
+  };
+
+  useEffect(() => {
+    getRequests();
+  }, [])
+
+  const getRequests = () => {
+    api
+      .get("/api/requests/")
+      .then((res) => res.data)
+      .then((data) => {setRequests(data); console.log(data)})
+      .catch((err) => alert(err));
+  }
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toISOString().split("T")[0];
   };
 
   return (
@@ -91,7 +109,7 @@ const RequestList = () => {
           <TableHead>
             <TableRow>
               <TableCell>Item Name</TableCell>
-              <TableCell>Request Number</TableCell>
+              <TableCell>RF Number</TableCell>
               <TableCell>Date Requested</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Delete</TableCell>
@@ -101,18 +119,30 @@ const RequestList = () => {
             {filteredRequests
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((request) => (
-                <TableRow key={request.requestNumber}>
-                  <TableCell>{request.itemName}</TableCell>
-                  <TableCell>{request.requestNumber}</TableCell>
-                  <TableCell>{request.dateRequested}</TableCell>
+                <TableRow key={request.id}>
+                  <TableCell>{request.item_name}</TableCell>
+                  <TableCell>{request.RF_number}</TableCell>
+                  <TableCell>{formatDate(request.date_created)}</TableCell>
                   <TableCell>{request.status}</TableCell>
                   <TableCell>
                     <IconButton
                       color="error"
-                      onClick={() => handleOpenConfirmDelete(request.requestNumber)}
+                      onClick={() => handleOpenConfirmDelete(request.RF_number)}
                     >
                       <DeleteIcon />
                     </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    {/* Conditionally show the button if the status is "approved" */}
+                    {request.status.toLowerCase() === "approved" && (
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => alert(`Request ${request.RF_number} button clicked!`)}
+                      >
+                        Action
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
