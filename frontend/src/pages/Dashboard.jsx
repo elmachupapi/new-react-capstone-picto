@@ -37,25 +37,25 @@ const Dashboard = () => {
       title: "Electronics",
       value: "200",
       icon: <CableIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
-      link: "/electronics-list",
+      link: "item/electronics",
     },
     {
       title: "IT Supplies",
       value: "350",
       icon: <ComputerIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
-      link: "/IT-supplies-list",
+      link: "item/itsupplies",
     },
     {
       title: "Office Supplies",
       value: "500",
       icon: <PrintIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
-      link: "/office-list",
+      link: "/item/office",
     },
     {
       title: "Janitorial Supplies",
       value: "1000",
       icon: <CleaningServicesIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
-      link: "/janitorial-list",
+      link: "/item/janitorial",
     },
   ];
 

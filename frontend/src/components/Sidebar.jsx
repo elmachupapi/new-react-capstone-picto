@@ -241,7 +241,7 @@ const Sidebar = ({ drawerWidth }) => {
         )}
 
         {/* Show Accounts Section if not "viewer" */}
-        {role !== "viewer" && (
+        {role === "superadmin" && (
           <ListItem button component={Link} to="/accounts">
             <ListItemIcon>
               <PeopleAltIcon />
