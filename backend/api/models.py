@@ -10,6 +10,7 @@ class Request(models.Model):
     RF_number = models.CharField(max_length=20)
     date_created = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50)
+    serial_number = models.CharField(max_length=50, default= '')
     requestor = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "requests")
 
     def __str__(self):
@@ -20,28 +21,40 @@ class Electronics(models.Model):
     quantity = models.IntegerField()
     unit = models.CharField(max_length=20)
     date_added = models.DateField()
-    RF_number = models.CharField(max_length=50)
+    PO_number = models.CharField(max_length=50)
+    year_quarter = models.CharField(max_length=10)
+    serial_number = models.CharField(max_length=50)
+    obsolete = models.CharField(max_length=50)
 
 class ITSupplies(models.Model):
     item_name = models.CharField(max_length=100)
     quantity = models.IntegerField()
     unit = models.CharField(max_length=20)
     date_added = models.DateField()
-    RF_number = models.CharField(max_length=50)
+    PO_number = models.CharField(max_length=50)
+    year_quarter = models.CharField(max_length=10)
+    serial_number = models.CharField(max_length=50)
+    obsolete = models.CharField(max_length=50)
 
 class Office(models.Model):
     item_name = models.CharField(max_length=100)
     quantity = models.IntegerField()
     unit = models.CharField(max_length=20)
     date_added = models.DateField()
-    RF_number = models.CharField(max_length=50)
-
+    PO_number = models.CharField(max_length=50)
+    year_quarter = models.CharField(max_length=10)
+    serial_number = models.CharField(max_length=50)
+    obsolete = models.CharField(max_length=50)
+    
 class Janitorial(models.Model):
     item_name = models.CharField(max_length=100)
     quantity = models.IntegerField()
     unit = models.CharField(max_length=20)
     date_added = models.DateField()
-    RF_number = models.CharField(max_length=50)
+    PO_number = models.CharField(max_length=50)
+    year_quarter = models.CharField(max_length=10)
+    serial_number = models.CharField(max_length=50)
+    obsolete = models.CharField(max_length=50)
 
 class RequestLogs(models.Model):
     item_name = models.CharField(max_length=100)

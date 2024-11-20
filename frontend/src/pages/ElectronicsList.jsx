@@ -22,11 +22,6 @@ import api from "../api";
 
 const ElectronicsList = () => {
   const [electronics, setElectronics] = useState([]);
-  
-  const [electronicsData, setElectronicsData] = useState([
-    { itemDescription: "Laptop", quantity: 5, unit: "pcs", date: "2024-10-12", rfNumber: "RF-001" },
-    { itemDescription: "Projector", quantity: 2, unit: "pcs", date: "2024-10-13", rfNumber: "RF-002" },
-  ]);
 
   const [open, setOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -37,7 +32,10 @@ const ElectronicsList = () => {
     quantity: "",
     unit: "",
     date_added: "",
-    RF_number: "",
+    PO_number: "",
+    year_quarter: "",
+    serial_number: "",
+    obsolete: ""
   });
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,7 +49,10 @@ const ElectronicsList = () => {
       quantity: "",
       unit: "",
       date_added: "",
-      RF_number: "",
+      PO_number: "",
+      year_quarter: "",
+      serial_number: "",
+      obsolete: ""
     });
     setOpen(true);
   };
@@ -119,7 +120,10 @@ const ElectronicsList = () => {
           quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
           unit: newItem.unit,
           date_added: newItem.date_added,
-          RF_number: newItem.RF_number,
+          PO_number: newItem.PO_number,
+          year_quarter: newItem.year_quarter,
+          serial_number: newItem.serial_number,
+          obsolete: newItem.obsolete
         };
   
         // Make PUT request to the update endpoint
@@ -147,7 +151,10 @@ const ElectronicsList = () => {
       quantity: "",
       unit: "",
       date_added: "",
-      RF_number: "",
+      PO_number: "",
+      year_quarter: "",
+      serial_number: "",
+      obsolete: ""
     });
     handleClose();
   };
@@ -170,7 +177,10 @@ const ElectronicsList = () => {
       quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
       unit: newItem.unit,
       date_added: newItem.date_added,
-      RF_number: newItem.RF_number,
+      PO_number: newItem.PO_number,
+      year_quarter: newItem.year_quarter,
+      serial_number: newItem.serial_number,
+      obsolete: newItem.obsolete
     };
   
     try {
@@ -218,7 +228,10 @@ const ElectronicsList = () => {
               <TableCell>Quantity</TableCell>
               <TableCell>Unit</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell>RF Number</TableCell>
+              <TableCell>PO Number</TableCell>
+              <TableCell>Year-Quarter</TableCell>
+              <TableCell>Serial Number</TableCell>
+              <TableCell>Obsolete</TableCell>
               <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
@@ -234,7 +247,10 @@ const ElectronicsList = () => {
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>{item.unit}</TableCell>
                 <TableCell>{item.date_added}</TableCell>
-                <TableCell>{item.RF_number}</TableCell>
+                <TableCell>{item.PO_number}</TableCell>
+                <TableCell>{item.year_quarter}</TableCell>
+                <TableCell>{item.serial_number}</TableCell>
+                <TableCell>{item.obsolete}</TableCell>
                 <TableCell>
                   <IconButton color="error" onClick={() => handleDeleteClick(item)}>
                     <DeleteIcon />
@@ -282,7 +298,10 @@ const ElectronicsList = () => {
                 <TableCell>Quantity</TableCell>
                 <TableCell>Unit</TableCell>
                 <TableCell>Date</TableCell>
-                <TableCell>RF Number</TableCell>
+                <TableCell>PO Number</TableCell>
+                <TableCell>Year-Quarter</TableCell>
+                <TableCell>Serial Number</TableCell>
+                <TableCell>Obsolete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -300,7 +319,16 @@ const ElectronicsList = () => {
                   <TextField fullWidth name="date_added" type="date" value={newItem.date_added} onChange={handleInputChange} />
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="RF_number" value={newItem.RF_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter RF Number"}/>
+                  <TextField fullWidth name="PO_number" value={newItem.PO_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter PO Number"}/>
+                </TableCell>
+                <TableCell>
+                  <TextField fullWidth name="year_quarter" value={newItem.year_quarter} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Year-Quarter"}/>
+                </TableCell>
+                <TableCell>
+                  <TextField fullWidth name="serial_number" value={newItem.serial_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Serial Number"}/>
+                </TableCell>
+                <TableCell>
+                  <TextField fullWidth name="obsolete" value={newItem.obsolete} onChange={handleInputChange} placeholder={editItem ? "" : "Enter if Obsolete or not"}/>
                 </TableCell>
               </TableRow>
             </TableBody>

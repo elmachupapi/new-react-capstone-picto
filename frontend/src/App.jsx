@@ -63,26 +63,19 @@ function App() {
           {!isAuthPage && <Header drawerWidth={drawerWidth} />}
           <Box sx={{ p: 3 }}>
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}/>
               <Route path="/login" element={<Login />} />
               <Route path="/logout" element={<Logout />} />
-              <Route path="/item/electronics" element={<ElectronicsList />} />
-              <Route path="/item/itsupplies" element={<ITSuppliesList />} />
-              <Route path="/item/office" element={<OfficeList />} />
-              <Route path="/item/janitorial" element={<JanitorialList />} />
-              <Route path="/request" element={<RequestItem />} />
-              <Route path="/request/list" element={<RequestList />} />
-              <Route path="/request/approvals" element={<UserRequest />} />
-              <Route path="/logs/request" element={<RequestLog />} />
-              <Route path="/logs/item" element={<ItemLog />} />
-              <Route path="/accounts" element={<Accounts />} />
+              <Route path="/item/electronics" element={<ProtectedRoute><ElectronicsList /></ProtectedRoute>} />
+              <Route path="/item/itsupplies" element={<ProtectedRoute><ITSuppliesList /></ProtectedRoute>} />
+              <Route path="/item/office" element={<ProtectedRoute><OfficeList /></ProtectedRoute>} />
+              <Route path="/item/janitorial" element={<ProtectedRoute><JanitorialList /></ProtectedRoute>} />
+              <Route path="/request" element={<ProtectedRoute><RequestItem /></ProtectedRoute>} />
+              <Route path="/request/list" element={<ProtectedRoute><RequestList /></ProtectedRoute>} />
+              <Route path="/request/approvals" element={<ProtectedRoute><UserRequest /></ProtectedRoute>} />
+              <Route path="/logs/request" element={<ProtectedRoute><RequestLog /></ProtectedRoute>} />
+              <Route path="/logs/item" element={<ProtectedRoute><ItemLog /></ProtectedRoute>} />
+              <Route path="/accounts" element={<ProtectedRoute></ProtectedRoute>} />
               <Route path="/signup" element={<SignupAndLogout />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

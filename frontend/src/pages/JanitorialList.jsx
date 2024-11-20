@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -18,27 +18,25 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-const sampleSubmittedRequests = [
-  { itemCategory: "Janitorial Supplies", itemDescription: "Mop", quantity: "20", unit: "pcs", date: "2024-10-10", rfNumber: "RF-003" },
-  { itemCategory: "Janitorial Supplies", itemDescription: "Broom", quantity: "15", unit: "pcs", date: "2024-10-11", rfNumber: "RF-004" },
-  // Add more items as needed for testing
-];
+import api from "../api";
 
 const JanitorialSupplies = () => {
-  const [janitorialData, setJanitorialData] = useState(sampleSubmittedRequests);
+  const [janitorialData, setJanitorialData] = useState([]);
   const [open, setOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({
-    itemCategory: "Janitorial Supplies",
-    itemDescription: "",
+    item_name: "",
     quantity: "",
     unit: "",
-    date: "",
-    rfNumber: "",
+    date_added: "",
+    PO_number: "",
+    year_quarter: "",
+    serial_number: "",
+    obsolete: "",
   });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -46,12 +44,14 @@ const JanitorialSupplies = () => {
   const handleOpen = () => {
     setEditItem(null); // Reset edit mode
     setNewItem({
-      itemCategory: "Janitorial Supplies",
-      itemDescription: "",
+      item_name: "",
       quantity: "",
       unit: "",
-      date: "",
-      rfNumber: "",
+      date_added: "",
+      PO_number: "",
+      year_quarter: "",
+      serial_number: "",
+      obsolete: "",
     });
     setOpen(true);
   };
@@ -70,8 +70,8 @@ const JanitorialSupplies = () => {
     setPage(0); // Reset to the first page when searching
   };
 
-  const filteredRequests = janitorialData.filter((item) =>
-    item.itemDescription.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredJanitorialData = janitorialData.filter((item) =>
+    item.item_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleChangePage = (event, newPage) => {
@@ -89,37 +89,94 @@ const JanitorialSupplies = () => {
     setOpen(true);
   };
 
-  const handleDelete = () => {
-    setJanitorialData((prevData) => prevData.filter((item) => item !== itemToDelete));
-    setConfirmDeleteOpen(false); // Close confirmation dialog after deleting
-  };
-
   const handleDeleteClick = (item) => {
     setItemToDelete(item); // Store item to be deleted
     setConfirmDeleteOpen(true); // Open delete confirmation modal
   };
 
-  const handleSubmit = () => {
+  const handleDelete = async () => {
+    try {
+      const res = await api.delete(`/api/item/janitorial/delete/${itemToDelete.id}/`);
+      if (res.status === 204) {
+        alert("Item deleted successfully!");
+        setJanitorialData((prevData) => prevData.filter((item) => item.id !== itemToDelete.id));
+      } else {
+        alert("Failed to delete the item.");
+      }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      alert("An error occurred while trying to delete the item.");
+    }
+    setConfirmDeleteOpen(false);
+  };
+
+  const handleSubmit = async () => {
     if (editItem) {
-      // Update the existing item
-      setJanitorialData((prevData) =>
-        prevData.map((item) => (item === editItem ? newItem : item))
-      );
+      try {
+        const payload = {
+          item_name: newItem.item_name,
+          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+          unit: newItem.unit,
+          date_added: newItem.date_added,
+          PO_number: newItem.PO_number,
+          year_quarter: newItem.year_quarter,
+          serial_number: newItem.serial_number,
+          obsolete: newItem.obsolete,
+        };
+
+        const res = await api.put(`/api/item/janitorial/update/${editItem.id}/`, payload);
+        if (res.status === 200) {
+          alert("Item updated successfully!");
+          getJanitorialSupplies(); // Refresh list
+        } else {
+          alert("Failed to update the item.");
+        }
+      } catch (error) {
+        console.error("Error updating item:", error);
+        alert("An error occurred while updating the item.");
+      }
     } else {
-      // Add a new item
-      setJanitorialData((prevData) => [...prevData, newItem]);
+      try {
+        const payload = {
+          item_name: newItem.item_name,
+          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+          unit: newItem.unit,
+          date_added: newItem.date_added,
+          PO_number: newItem.PO_number,
+          year_quarter: newItem.year_quarter,
+          serial_number: newItem.serial_number,
+          obsolete: newItem.obsolete,
+        };
+
+        const res = await api.post("/api/item/janitorial/", payload);
+        if (res.status === 201) {
+          alert("Item added successfully!");
+          getJanitorialSupplies(); // Refresh the list
+        } else {
+          alert("Error: Item not added.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Failed to add item. Please check your input and try again.");
+      }
     }
 
     setEditItem(null); // Reset edit mode
-    setNewItem({
-      itemCategory: "Janitorial Supplies",
-      itemDescription: "",
-      quantity: "",
-      unit: "",
-      date: "",
-      rfNumber: "",
-    });
     handleClose();
+  };
+
+  useEffect(() => {
+    getJanitorialSupplies();
+  }, []);
+
+  const getJanitorialSupplies = () => {
+    api
+      .get("/api/item/janitorial/")
+      .then((res) => res.data)
+      .then((data) => {
+        setJanitorialData(data);
+      })
+      .catch((err) => alert(err));
   };
 
   return (
@@ -128,19 +185,19 @@ const JanitorialSupplies = () => {
         <Typography variant="h4" gutterBottom>
           Janitorial Supplies List
         </Typography>
-        <Button variant="contained" color="primary" sx={{ width: '200px' }} onClick={handleOpen}>
+        <Button variant="contained" color="primary" sx={{ width: "200px" }} onClick={handleOpen}>
           Add Item
         </Button>
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mt: 1, mb: 2 }}>
         <TextField
           label="Search"
           variant="outlined"
           size="small"
           value={searchQuery}
           onChange={handleSearchChange}
-          sx={{ width: '400px', mt: -1, backgroundColor: 'white' }}
+          sx={{ width: "400px", mt: -1, backgroundColor: "white" }}
         />
       </Box>
 
@@ -149,31 +206,35 @@ const JanitorialSupplies = () => {
           <TableHead>
             <TableRow>
               <TableCell>Edit</TableCell>
-              <TableCell>Item Category</TableCell>
               <TableCell>Item Description</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Unit</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell>RF Number</TableCell>
+              <TableCell>PO Number</TableCell>
+              <TableCell>Year-Quarter</TableCell>
+              <TableCell>Serial Number</TableCell>
+              <TableCell>Obsolete</TableCell>
               <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredRequests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((request, index) => (
+            {filteredJanitorialData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
               <TableRow key={index}>
                 <TableCell>
-                  <IconButton color="primary" onClick={() => handleEdit(request)}>
+                  <IconButton color="primary" onClick={() => handleEdit(item)}>
                     <EditIcon />
                   </IconButton>
                 </TableCell>
-                <TableCell>{request.itemCategory}</TableCell>
-                <TableCell>{request.itemDescription}</TableCell>
-                <TableCell>{request.quantity}</TableCell>
-                <TableCell>{request.unit}</TableCell>
-                <TableCell>{request.date}</TableCell>
-                <TableCell>{request.rfNumber}</TableCell>
+                <TableCell>{item.item_name}</TableCell>
+                <TableCell>{item.quantity}</TableCell>
+                <TableCell>{item.unit}</TableCell>
+                <TableCell>{item.date_added}</TableCell>
+                <TableCell>{item.PO_number}</TableCell>
+                <TableCell>{item.year_quarter}</TableCell>
+                <TableCell>{item.serial_number}</TableCell>
+                <TableCell>{item.obsolete}</TableCell>
                 <TableCell>
-                  <IconButton color="error" onClick={() => handleDeleteClick(request)}>
+                  <IconButton color="error" onClick={() => handleDeleteClick(item)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -186,88 +247,137 @@ const JanitorialSupplies = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={filteredRequests.length}
+        count={filteredJanitorialData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
-      {/* Add/Edit Modal */}
       <Modal open={open} onClose={handleClose}>
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 1400,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4
-        }}>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{ position: 'absolute', top: 16, right: 16 }}
-          >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 1400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <IconButton aria-label="close" onClick={handleClose} sx={{ position: "absolute", top: 16, right: 16 }}>
             <CloseIcon />
           </IconButton>
+
           <Typography variant="h6" gutterBottom>
             {editItem ? "Edit Item" : "Add New Item"}
           </Typography>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Item Category</TableCell>
                 <TableCell>Item Description</TableCell>
                 <TableCell>Quantity</TableCell>
                 <TableCell>Unit</TableCell>
                 <TableCell>Date</TableCell>
-                <TableCell>RF Number</TableCell>
+                <TableCell>PO Number</TableCell>
+                <TableCell>Year-Quarter</TableCell>
+                <TableCell>Serial Number</TableCell>
+                <TableCell>Obsolete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               <TableRow>
                 <TableCell>
-                  <TextField fullWidth name="itemCategory" value={newItem.itemCategory} onChange={handleInputChange} disabled/>
+                  <TextField
+                    fullWidth
+                    name="item_name"
+                    value={newItem.item_name}
+                    onChange={handleInputChange}
+                  />
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="itemDescription" value={newItem.itemDescription} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Item Description"} />
+                  <TextField
+                    fullWidth
+                    name="quantity"
+                    type="number"
+                    value={newItem.quantity}
+                    onChange={handleInputChange}
+                  />
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="quantity" type="number" value={newItem.quantity} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Quantity"} />
+                  <TextField
+                    fullWidth
+                    name="unit"
+                    value={newItem.unit}
+                    onChange={handleInputChange}
+                  />
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="unit" value={newItem.unit} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Unit"} />
+                  <TextField
+                    fullWidth
+                    name="date_added"
+                    type="date"
+                    value={newItem.date_added}
+                    onChange={handleInputChange}
+                  />
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="date" type="date" value={newItem.date} onChange={handleInputChange} />
+                  <TextField
+                    fullWidth
+                    name="PO_number"
+                    value={newItem.PO_number}
+                    onChange={handleInputChange}
+                  />
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="rfNumber" value={newItem.rfNumber} onChange={handleInputChange} placeholder={editItem ? "" : "Enter RF Number"}/>
+                  <TextField
+                    fullWidth
+                    name="year_quarter"
+                    value={newItem.year_quarter}
+                    onChange={handleInputChange}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    fullWidth
+                    name="serial_number"
+                    value={newItem.serial_number}
+                    onChange={handleInputChange}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    fullWidth
+                    name="obsolete"
+                    value={newItem.obsolete}
+                    onChange={handleInputChange}
+                  />
                 </TableCell>
               </TableRow>
             </TableBody>
           </Table>
-          <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ mt: 2 }}>
+          <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 2 }}>
             {editItem ? "Update Item" : "Add Item"}
           </Button>
         </Box>
       </Modal>
 
-      {/* Confirm Delete Modal */}
       <Modal open={confirmDeleteOpen} onClose={handleConfirmDeleteClose}>
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          textAlign: 'center'
-        }}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            textAlign: "center",
+          }}
+        >
           <Typography variant="h6" gutterBottom>
             Confirm Deletion
           </Typography>

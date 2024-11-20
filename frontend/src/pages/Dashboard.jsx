@@ -16,19 +16,19 @@ const Dashboard = () => {
       title: "Request Item",
       value: "$60,000",
       icon: <CreateIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
-      link: "/request-item",
+      link: "/request",
     },
     {
       title: "Request List",
       value: "650",
       icon: <ListIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
-      link: "/request-list",
+      link: "/request/list",
     },
     {
       title: ["List of Requests", "from Users"],
       value: "300",
       icon: <ChecklistRtlIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
-      link: "/user-requests",
+      link: "/request/approvals",
     },
   ];
 

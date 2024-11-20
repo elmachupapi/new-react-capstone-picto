@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -18,38 +18,40 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import api from "../api";
 
 const ITSuppliesList = () => {
-  const [itSuppliesData, setITSuppliesData] = useState([
-    { itemCategory: "IT Supplies", itemDescription: "Keyboard", quantity: 10, unit: "pcs", date: "2024-10-10", rfNumber: "RF-001" },
-    { itemCategory: "IT Supplies", itemDescription: "Mouse", quantity: 15, unit: "pcs", date: "2024-10-11", rfNumber: "RF-002" },
-  ]);
-
+  const [itSupplies, setITSupplies] = useState([]);
   const [open, setOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({
-    itemCategory: "IT Supplies",
-    itemDescription: "",
+    item_name: "",
     quantity: "",
     unit: "",
-    date: "",
-    rfNumber: "",
+    date_added: "",
+    PO_number: "",
+    year_quarter: "",
+    serial_number: "",
+    obsolete: "",
   });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleOpen = () => {
-    setEditItem(null);  // Reset edit mode
+    setEditItem(null); // Reset edit mode
     setNewItem({
-      itemCategory: "IT Supplies",
-      itemDescription: "",
+      item_name: "",
       quantity: "",
       unit: "",
-      date: "",
-      rfNumber: "",
+      date_added: "",
+      PO_number: "",
+      year_quarter: "",
+      serial_number: "",
+      obsolete: "",
     });
     setOpen(true);
   };
@@ -68,8 +70,8 @@ const ITSuppliesList = () => {
     setPage(0); // Reset to the first page when searching
   };
 
-  const filteredITSupplies = itSuppliesData.filter((item) =>
-    item.itemDescription.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredITSupplies = itSupplies.filter((item) =>
+    item.item_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleChangePage = (event, newPage) => {
@@ -87,9 +89,20 @@ const ITSuppliesList = () => {
     setOpen(true);
   };
 
-  const handleDelete = () => {
-    setITSuppliesData((prevData) => prevData.filter((item) => item !== itemToDelete));
-    setConfirmDeleteOpen(false); // Close confirmation dialog after deleting
+  const handleDelete = async () => {
+    try {
+      const res = await api.delete(`/api/item/itsupplies/delete/${itemToDelete.id}/`);
+      if (res.status === 204) {
+        alert("Item deleted successfully!");
+        setITSupplies((prevData) => prevData.filter((item) => item.id !== itemToDelete.id));
+      } else {
+        alert("Failed to delete the item.");
+      }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      alert("An error occurred while trying to delete the item.");
+    }
+    setConfirmDeleteOpen(false);
   };
 
   const handleDeleteClick = (item) => {
@@ -97,19 +110,73 @@ const ITSuppliesList = () => {
     setConfirmDeleteOpen(true); // Open delete confirmation modal
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (editItem) {
-      // Update the existing item
-      setITSuppliesData((prevData) =>
-        prevData.map((item) => (item === editItem ? newItem : item))
-      );
+      try {
+        const payload = {
+          item_name: newItem.item_name,
+          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+          unit: newItem.unit,
+          date_added: newItem.date_added,
+          PO_number: newItem.PO_number,
+          year_quarter: newItem.year_quarter,
+          serial_number: newItem.serial_number,
+          obsolete: newItem.obsolete,
+        };
+
+        const res = await api.put(`/api/item/itsupplies/update/${editItem.id}/`, payload);
+        if (res.status === 200) {
+          alert("Item updated successfully!");
+          getITSupplies(); // Refresh list
+        } else {
+          alert("Failed to update the item.");
+        }
+      } catch (error) {
+        console.error("Error updating item:", error);
+        alert("An error occurred while updating the item.");
+      }
     } else {
-      // Add a new item
-      setITSuppliesData((prevData) => [...prevData, newItem]);
+      try {
+        const payload = {
+          item_name: newItem.item_name,
+          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+          unit: newItem.unit,
+          date_added: newItem.date_added,
+          PO_number: newItem.PO_number,
+          year_quarter: newItem.year_quarter,
+          serial_number: newItem.serial_number,
+          obsolete: newItem.obsolete,
+        };
+
+        const res = await api.post("/api/item/itsupplies/", payload);
+        if (res.status === 201) {
+          alert("Item added successfully!");
+          getITSupplies(); // Refresh the list
+        } else {
+          alert("Error: Item not added.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Failed to add item. Please check your input and try again.");
+      }
     }
 
     setEditItem(null); // Reset edit mode
     handleClose();
+  };
+
+  useEffect(() => {
+    getITSupplies();
+  }, []);
+
+  const getITSupplies = () => {
+    api
+      .get("/api/item/itsupplies/")
+      .then((res) => res.data)
+      .then((data) => {
+        setITSupplies(data);
+      })
+      .catch((err) => alert(err));
   };
 
   return (
@@ -118,19 +185,19 @@ const ITSuppliesList = () => {
         <Typography variant="h4" gutterBottom>
           IT Supplies List
         </Typography>
-        <Button variant="contained" color="primary" sx={{ width: '200px' }} onClick={handleOpen}>
+        <Button variant="contained" color="primary" sx={{ width: "200px" }} onClick={handleOpen}>
           Add Item
         </Button>
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mt: 1, mb: 2 }}>
         <TextField
           label="Search"
           variant="outlined"
           size="small"
           value={searchQuery}
           onChange={handleSearchChange}
-          sx={{ width: '400px', mt: -1, backgroundColor: 'white' }}
+          sx={{ width: "400px", mt: -1, backgroundColor: "white" }}
         />
       </Box>
 
@@ -139,12 +206,14 @@ const ITSuppliesList = () => {
           <TableHead>
             <TableRow>
               <TableCell>Edit</TableCell>
-              <TableCell>Item Category</TableCell>
               <TableCell>Item Description</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Unit</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell>RF Number</TableCell>
+              <TableCell>PO Number</TableCell>
+              <TableCell>Year-Quarter</TableCell>
+              <TableCell>Serial Number</TableCell>
+              <TableCell>Obsolete</TableCell>
               <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
@@ -156,12 +225,14 @@ const ITSuppliesList = () => {
                     <EditIcon />
                   </IconButton>
                 </TableCell>
-                <TableCell>{item.itemCategory}</TableCell>
-                <TableCell>{item.itemDescription}</TableCell>
+                <TableCell>{item.item_name}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>{item.unit}</TableCell>
-                <TableCell>{item.date}</TableCell>
-                <TableCell>{item.rfNumber}</TableCell>
+                <TableCell>{item.date_added}</TableCell>
+                <TableCell>{item.PO_number}</TableCell>
+                <TableCell>{item.year_quarter}</TableCell>
+                <TableCell>{item.serial_number}</TableCell>
+                <TableCell>{item.obsolete}</TableCell>
                 <TableCell>
                   <IconButton color="error" onClick={() => handleDeleteClick(item)}>
                     <DeleteIcon />
@@ -184,17 +255,19 @@ const ITSuppliesList = () => {
       />
 
       <Modal open={open} onClose={handleClose}>
-        <Box sx={{ 
-          position: 'absolute', 
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, -50%)', 
-          width: 1400, 
-          bgcolor: 'background.paper', 
-          boxShadow: 24, 
-          p: 4 
-        }}>
-          <IconButton aria-label="close" onClick={handleClose} sx={{ position: 'absolute', top: 16, right: 16 }}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 1400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <IconButton aria-label="close" onClick={handleClose} sx={{ position: "absolute", top: 16, right: 16 }}>
             <CloseIcon />
           </IconButton>
 
@@ -204,70 +277,82 @@ const ITSuppliesList = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Item Category</TableCell>
                 <TableCell>Item Description</TableCell>
                 <TableCell>Quantity</TableCell>
                 <TableCell>Unit</TableCell>
                 <TableCell>Date</TableCell>
-                <TableCell>RF Number</TableCell>
+                <TableCell>PO Number</TableCell>
+                <TableCell>Year-Quarter</TableCell>
+                <TableCell>Serial Number</TableCell>
+                <TableCell>Obsolete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               <TableRow>
                 <TableCell>
-                  <TextField 
-                    fullWidth 
-                    name="itemCategory" 
-                    value={newItem.itemCategory} 
-                    onChange={handleInputChange} 
-                    disabled // Makes the field uneditable
+                  <TextField
+                    fullWidth
+                    name="item_name"
+                    value={newItem.item_name}
+                    onChange={handleInputChange}
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField 
-                    fullWidth 
-                    name="itemDescription" 
-                    value={newItem.itemDescription} 
-                    onChange={handleInputChange} 
-                    placeholder={editItem ? "" : "Enter Item Descripton"}
+                  <TextField
+                    fullWidth
+                    name="quantity"
+                    type="number"
+                    value={newItem.quantity}
+                    onChange={handleInputChange}
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField 
-                    fullWidth 
-                    name="quantity" 
-                    type="number" 
-                    value={newItem.quantity} 
-                    onChange={handleInputChange} 
-                    inputProps={{ min: 0 }} 
-                    placeholder={editItem ? "" : "Enter Quantity"}
+                  <TextField
+                    fullWidth
+                    name="unit"
+                    value={newItem.unit}
+                    onChange={handleInputChange}
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField 
-                    fullWidth 
-                    name="unit" 
-                    value={newItem.unit} 
-                    onChange={handleInputChange} 
-                    placeholder={editItem ? "" : "Enter Unit"}
+                  <TextField
+                    fullWidth
+                    name="date_added"
+                    type="date"
+                    value={newItem.date_added}
+                    onChange={handleInputChange}
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField 
-                    fullWidth 
-                    name="date" 
-                    type="date" 
-                    value={newItem.date} 
-                    onChange={handleInputChange} 
+                  <TextField
+                    fullWidth
+                    name="PO_number"
+                    value={newItem.PO_number}
+                    onChange={handleInputChange}
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField 
-                    fullWidth 
-                    name="rfNumber" 
-                    value={newItem.rfNumber} 
-                    onChange={handleInputChange} 
-                    placeholder={editItem ? "" : "Enter RF Number"}
+                  <TextField
+                    fullWidth
+                    name="year_quarter"
+                    value={newItem.year_quarter}
+                    onChange={handleInputChange}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    fullWidth
+                    name="serial_number"
+                    value={newItem.serial_number}
+                    onChange={handleInputChange}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    fullWidth
+                    name="obsolete"
+                    value={newItem.obsolete}
+                    onChange={handleInputChange}
                   />
                 </TableCell>
               </TableRow>
@@ -280,17 +365,19 @@ const ITSuppliesList = () => {
       </Modal>
 
       <Modal open={confirmDeleteOpen} onClose={handleConfirmDeleteClose}>
-        <Box sx={{ 
-          position: 'absolute', 
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, -50%)', 
-          width: 400, 
-          bgcolor: 'background.paper', 
-          boxShadow: 24, 
-          p: 4,
-          textAlign: 'center' 
-        }}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            textAlign: "center",
+          }}
+        >
           <Typography variant="h6" gutterBottom>
             Confirm Deletion
           </Typography>
