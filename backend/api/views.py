@@ -7,6 +7,8 @@ from .models import Request, Electronics, ITSupplies, Office, Janitorial, Reques
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
 
 class RequestListCreate(generics.ListCreateAPIView):
     serializer_class = RequestSerializer
@@ -232,8 +234,50 @@ class UpdateJanitorial(generics.RetrieveUpdateAPIView):
 
 class PendingRequestListView(generics.ListAPIView):
     serializer_class = RequestSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         # Filter by 'pending' status and order by 'date_created' (FIFO)
-        return Request.objects.filter(status="pending").order_by('date_created')
+        return Request.objects.filter(status="Pending").order_by('date_created')
+
+class ApproveRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        # Fetch the request object
+        request_obj = get_object_or_404(Request, pk=pk)
+
+        # Map categories to models
+        category_model_map = {
+            "electronics": Electronics,
+            "it supplies": ITSupplies,
+            "office supplies": Office,
+            "janitorial supplies": Janitorial,
+        }
+
+        model = category_model_map.get(request_obj.category)
+        if not model:
+            return Response({"error": "Invalid category"}, status=400)
+
+        # Fetch the earliest item_name from the corresponding model
+        matching_item = model.objects.filter(item_name=request_obj.item_name).order_by("date_added").first()
+        if not matching_item:
+            return Response({"error": "No matching item found"}, status=404)
+
+        # Check if the inventory has sufficient quantity
+        if matching_item.quantity < request_obj.quantity:
+            return Response(
+                {"error": "Insufficient quantity in stock to fulfill the request"},
+                status=400,
+            )
+
+        # Subtract the quantity from the inventory item
+        matching_item.quantity -= request_obj.quantity
+        matching_item.save()
+
+        # Update the serial_number and status of the request
+        request_obj.serial_number = matching_item.serial_number
+        request_obj.status = "Approved"
+        request_obj.save()
+
+        return Response({"message": "Request approved and inventory updated successfully"})

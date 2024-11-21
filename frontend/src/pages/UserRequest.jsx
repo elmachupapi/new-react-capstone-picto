@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -18,37 +18,40 @@ import {
   DialogActions,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import api from "../api";
 
 const UserRequest = () => {
   // Sample data for the user requests
-  const requests = [
-    {
-      itemName: "Laptop",
-      requestNumber: "REQ-001",
-      dateRequested: "2024-10-10",
-      requestor: "John Doe",
-      position: "IT Specialist",
-      division: "ICT Division",
-      serialNumber: "SN-12345",
-      quantity: 1,
-      unit: "Piece",
-      purpose: "For work-from-home setup",
-      rfNumber: "RF-101",
-    },
-    {
-      itemName: "Mouse",
-      requestNumber: "REQ-002",
-      dateRequested: "2024-10-11",
-      requestor: "Jane Smith",
-      position: "Office Assistant",
-      division: "Admin Division",
-      serialNumber: "SN-67890",
-      quantity: 2,
-      unit: "Pieces",
-      purpose: "For office use",
-      rfNumber: "RF-102",
-    },
-  ];
+  // const requests = [
+  //   {
+  //     itemName: "Laptop",
+  //     id: "REQ-001",
+  //     dateRequested: "2024-10-10",
+  //     requestor: "John Doe",
+  //     position: "IT Specialist",
+  //     division: "ICT Division",
+  //     serialNumber: "SN-12345",
+  //     quantity: 1,
+  //     unit: "Piece",
+  //     purpose: "For work-from-home setup",
+  //     rfNumber: "RF-101",
+  //   },
+  //   {
+  //     itemName: "Mouse",
+  //     id: "REQ-002",
+  //     dateRequested: "2024-10-11",
+  //     requestor: "Jane Smith",
+  //     position: "Office Assistant",
+  //     division: "Admin Division",
+  //     serialNumber: "SN-67890",
+  //     quantity: 2,
+  //     unit: "Pieces",
+  //     purpose: "For office use",
+  //     rfNumber: "RF-102",
+  //   },
+  // ];
+
+  const [requests, setRequests] = useState([]);
 
   // State for search term, pagination, rows per page, and dialog visibility
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,9 +61,15 @@ const UserRequest = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Function to handle approval
-  const handleApprove = (request) => {
-    setSelectedRequest(request);
-    setDialogOpen(true);
+  const handleApprove = async (request) => {
+    try {
+      const response = await api.post(`/api/approvals/approved/${request.id}/`);
+      alert(response.data.message);
+      // Optionally, refresh the request list to reflect changes
+      getPendingRequests();
+    } catch (error) {
+      alert(error.response?.data?.error || "An error occurred while approving the request");
+    }
   };
 
   // Function to close the dialog
@@ -77,7 +86,7 @@ const UserRequest = () => {
 
   // Filter requests based on the search term
   const filteredRequests = requests.filter((request) =>
-    request.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+    request.item_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Handle pagination page change
@@ -105,6 +114,23 @@ const UserRequest = () => {
     },
   }));
 
+  useEffect(() => {
+    getPendingRequests();
+  }, [])
+
+  const getPendingRequests = () => {
+    api
+      .get("/api/requests/list/pending/")
+      .then((res) => res.data)
+      .then((data) => {setRequests(data); console.log(data)})
+      .catch((err) => alert(err));
+  }
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toISOString().split("T")[0];
+  };
+
+
 
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
@@ -124,31 +150,31 @@ const UserRequest = () => {
           <TableHead>
             <TableRow>
               <TableCell>Item Name</TableCell>
-              <TableCell>Request Number</TableCell>
+              <TableCell>RF Number</TableCell>
               <TableCell>Date Requested</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {currentRequests.map((request) => (
-              <TableRow key={request.requestNumber}>
-                <TableCell>{request.itemName}</TableCell>
-                <TableCell>{request.requestNumber}</TableCell>
-                <TableCell>{request.dateRequested}</TableCell>
+              <TableRow key={request.id}>
+                <TableCell>{request.item_name}</TableCell>
+                <TableCell>{request.RF_number}</TableCell>
+                <TableCell>{formatDate(request.date_created)}</TableCell>
                 <TableCell align="center">
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleApprove(request)}
-                    sx={{ mr: 1 }}
-                  >
-                    Approve
-                  </Button>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => handleApprove(request)}
+                  sx={{ mr: 1 }}
+                >
+                  Approve
+                </Button>
                   <Button
                     variant="contained"
                     color="error"
                     onClick={() =>
-                      console.log(`Denied request: ${request.requestNumber}`)
+                      console.log(`Denied request: ${request.RF_number}`)
                     }
                   >
                     Deny
@@ -170,7 +196,7 @@ const UserRequest = () => {
       />
 
       {/* Dialog for Approval Details */}
-      {selectedRequest && (
+      {/* {selectedRequest && (
   <CustomDialog open={dialogOpen} onClose={handleCloseDialog}>
     <DialogTitle sx={{ fontSize: "24px", fontWeight: "bold" }}>Approval Details</DialogTitle>
     <DialogContent>
@@ -184,7 +210,7 @@ const UserRequest = () => {
         <strong>Division:</strong> {selectedRequest.division}
       </Typography>
       <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
-        <strong>Item Issued:</strong> {selectedRequest.itemName}
+        <strong>Item Issued:</strong> {selectedRequest.item_name}
       </Typography>
       <Typography variant="body1" sx={{ fontSize: "18px", marginBottom: "8px" }}>
         <strong>Serial Number:</strong> {selectedRequest.serialNumber}
@@ -208,7 +234,7 @@ const UserRequest = () => {
       </Button>
     </DialogActions>
   </CustomDialog>
-)}
+)} */}
 
     </Box>
   );
