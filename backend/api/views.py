@@ -272,20 +272,28 @@ class ApproveRequestView(APIView):
                 break
 
             if item.quantity > 0:
+                updated_quantity = 0
                 if item.quantity >= remaining_quantity:
+                    updated_quantity = remaining_quantity
                     item.quantity -= remaining_quantity
-                    # Only append serial number if it exists
-                    if item.serial_number:
-                        used_serial_numbers.append(item.serial_number)
-                    item.save()
                     remaining_quantity = 0
                 else:
+                    updated_quantity = item.quantity
                     remaining_quantity -= item.quantity
-                    # Only append serial number if it exists
-                    if item.serial_number:
-                        used_serial_numbers.append(item.serial_number)
                     item.quantity = 0
-                    item.save()
+
+                # Log the update action
+                ItemLogs.objects.create(
+                    item_name=item.item_name,
+                    action="Item Updated",
+                    current_quantity=item.quantity,
+                )
+
+                # Only append serial number if it exists
+                if item.serial_number:
+                    used_serial_numbers.append(item.serial_number)
+                
+                item.save()
 
         if remaining_quantity > 0:
             return Response(
@@ -299,4 +307,3 @@ class ApproveRequestView(APIView):
         request_obj.save()
 
         return Response({"message": "Request approved and inventory updated successfully"})
-
