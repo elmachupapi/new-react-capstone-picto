@@ -60,15 +60,41 @@ const UserRequest = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const addRequestLog = async (itemName, requestNumber, action, admin = null) => {
+    try {
+      const logPayload = {
+        item_name: itemName,
+        request_number: requestNumber,
+        action: action,
+        admin: admin, // Admin can be null
+      };
+      await api.post("/api/logs/request/", logPayload);
+      console.log("Request log added successfully!");
+    } catch (error) {
+      console.error("Error adding request log:", error);
+      alert("Failed to add request log.");
+    }
+  };
+  
   // Function to handle approval
   const handleApprove = async (request) => {
     try {
       const response = await api.post(`/api/approvals/approved/${request.id}/`);
-      alert(response.data.message);
-      // Optionally, refresh the request list to reflect changes
-      getPendingRequests();
+      if (response.status === 200) {
+        alert("Request approved successfully!");
+        await addRequestLog(
+          request.item_name,
+          request.RF_number,
+          "Request Approved",
+          localStorage.getItem("username") // Fetch admin username from local storage
+        );
+        getPendingRequests(); // Refresh the request list to reflect changes
+      } else {
+        alert("Failed to approve the request.");
+      }
     } catch (error) {
-      alert(error.response?.data?.error || "An error occurred while approving the request");
+      console.error("Error approving request:", error);
+      alert(error.response?.data?.error || "An error occurred while approving the request.");
     }
   };
 
@@ -132,9 +158,15 @@ const UserRequest = () => {
 
   const handleDeny = async (request) => {
     try {
-      const response = await api.post(`/api/approvals/deny/${request.id}/`); // Replace with your backend endpoint for denying a request
+      const response = await api.post(`/api/approvals/deny/${request.id}/`);
       if (response.status === 200) {
         alert("Request denied successfully!");
+        await addRequestLog(
+          request.item_name,
+          request.RF_number,
+          "Request Denied",
+          localStorage.getItem("username") // Fetch admin username from local storage
+        );
         getPendingRequests(); // Refresh the request list to reflect changes
       } else {
         alert("Failed to deny the request.");
