@@ -68,9 +68,26 @@ const RequestList = () => {
   };
 
   // Handle delete action
-  const handleDelete = () => {
-    setRequests(requests.filter((request) => request.RF_number !== requestToDelete));
-    handleCloseConfirmDelete();
+  const handleDelete = async () => {
+    try {
+      // Send a DELETE request to the backend
+      const res = await api.delete(`/api/requests/delete/${requestToDelete}/`);
+      
+      if (res.status === 204) { // Assuming 204 No Content indicates successful deletion
+        // Remove the deleted request from the frontend state
+        setRequests((prevRequests) => 
+          prevRequests.filter((request) => request.RF_number !== requestToDelete)
+        );
+        alert("Request deleted successfully!");
+      } else {
+        alert("Failed to delete the request. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error deleting request:", error);
+      alert("An error occurred while deleting the request.");
+    } finally {
+      handleCloseConfirmDelete();
+    }
   };
 
   useEffect(() => {

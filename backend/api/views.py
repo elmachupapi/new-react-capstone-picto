@@ -259,8 +259,8 @@ class ApproveRequestView(APIView):
         if not model:
             return Response({"error": "Invalid category"}, status=400)
 
-        # Fetch the earliest item_name from the corresponding model
-        matching_item = model.objects.filter(item_name=request_obj.item_name).order_by("date_added").first()
+        # Fetch the earliest item_name from the corresponding model (case-insensitive match)
+        matching_item = model.objects.filter(item_name__iexact=request_obj.item_name).order_by("date_added").first()
         if not matching_item:
             return Response({"error": "No matching item found"}, status=404)
 
