@@ -62,7 +62,7 @@ class RequestLogs(models.Model):
     request_number = models.IntegerField()
     date = models.DateTimeField(auto_now_add=True)
     action = models.CharField(max_length=50)
-    admin = models.CharField(max_length=50)
+    admin = models.CharField(max_length=50, null=True, blank=True)
 
 class ItemLogs(models.Model):
     item_name = models.CharField(max_length=100)

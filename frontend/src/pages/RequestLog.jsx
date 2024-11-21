@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -12,51 +12,35 @@ import {
   TextField,
   TablePagination,
 } from '@mui/material';
+import api from "../api"; // Ensure this is your API handler
 
 const RequestLog = () => {
-  // Sample data for request logs
-  const logs = [
-    {
-      requestor: 'User1',
-      requestNumber: 'REQ-001',
-      date: '2024-10-10',
-      action: 'Request Created',
-      admin: 'Admin1',
-    },
-    {
-      requestor: 'User2',
-      requestNumber: 'REQ-002',
-      date: '2024-10-11',
-      action: 'Request Approved',
-      admin: 'Admin2',
-    },
-    {
-      requestor: 'User3',
-      requestNumber: 'REQ-003',
-      date: '2024-10-12',
-      action: 'Request Denied',
-      admin: 'Admin3',
-    },
-    {
-      requestor: 'User4',
-      requestNumber: 'REQ-004',
-      date: '2024-10-13',
-      action: 'Request Created',
-      admin: 'Admin4',
-    },
-  ];
+  const [logs, setLogs] = useState([]); // State for fetched logs
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const [page, setPage] = useState(0); // State for pagination
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page for pagination
 
-  // State for search term and pagination
-  const [searchTerm, setSearchTerm] = useState('');
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  useEffect(() => {
+    // Fetch logs from the backend when the component mounts
+    getRequestLogs();
+  }, []);
+
+  const getRequestLogs = async () => {
+    try {
+      const res = await api.get("/api/logs/request/"); // Adjust the URL if necessary
+      setLogs(res.data); // Populate logs with the fetched data
+    } catch (error) {
+      console.error("Error fetching request logs:", error);
+      alert("Failed to fetch request logs.");
+    }
+  };
 
   // Filter logs based on the search term
   const filteredLogs = logs.filter(
     log =>
       log.requestor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.requestNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.admin.toLowerCase().includes(searchTerm.toLowerCase())
+      log.request_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (log.admin && log.admin.toLowerCase().includes(searchTerm.toLowerCase())) // Handle null admin field
   );
 
   // Handle pagination change
@@ -67,7 +51,7 @@ const RequestLog = () => {
   // Handle rows per page change
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPage(0); // Reset to the first page when changing rows per page
   };
 
   return (
@@ -83,7 +67,7 @@ const RequestLog = () => {
         margin="normal"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        sx={{width: '400px', backgroundColor: 'white', mt: .1, mb: 2 }}
+        sx={{ width: '400px', backgroundColor: 'white', mt: 0.1, mb: 2 }}
       />
       <TableContainer component={Paper}>
         <Table>
@@ -100,12 +84,14 @@ const RequestLog = () => {
             {filteredLogs
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((log) => (
-                <TableRow key={log.requestNumber}>
+                <TableRow key={log.request_number}>
                   <TableCell>{log.requestor}</TableCell>
-                  <TableCell>{log.requestNumber}</TableCell>
-                  <TableCell>{log.date}</TableCell>
+                  <TableCell>{log.request_number}</TableCell>
+                  <TableCell>
+                    {new Date(log.date).toISOString().split("T")[0]} {/* Format date */}
+                  </TableCell>
                   <TableCell>{log.action}</TableCell>
-                  <TableCell>{log.admin}</TableCell>
+                  <TableCell>{log.admin || "N/A"}</TableCell> {/* Handle null admin */}
                 </TableRow>
               ))}
           </TableBody>

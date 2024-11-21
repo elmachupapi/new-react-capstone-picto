@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   MenuItem,
@@ -13,7 +13,6 @@ import {
 import api from "../api";
 
 const RequestItem = () => {
-
   const [requests, setRequests] = useState([]);
   const [category, setCategory] = useState("");
   const [item_name, setItemName] = useState("");
@@ -24,27 +23,62 @@ const RequestItem = () => {
 
   useEffect(() => {
     getRequests();
-  }, [])
+  }, []);
 
   const getRequests = () => {
     api
       .get("/api/requests/")
       .then((res) => res.data)
-      .then((data) => {setRequests(data); console.log(data)})
-      .catch((err) => alert(err));
-  }
-
-  const createRequest = (e) => {
-    e.preventDefault();
-    api
-      .post("api/requests/", { category, item_name, quantity, unit, RF_number, status:"Pending" })
-      .then((res) => {
-        if (res.status === 201) alert("Request Created!")
-        else alert("Failed to create note")
+      .then((data) => {
+        setRequests(data);
+        console.log(data);
       })
-      .catch((err) => alert(err))
-    getRequests();
-  }
+      .catch((err) => alert(err));
+  };
+
+  const addRequestLog = async (itemName, requestNumber, action, admin) => {
+    const requestor = localStorage.getItem("username"); // Retrieve username from local storage
+    try {
+      const logPayload = {
+        item_name: itemName,
+        request_number: requestNumber,
+        action: action,
+        admin: admin,
+        requestor
+      };
+      await api.post("/api/logs/request/", logPayload);
+      console.log("Request log added successfully!");
+    } catch (error) {
+      console.error("Error adding request log:", error);
+      alert("Failed to add request log.");
+    }
+  };
+
+  const createRequest = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        category,
+        item_name,
+        quantity,
+        unit,
+        RF_number,
+        status: "Pending",
+      };
+      const res = await api.post("api/requests/", payload);
+      if (res.status === 201) {
+        alert("Request Created!");
+        // Add a log for the new request
+        await addRequestLog(item_name, RF_number, "Request Created", "System");
+        getRequests();
+      } else {
+        alert("Failed to create request.");
+      }
+    } catch (error) {
+      console.error("Error creating request:", error);
+      alert("Failed to create request. Please try again.");
+    }
+  };
 
   return (
     <Container sx={{ mt: 10 }}>
@@ -61,7 +95,7 @@ const RequestItem = () => {
                 id="category"
                 name="category"
                 value={category}
-                onChange={(e)  => setCategory(e.target.value)}
+                onChange={(e) => setCategory(e.target.value)}
                 required
               >
                 <MenuItem value="electronics">Electronics</MenuItem>
@@ -77,12 +111,12 @@ const RequestItem = () => {
               id="item_name"
               name="item_name"
               value={item_name}
-              onChange={(e)  => setItemName(e.target.value)}
+              onChange={(e) => setItemName(e.target.value)}
               fullWidth
               required
             />
           </Grid>
-         
+
           <Grid item xs={12} sm={6}>
             <TextField
               label="Quantity"
@@ -90,7 +124,7 @@ const RequestItem = () => {
               name="quantity"
               type="number"
               value={quantity}
-              onChange={(e)  => setQuantity(e.target.value)}
+              onChange={(e) => setQuantity(e.target.value)}
               fullWidth
               required
             />
@@ -101,7 +135,7 @@ const RequestItem = () => {
               id="unit"
               name="unit"
               value={unit}
-              onChange={(e)  => setUnit(e.target.value)}
+              onChange={(e) => setUnit(e.target.value)}
               fullWidth
               required
             />
@@ -112,7 +146,7 @@ const RequestItem = () => {
               id="purpose"
               name="purpose"
               value={purpose}
-              onChange={(e)  => setPurpose(e.target.value)}
+              onChange={(e) => setPurpose(e.target.value)}
               fullWidth
               required
             />
@@ -123,13 +157,20 @@ const RequestItem = () => {
               id="RF_number"
               name="RF_number"
               value={RF_number}
-              onChange={(e)  => setRFNumber(e.target.value)}
+              onChange={(e) => setRFNumber(e.target.value)}
               fullWidth
               required
             />
           </Grid>
           <Grid item xs={12}>
-            <Button type="submit" value="Submit" variant="contained" color="primary" fullWidth sx={{ mt: 3 }}>
+            <Button
+              type="submit"
+              value="Submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 3 }}
+            >
               Submit
             </Button>
           </Grid>

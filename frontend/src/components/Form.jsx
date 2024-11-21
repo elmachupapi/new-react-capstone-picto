@@ -4,90 +4,95 @@ import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 
-function Form ({ route, method }) {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-    const [loading, setLoading] = useState(false)
-    const navigate = useNavigate()
+function Form({ route, method }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const name = method === "login" ? "Login" : "Signup"
+  const name = method === "login" ? "Login" : "Signup";
 
-    const fetchAndSaveRole = async () => {
-        try {
-            const response = await api.get("api/profile/"); // Endpoint to fetch profile data
-            const { role } = response.data;
-            localStorage.setItem("role", role); // Save the role to localStorage
-        } catch (error) {
-            console.error("Error fetching user role:", error);
-            alert("Failed to retrieve user role. Please try again.");
-        }
-    };
+  const fetchAndSaveRole = async () => {
+    try {
+      const response = await api.get("api/profile/"); // Endpoint to fetch profile data
+      const { role } = response.data;
+      localStorage.setItem("role", role); // Save the role to localStorage
+    } catch (error) {
+      console.error("Error fetching user role:", error);
+      alert("Failed to retrieve user role. Please try again.");
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        setLoading(true);
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    setLoading(true);
+    e.preventDefault();
 
-        try { 
-            const res = await api.post(route, { username, password })
-            if (method === "login") {
-                localStorage.setItem(ACCESS_TOKEN, res.data.access);
-                localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+    try {
+      const res = await api.post(route, { username, password });
+      if (method === "login") {
+        // Save tokens to local storage
+        localStorage.setItem(ACCESS_TOKEN, res.data.access);
+        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
-                await fetchAndSaveRole(); // Fetch and save the role after login
+        // Save username to local storage
+        localStorage.setItem("username", username);
 
-                navigate("/")
-            } else {
-                navigate("/login")
-            }
-        } catch (error) {
-            alert(error);
-        } finally {
-            setLoading(false)
-        }
-    };
+        await fetchAndSaveRole(); // Fetch and save the role after login
 
-    return (
-        <Container maxWidth="xs">
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 4 }}>
-                <Typography variant="h4" gutterBottom>
-                    {name}
-                </Typography>
+        navigate("/");
+      } else {
+        navigate("/login");
+      }
+    } catch (error) {
+      alert(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                <TextField
-                    label="Username"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    name="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
+  return (
+    <Container maxWidth="xs">
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          {name}
+        </Typography>
 
-                <TextField
-                    label="Password"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    name="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    type="password"
-                />
+        <TextField
+          label="Username"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
 
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    sx={{ mt: 2 }}
-                >
-                    {name}
-                </Button>
-            </Box>
-        </Container>
-    );
+        <TextField
+          label="Password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          type="password"
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+          disabled={loading} // Disable button during loading
+        >
+          {name}
+        </Button>
+      </Box>
+    </Container>
+  );
 }
 
 export default Form;
