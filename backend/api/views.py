@@ -259,24 +259,39 @@ class ApproveRequestView(APIView):
         if not model:
             return Response({"error": "Invalid category"}, status=400)
 
-        # Fetch the earliest item_name from the corresponding model (case-insensitive match)
-        matching_item = model.objects.filter(item_name__iexact=request_obj.item_name).order_by("date_added").first()
-        if not matching_item:
+        # Fetch all matching items for the item_name (case-insensitive)
+        matching_items = model.objects.filter(item_name__iexact=request_obj.item_name).order_by("date_added")
+        if not matching_items.exists():
             return Response({"error": "No matching item found"}, status=404)
 
-        # Check if the inventory has sufficient quantity
-        if matching_item.quantity < request_obj.quantity:
+        remaining_quantity = request_obj.quantity
+        used_serial_numbers = []
+
+        # Iterate through matching items to fulfill the request
+        for item in matching_items:
+            if remaining_quantity <= 0:
+                break
+
+            if item.quantity > 0:
+                if item.quantity >= remaining_quantity:
+                    item.quantity -= remaining_quantity
+                    used_serial_numbers.append(item.serial_number)
+                    item.save()
+                    remaining_quantity = 0
+                else:
+                    remaining_quantity -= item.quantity
+                    used_serial_numbers.append(item.serial_number)
+                    item.quantity = 0
+                    item.save()
+
+        if remaining_quantity > 0:
             return Response(
-                {"error": "Insufficient quantity in stock to fulfill the request"},
+                {"error": "Insufficient inventory across all items to fulfill the request"},
                 status=400,
             )
 
-        # Subtract the quantity from the inventory item
-        matching_item.quantity -= request_obj.quantity
-        matching_item.save()
-
-        # Update the serial_number and status of the request
-        request_obj.serial_number = matching_item.serial_number
+        # Update the request object
+        request_obj.serial_number = ", ".join(used_serial_numbers)  # Append all serial numbers used
         request_obj.status = "Approved"
         request_obj.save()
 
