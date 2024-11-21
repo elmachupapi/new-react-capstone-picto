@@ -7,7 +7,7 @@ from .models import Profile
 def create_user_profile(sender, instance, created, **kwargs):
     """Automatically create a profile for the user when they are created."""
     if created:
-        Profile.objects.create(user=instance, role='superadmin')  # Default role as 'viewer'
+        Profile.objects.create(user=instance, role='viewer')  # Default role as 'viewer'
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
