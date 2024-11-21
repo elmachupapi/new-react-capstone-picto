@@ -14,36 +14,15 @@ class RequestListCreate(generics.ListCreateAPIView):
     serializer_class = RequestSerializer
     permission_classes = [IsAuthenticated]
 
-    # Map categories to models
-    category_model_map = {
-        "electronics": Electronics,
-        "it supplies": ITSupplies,
-        "office supplies": Office,
-        "janitorial supplies": Janitorial,
-    }
-
     def get_queryset(self):
         user = self.request.user
         return Request.objects.filter(requestor=user)
 
     def perform_create(self, serializer):
-        # Get the category and item_name from the serializer
-        category = serializer.validated_data.get("category")
-        item_name = serializer.validated_data.get("item_name")
-
-        # Check if the category is valid and fetch the corresponding model
-        model = self.category_model_map.get(category.lower())
-        if not model:
-            raise serializers.ValidationError({"category": "Invalid category"})
-
-        # Check if the item_name exists in the corresponding model
-        if not model.objects.filter(item_name__iexact=item_name).exists():
-            raise serializers.ValidationError({"item_name": f"Item '{item_name}' does not exist in the {category} category."})
-
-        # Save the request object with the authenticated user as the requestor
-        serializer.save(requestor=self.request.user)
-
-
+        if serializer.is_valid():
+            serializer.save(requestor=self.request.user)
+        else:
+            print(serializer.errors)
 
 class RequestDelete(generics.DestroyAPIView):
     serializer_class = RequestSerializer
