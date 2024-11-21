@@ -130,8 +130,21 @@ const UserRequest = () => {
     return new Date(dateString).toISOString().split("T")[0];
   };
 
-
-
+  const handleDeny = async (request) => {
+    try {
+      const response = await api.post(`/api/approvals/deny/${request.id}/`); // Replace with your backend endpoint for denying a request
+      if (response.status === 200) {
+        alert("Request denied successfully!");
+        getPendingRequests(); // Refresh the request list to reflect changes
+      } else {
+        alert("Failed to deny the request.");
+      }
+    } catch (error) {
+      console.error("Error denying request:", error);
+      alert(error.response?.data?.error || "An error occurred while denying the request.");
+    }
+  };
+  
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
       <Typography variant="h4" gutterBottom>
@@ -162,20 +175,18 @@ const UserRequest = () => {
                 <TableCell>{request.RF_number}</TableCell>
                 <TableCell>{formatDate(request.date_created)}</TableCell>
                 <TableCell align="center">
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={() => handleApprove(request)}
-                  sx={{ mr: 1 }}
-                >
-                  Approve
-                </Button>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleApprove(request)}
+                    sx={{ mr: 1 }}
+                  >
+                    Approve
+                  </Button>
                   <Button
                     variant="contained"
                     color="error"
-                    onClick={() =>
-                      console.log(`Denied request: ${request.RF_number}`)
-                    }
+                    onClick={() => handleDeny(request)} // Call the deny handler
                   >
                     Deny
                   </Button>

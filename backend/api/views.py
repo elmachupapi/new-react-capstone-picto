@@ -307,3 +307,16 @@ class ApproveRequestView(APIView):
         request_obj.save()
 
         return Response({"message": "Request approved and inventory updated successfully"})
+    
+class DenyRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        # Fetch the request object
+        request_obj = get_object_or_404(Request, pk=pk)
+
+        # Update the status to "Denied"
+        request_obj.status = "Denied"
+        request_obj.save()
+
+        return Response({"message": "Request denied successfully!"})

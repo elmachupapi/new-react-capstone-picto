@@ -8,6 +8,7 @@ urlpatterns = [
 
     path("requests/list/pending/", views.PendingRequestListView.as_view(), name = "pending-request"),
     path("approvals/approved/<int:pk>/", views.ApproveRequestView.as_view(), name = "approve"),
+    path("approvals/deny/<int:pk>/", views.DenyRequestView.as_view(), name = "deny-request"),
 
     path("item/electronics/", views.ListCreateElectronicItem.as_view(), name = "item-electronic"),
     path("item/itsupplies/", views.ListCreateITSupplyItem.as_view(), name = "item-itsupply"),
