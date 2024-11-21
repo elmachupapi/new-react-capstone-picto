@@ -144,7 +144,7 @@ const RequestList = () => {
                   <TableCell>
                     <IconButton
                       color="error"
-                      onClick={() => handleOpenConfirmDelete(request.RF_number)}
+                      onClick={() => handleOpenConfirmDelete(request.id)}
                     >
                       <DeleteIcon />
                     </IconButton>
