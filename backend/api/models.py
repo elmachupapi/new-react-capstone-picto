@@ -10,7 +10,7 @@ class Request(models.Model):
     RF_number = models.CharField(max_length=20)
     date_created = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50)
-    serial_number = models.CharField(max_length=50, default= '')
+    serial_number = models.CharField(max_length=50, default= '', null=True, blank=True)
     requestor = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "requests")
 
     def __str__(self):
@@ -23,8 +23,8 @@ class Electronics(models.Model):
     date_added = models.DateField()
     PO_number = models.CharField(max_length=50)
     year_quarter = models.CharField(max_length=10)
-    serial_number = models.CharField(max_length=50)
-    obsolete = models.CharField(max_length=50)
+    serial_number = models.CharField(max_length=50, null=True, blank=True)
+    obsolete = models.CharField(max_length=50, null=True, blank=True)
 
 class ITSupplies(models.Model):
     item_name = models.CharField(max_length=100)
@@ -33,8 +33,8 @@ class ITSupplies(models.Model):
     date_added = models.DateField()
     PO_number = models.CharField(max_length=50)
     year_quarter = models.CharField(max_length=10)
-    serial_number = models.CharField(max_length=50)
-    obsolete = models.CharField(max_length=50)
+    serial_number = models.CharField(max_length=50, null=True, blank=True)
+    obsolete = models.CharField(max_length=50, null=True, blank=True)
 
 class Office(models.Model):
     item_name = models.CharField(max_length=100)
@@ -43,18 +43,18 @@ class Office(models.Model):
     date_added = models.DateField()
     PO_number = models.CharField(max_length=50)
     year_quarter = models.CharField(max_length=10)
-    serial_number = models.CharField(max_length=50)
-    obsolete = models.CharField(max_length=50)
+    serial_number = models.CharField(max_length=50, null=True, blank=True)
+    obsolete = models.CharField(max_length=50, null=True, blank=True)
     
 class Janitorial(models.Model):
     item_name = models.CharField(max_length=100)
-    quantity = models.IntegerField()
-    unit = models.CharField(max_length=20)
-    date_added = models.DateField()
-    PO_number = models.CharField(max_length=50)
-    year_quarter = models.CharField(max_length=10)
-    serial_number = models.CharField(max_length=50)
-    obsolete = models.CharField(max_length=50)
+    quantity = models.IntegerField(null=True, blank=True)
+    unit = models.CharField(max_length=20, null=True, blank=True)
+    date_added = models.DateField(null=True, blank=True)
+    PO_number = models.CharField(max_length=50, null=True, blank=True)
+    year_quarter = models.CharField(max_length=20, null=True, blank=True)
+    serial_number = models.CharField(max_length=50, null=True, blank=True)
+    obsolete = models.CharField(max_length=50, null=True, blank=True)
 
 class RequestLogs(models.Model):
     item_name = models.CharField(max_length=100)

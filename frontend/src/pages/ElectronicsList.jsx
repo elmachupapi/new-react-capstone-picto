@@ -95,6 +95,10 @@ const ElectronicsList = () => {
       const res = await api.delete(`api/item/electronics/delete/${itemToDelete.id}/`);
       if (res.status === 204) {
         alert("Item deleted successfully!");
+  
+        // Add a log for the delete action
+        await addLog(itemToDelete.item_name, "Item Deleted", itemToDelete.quantity);
+  
         setElectronics((prevData) => prevData.filter((item) => item.id !== itemToDelete.id));
       } else {
         alert("Failed to delete the item.");
@@ -111,28 +115,52 @@ const ElectronicsList = () => {
     setConfirmDeleteOpen(true); // Open delete confirmation modal
   };
 
+  const addLog = async (itemName, action, currentQuantity) => {
+    try {
+      const logPayload = {
+        item_name: itemName,
+        action: action, // Specify the action (e.g., "Item Added", "Item Updated")
+        current_quantity: currentQuantity,
+      };
+      await api.post("/api/logs/item/", logPayload);
+      alert("Log added successfully!");
+    } catch (error) {
+      console.error("Error adding log:", error);
+      alert("Failed to add log.");
+    }
+  };
+  
   const handleSubmit = async () => {
+    const sanitizePayload = (payload) => {
+      const sanitizedPayload = {};
+      for (const [key, value] of Object.entries(payload)) {
+        sanitizedPayload[key] = value === "" || value === undefined ? null : value;
+      }
+      return sanitizedPayload;
+    };
+  
     if (editItem) {
+      // Editing an existing item
       try {
-        // Construct payload for the update request
         const payload = {
           item_name: newItem.item_name,
-          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number or null
           unit: newItem.unit,
           date_added: newItem.date_added,
           PO_number: newItem.PO_number,
           year_quarter: newItem.year_quarter,
           serial_number: newItem.serial_number,
-          obsolete: newItem.obsolete
+          obsolete: newItem.obsolete,
         };
   
-        // Make PUT request to the update endpoint
-        const res = await api.put(`api/item/electronics/update/${editItem.id}/`, payload);
+        const sanitizedPayload = sanitizePayload(payload);
   
-        if (res.status === 200) { // Assuming successful update returns HTTP 200
+        const res = await api.put(`/api/item/electronics/update/${editItem.id}/`, sanitizedPayload);
+        if (res.status === 200) {
           alert("Item updated successfully!");
-          // Optional: Fetch updated data from the server
-          getElectronics(); // Refresh list
+          // Add a log for the update action
+          await addLog(newItem.item_name, "Item Updated", parseInt(newItem.quantity, 10));
+          getElectronics(); // Refresh the list
         } else {
           alert("Failed to update the item.");
         }
@@ -141,21 +169,37 @@ const ElectronicsList = () => {
         alert("An error occurred while updating the item.");
       }
     } else {
-      // Add a new item
-      addElectronics();
+      // Adding a new item
+      try {
+        const payload = {
+          item_name: newItem.item_name,
+          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number or null
+          unit: newItem.unit,
+          date_added: newItem.date_added,
+          PO_number: newItem.PO_number,
+          year_quarter: newItem.year_quarter,
+          serial_number: newItem.serial_number,
+          obsolete: newItem.obsolete,
+        };
+  
+        const sanitizedPayload = sanitizePayload(payload);
+  
+        const res = await api.post("/api/item/electronics/", sanitizedPayload);
+        if (res.status === 201) {
+          alert("Item added successfully!");
+          // Add a log for the add action
+          await addLog(newItem.item_name, "Item Added", parseInt(newItem.quantity, 10));
+          getElectronics(); // Refresh the list
+        } else {
+          alert("Error: Item not added.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Failed to add item. Please check your input and try again.");
+      }
     }
-
+  
     setEditItem(null); // Reset edit mode
-    setNewItem({
-      item_name: "",
-      quantity: "",
-      unit: "",
-      date_added: "",
-      PO_number: "",
-      year_quarter: "",
-      serial_number: "",
-      obsolete: ""
-    });
     handleClose();
   };
 
@@ -171,31 +215,44 @@ const ElectronicsList = () => {
       .catch((err) => alert(err));
   }
 
-  const addElectronics = async () => {
-    const payload = {
-      item_name: newItem.item_name,
-      quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
-      unit: newItem.unit,
-      date_added: newItem.date_added,
-      PO_number: newItem.PO_number,
-      year_quarter: newItem.year_quarter,
-      serial_number: newItem.serial_number,
-      obsolete: newItem.obsolete
-    };
+  // const addElectronics = async () => {
+  //   const payload = {
+  //     item_name: newItem.item_name,
+  //     quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+  //     unit: newItem.unit,
+  //     date_added: newItem.date_added,
+  //     PO_number: newItem.PO_number,
+  //     year_quarter: newItem.year_quarter,
+  //     serial_number: newItem.serial_number,
+  //     obsolete: newItem.obsolete,
+  //   };
   
-    try {
-      const res = await api.post("/api/item/electronics/", payload);
-      if (res.status === 201) {
-        alert("Item added!");
-        getElectronics(); // Refresh the list
-      } else {
-        alert("Error: Item not added");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Failed to add item. Please check your input and try again.");
-    }
-  };
+  //   try {
+  //     // First POST request to add the new item
+  //     const res = await api.post("/api/item/electronics/", payload);
+  //     if (res.status === 201) {
+  //       alert("Item added!");
+  
+  //       // Second POST request to add a log
+  //       const logPayload = {
+  //         item_name: newItem.item_name,
+  //         action: "Item Added", // Log action
+  //         current_quantity: parseInt(newItem.quantity, 10),
+  //       };
+  
+  //       await api.post("/api/logs/item/", logPayload);
+  //       alert("Log added!");
+  
+  //       getElectronics(); // Refresh the list
+  //     } else {
+  //       alert("Error: Item not added");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Failed to add item or log. Please check your input and try again.");
+  //   }
+  // };
+  
 
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>

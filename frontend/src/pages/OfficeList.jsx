@@ -96,9 +96,13 @@ const OfficeList = () => {
 
   const handleDelete = async () => {
     try {
-      const res = await api.delete(`/api/item/office/delete/${itemToDelete.id}/`);
+      const res = await api.delete(`api/item/office/delete/${itemToDelete.id}/`);
       if (res.status === 204) {
         alert("Item deleted successfully!");
+  
+        // Add a log for the delete action
+        await addLog(itemToDelete.item_name, "Item Deleted", itemToDelete.quantity);
+  
         setOfficeData((prevData) => prevData.filter((item) => item.id !== itemToDelete.id));
       } else {
         alert("Failed to delete the item.");
@@ -110,12 +114,36 @@ const OfficeList = () => {
     setConfirmDeleteOpen(false);
   };
 
+  const addLog = async (itemName, action, currentQuantity) => {
+    try {
+      const logPayload = {
+        item_name: itemName,
+        action: action, // Specify the action (e.g., "Item Added", "Item Updated")
+        current_quantity: currentQuantity,
+      };
+      await api.post("/api/logs/item/", logPayload);
+      alert("Log added successfully!");
+    } catch (error) {
+      console.error("Error adding log:", error);
+      alert("Failed to add log.");
+    }
+  };
+  
   const handleSubmit = async () => {
+    const sanitizePayload = (payload) => {
+      const sanitizedPayload = {};
+      for (const [key, value] of Object.entries(payload)) {
+        sanitizedPayload[key] = value === "" || value === undefined ? null : value;
+      }
+      return sanitizedPayload;
+    };
+  
     if (editItem) {
+      // Editing an existing item
       try {
         const payload = {
           item_name: newItem.item_name,
-          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number or null
           unit: newItem.unit,
           date_added: newItem.date_added,
           PO_number: newItem.PO_number,
@@ -123,11 +151,15 @@ const OfficeList = () => {
           serial_number: newItem.serial_number,
           obsolete: newItem.obsolete,
         };
-
-        const res = await api.put(`/api/item/office/update/${editItem.id}/`, payload);
+  
+        const sanitizedPayload = sanitizePayload(payload);
+  
+        const res = await api.put(`/api/item/office/update/${editItem.id}/`, sanitizedPayload);
         if (res.status === 200) {
           alert("Item updated successfully!");
-          getOfficeData(); // Refresh list
+          // Add a log for the update action
+          await addLog(newItem.item_name, "Item Updated", parseInt(newItem.quantity, 10));
+          getOfficeData(); // Refresh the list
         } else {
           alert("Failed to update the item.");
         }
@@ -136,10 +168,11 @@ const OfficeList = () => {
         alert("An error occurred while updating the item.");
       }
     } else {
+      // Adding a new item
       try {
         const payload = {
           item_name: newItem.item_name,
-          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number
+          quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number or null
           unit: newItem.unit,
           date_added: newItem.date_added,
           PO_number: newItem.PO_number,
@@ -147,10 +180,14 @@ const OfficeList = () => {
           serial_number: newItem.serial_number,
           obsolete: newItem.obsolete,
         };
-
-        const res = await api.post("/api/item/office/", payload);
+  
+        const sanitizedPayload = sanitizePayload(payload);
+  
+        const res = await api.post("/api/item/office/", sanitizedPayload);
         if (res.status === 201) {
           alert("Item added successfully!");
+          // Add a log for the add action
+          await addLog(newItem.item_name, "Item Added", parseInt(newItem.quantity, 10));
           getOfficeData(); // Refresh the list
         } else {
           alert("Error: Item not added.");
@@ -160,7 +197,7 @@ const OfficeList = () => {
         alert("Failed to add item. Please check your input and try again.");
       }
     }
-
+  
     setEditItem(null); // Reset edit mode
     handleClose();
   };

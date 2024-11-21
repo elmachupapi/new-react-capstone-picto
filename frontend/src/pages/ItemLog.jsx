@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -12,53 +12,40 @@ import {
   TextField,
   TablePagination,
 } from '@mui/material';
+import api from '../api'; // Make sure this is configured for your backend API
 
 const ItemLog = () => {
-  // Sample data for item logs
-  const logs = [
-    {
-      itemName: 'Laptop',
-      date: '2024-10-10',
-      action: 'Request Created',
-      currentQuantity: 15,
-    },
-    {
-      itemName: 'Mouse',
-      date: '2024-10-11',
-      action: 'Request Created',
-      currentQuantity: 50,
-    },
-    {
-      itemName: 'Printer',
-      date: '2024-10-12',
-      action: 'Request Created',
-      currentQuantity: 5,
-    },
-    {
-      itemName: 'Broom',
-      date: '2024-10-13',
-      action: 'Request Denied',
-      currentQuantity: 100,
-    },
-  ];
+  const [logs, setLogs] = useState([]); // State for item logs
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const [page, setPage] = useState(0); // Current page for pagination
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page for pagination
 
-  // State for search term
-  const [searchTerm, setSearchTerm] = useState('');
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  // Fetch item logs from the backend
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const response = await api.get('/api/logs/item/'); // Replace with your actual endpoint
+        setLogs(response.data); // Update state with fetched logs
+      } catch (error) {
+        console.error('Error fetching item logs:', error);
+      }
+    };
 
-  // Handle search
+    fetchLogs();
+  }, []);
+
+  // Handle search input change
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setPage(0); // Reset to the first page on search
+    setPage(0); // Reset to the first page when searching
   };
 
-  // Filter logs based on search term
+  // Filter logs based on the search term
   const filteredLogs = logs.filter((log) =>
-    log.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+    log.item_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Handle pagination change
+  // Handle pagination page change
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -69,8 +56,15 @@ const ItemLog = () => {
     setPage(0); // Reset to the first page when changing rows per page
   };
 
-  // Get current logs to display
-  const currentLogs = filteredLogs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  // Get the current logs to display based on pagination
+  const currentLogs = filteredLogs.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toISOString().split('T')[0];
+  };
 
   return (
     <Box sx={{ p: 3, backgroundColor: '#f0f4f4', minHeight: '100vh', mt: 5 }}>
@@ -92,16 +86,16 @@ const ItemLog = () => {
               <TableCell>Item</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Action</TableCell>
-              <TableCell>Current Quantity</TableCell>
+              <TableCell>Quantity</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {currentLogs.map((log, index) => (
               <TableRow key={index}>
-                <TableCell>{log.itemName}</TableCell>
-                <TableCell>{log.date}</TableCell>
+                <TableCell>{log.item_name}</TableCell>
+                <TableCell>{formatDate(log.date)}</TableCell>
                 <TableCell>{log.action}</TableCell>
-                <TableCell>{log.currentQuantity}</TableCell>
+                <TableCell>{log.current_quantity}</TableCell>
               </TableRow>
             ))}
           </TableBody>

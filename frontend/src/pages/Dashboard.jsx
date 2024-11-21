@@ -87,6 +87,10 @@ const Dashboard = () => {
       .catch((err) => alert(err));
   }
 
+  const formatDate = (dateString) => {
+    return new Date(dateString).toISOString().split("T")[0];
+  };
+
   return (
     <Box sx={{ mt: 8 }}>
       <Typography variant="h5" gutterBottom>
@@ -190,8 +194,8 @@ const Dashboard = () => {
         <Table sx={{ borderRadius: "8px" }}>
           <TableHead sx={{ backgroundColor: "#474647" }}>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>Item Name</TableCell>
-              <TableCell sx={{ color: "white" }}>Request Number</TableCell>
+              <TableCell sx={{ color: "white" }}>Item Description</TableCell>
+              <TableCell sx={{ color: "white" }}>RF Number</TableCell>
               <TableCell sx={{ color: "white" }}>Date Requested</TableCell>
             </TableRow>
           </TableHead>
@@ -200,7 +204,7 @@ const Dashboard = () => {
               <TableRow key={request.id}>
                 <TableCell>{request.item_name}</TableCell>
                 <TableCell>{request.RF_number}</TableCell>
-                <TableCell>{request.date_created}</TableCell>
+                <TableCell>{formatDate(request.date_created)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -215,7 +219,7 @@ const Dashboard = () => {
         <Table sx={{ borderRadius: "8px" }}>
           <TableHead sx={{ backgroundColor: "#e9b90b" }}>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>Item Name</TableCell>
+              <TableCell sx={{ color: "white" }}>Item Description</TableCell>
               <TableCell sx={{ color: "white" }}>Quantity</TableCell>
             </TableRow>
           </TableHead>
@@ -238,7 +242,7 @@ const Dashboard = () => {
         <Table sx={{ borderRadius: "8px" }}>
           <TableHead sx={{ backgroundColor: "#DC4C64" }}>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>Item Name</TableCell>
+              <TableCell sx={{ color: "white" }}>Item Description</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
