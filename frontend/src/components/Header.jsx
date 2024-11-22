@@ -5,7 +5,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Header = ({ drawerWidth }) => {
-  const username = "Mark Kim"; // Sample username
+  const username =localStorage.getItem("username"); // Sample username
 
   // State for handling dropdown menu
   const [anchorEl, setAnchorEl] = useState(null);

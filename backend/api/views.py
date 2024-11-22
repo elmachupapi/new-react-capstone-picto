@@ -240,7 +240,7 @@ class PendingRequestListView(generics.ListAPIView):
         return Request.objects.filter(status="Pending").order_by('date_created')
 
 class ApproveRequestView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request, pk):
         # Fetch the request object
@@ -309,7 +309,7 @@ class ApproveRequestView(APIView):
         return Response({"message": "Request approved and inventory updated successfully"})
     
 class DenyRequestView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request, pk):
         # Fetch the request object

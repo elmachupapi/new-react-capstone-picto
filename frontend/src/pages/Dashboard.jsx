@@ -14,19 +14,16 @@ const Dashboard = () => {
   const requestCards = [
     {
       title: "Request Item",
-      value: "$60,000",
       icon: <CreateIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
       link: "/request",
     },
     {
       title: "Request List",
-      value: "650",
       icon: <ListIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
       link: "/request/list",
     },
     {
       title: ["List of Requests", "from Users"],
-      value: "300",
       icon: <ChecklistRtlIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
       link: "/request/approvals",
     },
@@ -35,25 +32,21 @@ const Dashboard = () => {
   const itemCards = [
     {
       title: "Electronics",
-      value: "200",
       icon: <CableIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
       link: "item/electronics",
     },
     {
       title: "IT Supplies",
-      value: "350",
       icon: <ComputerIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
       link: "item/itsupplies",
     },
     {
       title: "Office Supplies",
-      value: "500",
       icon: <PrintIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
       link: "/item/office",
     },
     {
       title: "Janitorial Supplies",
-      value: "1000",
       icon: <CleaningServicesIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
       link: "/item/janitorial",
     },
