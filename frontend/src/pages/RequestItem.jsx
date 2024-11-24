@@ -88,21 +88,22 @@ const RequestItem = () => {
       <form onSubmit={createRequest}>
         <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
+            <FormControl fullWidth variant="outlined">
               <InputLabel id="item-category-label">Item Category</InputLabel>
-              <Select
-                labelId="item-category-label"
-                id="category"
-                name="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                required
-              >
-                <MenuItem value="electronics">Electronics</MenuItem>
-                <MenuItem value="it supplies">IT Supplies</MenuItem>
-                <MenuItem value="office supplies">Office Supplies</MenuItem>
-                <MenuItem value="janitorial supplies">Janitorial Supplies</MenuItem>
-              </Select>
+                <Select
+                  labelId="item-category-label"
+                  id="category"
+                  name="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  label="Item Category" // Ensure the label is explicitly connected
+                  required
+                >
+                  <MenuItem value="electronics">Electronics</MenuItem>
+                  <MenuItem value="it supplies">IT Supplies</MenuItem>
+                  <MenuItem value="office supplies">Office Supplies</MenuItem>
+                  <MenuItem value="janitorial supplies">Janitorial Supplies</MenuItem>
+                </Select>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -118,16 +119,19 @@ const RequestItem = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField
-              label="Quantity"
-              id="quantity"
-              name="quantity"
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              fullWidth
-              required
-            />
+          <TextField
+            label="Quantity"
+            id="quantity"
+            name="quantity"
+            type="number"
+            value={quantity}
+            onChange={(e) => {
+              const value = Math.max(0, Number(e.target.value)); // Prevent negative values
+              setQuantity(value);
+            }}
+            fullWidth
+            required
+          />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField

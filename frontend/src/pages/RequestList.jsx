@@ -113,6 +113,7 @@ const RequestList = () => {
               <TableCell>Date Requested</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Delete</TableCell>
+              <TableCell>Received</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

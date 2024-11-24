@@ -14,6 +14,7 @@ import {
   TextField,
   IconButton,
   TablePagination,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
@@ -358,7 +359,7 @@ const ElectronicsList = () => {
                 <TableCell>PO Number</TableCell>
                 <TableCell>Year-Quarter</TableCell>
                 <TableCell>Serial Number</TableCell>
-                <TableCell>Obsolete</TableCell>
+                <TableCell sx={{width: "150px"}}>Obsolete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -385,7 +386,20 @@ const ElectronicsList = () => {
                   <TextField fullWidth name="serial_number" value={newItem.serial_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Serial Number"}/>
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="obsolete" value={newItem.obsolete} onChange={handleInputChange} placeholder={editItem ? "" : "Enter if Obsolete or not"}/>
+                  <TextField
+                    select
+                    fullWidth
+                    name="obsolete"
+                    value={newItem.obsolete || ""} // Ensure a valid value
+                    onChange={handleInputChange}
+                    label="Yes or No" // Use label for clarity
+                  >
+                    <MenuItem value="" disabled>
+                      Select Obsolete Status
+                    </MenuItem>
+                    <MenuItem value="Yes">Yes</MenuItem>
+                    <MenuItem value="No">No</MenuItem>
+                  </TextField>
                 </TableCell>
               </TableRow>
             </TableBody>

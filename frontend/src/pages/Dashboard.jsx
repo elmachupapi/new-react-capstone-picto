@@ -14,17 +14,17 @@ const Dashboard = () => {
   const requestCards = [
     {
       title: "Request Item",
-      icon: <CreateIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
+      icon: <CreateIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6 }} />,
       link: "/request",
     },
     {
       title: "Request List",
-      icon: <ListIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
+      icon: <ListIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px",opacity:0.6  }} />,
       link: "/request/list",
     },
     {
       title: ["List of Requests", "from Users"],
-      icon: <ChecklistRtlIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
+      icon: <ChecklistRtlIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
       link: "/request/approvals",
     },
   ];
@@ -32,22 +32,22 @@ const Dashboard = () => {
   const itemCards = [
     {
       title: "Electronics",
-      icon: <CableIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
+      icon: <CableIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
       link: "item/electronics",
     },
     {
       title: "IT Supplies",
-      icon: <ComputerIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
+      icon: <ComputerIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
       link: "item/itsupplies",
     },
     {
       title: "Office Supplies",
-      icon: <PrintIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
+      icon: <PrintIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
       link: "/item/office",
     },
     {
       title: "Janitorial Supplies",
-      icon: <CleaningServicesIcon sx={{ fontSize: "7rem", color: "gray", position: "absolute", top: "10px", right: "10px" }} />,
+      icon: <CleaningServicesIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
       link: "/item/janitorial",
     },
   ];
@@ -183,7 +183,16 @@ const Dashboard = () => {
       <Typography variant="h5" sx={{ mt: 4 }}>
         Request Lists
       </Typography>
-      <TableContainer component={Box} sx={{ mt: 2, borderRadius: "8px", overflow: "hidden" }}>
+      <TableContainer
+        component={Box}
+        sx={{
+          mt: 2,
+          borderRadius: "8px",
+          overflow: "auto", // Enable scrolling
+          maxHeight: "320px", // Adjust this value based on row height to fit ~5 rows
+          backgroundColor: "white",
+        }}
+      >
         <Table sx={{ borderRadius: "8px" }}>
           <TableHead sx={{ backgroundColor: "#474647" }}>
             <TableRow>
@@ -204,11 +213,21 @@ const Dashboard = () => {
         </Table>
       </TableContainer>
 
+
       {/* Low Quantity Items Section */}
       <Typography variant="h5" sx={{ mt: 4 }}>
         Low Quantity Items
       </Typography>
-      <TableContainer component={Box} sx={{ mt: 2, borderRadius: "8px", overflow: "hidden" }}>
+      <TableContainer
+        component={Box}
+        sx={{
+          mt: 2,
+          borderRadius: "8px",
+          overflow: "auto", // Enable scrolling
+          maxHeight: "320px", // Adjust this value based on row height to fit ~5 rows
+          backgroundColor: "white",
+        }}
+      >
         <Table sx={{ borderRadius: "8px" }}>
           <TableHead sx={{ backgroundColor: "#e9b90b" }}>
             <TableRow>
@@ -231,7 +250,16 @@ const Dashboard = () => {
       <Typography variant="h5" sx={{ mt: 4 }}>
         Out of Stock Items
       </Typography>
-      <TableContainer component={Box} sx={{ mt: 2, borderRadius: "8px", overflow: "hidden" }}>
+      <TableContainer
+        component={Box}
+        sx={{
+          mt: 2,
+          borderRadius: "8px",
+          overflow: "auto", // Enable scrolling
+          maxHeight: "320px", // Adjust this value based on row height to fit ~5 rows
+          backgroundColor: "white",
+        }}
+      >
         <Table sx={{ borderRadius: "8px" }}>
           <TableHead sx={{ backgroundColor: "#DC4C64" }}>
             <TableRow>
