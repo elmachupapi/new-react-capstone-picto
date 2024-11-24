@@ -14,6 +14,7 @@ import {
   TextField,
   IconButton,
   TablePagination,
+  MenuItem
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
@@ -321,7 +322,7 @@ const ITSuppliesList = () => {
                 <TableCell>PO Number</TableCell>
                 <TableCell>Year-Quarter</TableCell>
                 <TableCell>Serial Number</TableCell>
-                <TableCell>Obsolete</TableCell>
+                <TableCell sx={{width: "150px"}}>Obsolete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -332,6 +333,7 @@ const ITSuppliesList = () => {
                     name="item_name"
                     value={newItem.item_name}
                     onChange={handleInputChange}
+                    placeholder={editItem ? "" : "Enter Item Description"}
                   />
                 </TableCell>
                 <TableCell>
@@ -341,6 +343,7 @@ const ITSuppliesList = () => {
                     type="number"
                     value={newItem.quantity}
                     onChange={handleInputChange}
+                    placeholder={editItem ? "" : "Enter Quantity"}
                   />
                 </TableCell>
                 <TableCell>
@@ -349,6 +352,7 @@ const ITSuppliesList = () => {
                     name="unit"
                     value={newItem.unit}
                     onChange={handleInputChange}
+                    placeholder={editItem ? "" : "Enter Unit"}
                   />
                 </TableCell>
                 <TableCell>
@@ -366,6 +370,7 @@ const ITSuppliesList = () => {
                     name="PO_number"
                     value={newItem.PO_number}
                     onChange={handleInputChange}
+                    placeholder={editItem ? "" : "Enter PO Number"}
                   />
                 </TableCell>
                 <TableCell>
@@ -374,6 +379,7 @@ const ITSuppliesList = () => {
                     name="year_quarter"
                     value={newItem.year_quarter}
                     onChange={handleInputChange}
+                    placeholder={editItem ? "" : "Enter Year-Quarter"}
                   />
                 </TableCell>
                 <TableCell>
@@ -382,15 +388,24 @@ const ITSuppliesList = () => {
                     name="serial_number"
                     value={newItem.serial_number}
                     onChange={handleInputChange}
+                    placeholder={editItem ? "" : "Enter Serial Number"}
                   />
                 </TableCell>
                 <TableCell>
                   <TextField
+                    select
                     fullWidth
                     name="obsolete"
-                    value={newItem.obsolete}
+                    value={newItem.obsolete || ""} 
                     onChange={handleInputChange}
-                  />
+                    label="Yes or No" 
+                  >
+                    <MenuItem value="" disabled>
+                      Select Obsolete Status
+                    </MenuItem>
+                    <MenuItem value="Yes">Yes</MenuItem>
+                    <MenuItem value="No">No</MenuItem>
+                  </TextField>
                 </TableCell>
               </TableRow>
             </TableBody>
