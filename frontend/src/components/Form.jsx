@@ -40,28 +40,24 @@ function Form() {
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-
+  
     try {
       if (isLogin) {
-        // Login logic
         const res = await api.post("/api/token/", { username, password });
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         localStorage.setItem("username", username);
-
-        await fetchAndSaveRole(); // Fetch and save the role after login
-
+        await fetchAndSaveRole();
         navigate("/");
       } else {
-        // Signup logic
         const payload = {
           username,
           password,
           email,
-          first_name: firstName, // Send first name
-          last_name: lastName, // Send last name
+          first_name: firstName,
+          last_name: lastName,
         };
-        await api.post("/api/register/", payload);
+        await api.post("/api/user/register/", payload);
         alert("Signup successful! Please log in.");
         setIsLogin(true); // Switch to login after successful signup
       }
@@ -71,6 +67,7 @@ function Form() {
       setLoading(false);
     }
   };
+  
 
   return (
     <Grid container sx={{ minHeight: "90vh" }}>

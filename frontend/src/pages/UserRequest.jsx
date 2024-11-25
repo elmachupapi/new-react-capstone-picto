@@ -158,16 +158,22 @@ const UserRequest = () => {
 
   const handleDeny = async (request) => {
     try {
+      // Send request to deny the request
       const response = await api.post(`/api/approvals/deny/${request.id}/`);
       if (response.status === 200) {
+        // Display success message
         alert("Request denied successfully!");
+  
+        // Add a log for the denied request
         await addRequestLog(
-          request.item_name,
-          request.RF_number,
-          "Request Denied",
+          request.item_name,             // Item name
+          request.RF_number,             // Request number
+          "Request Denied",              // Action
           localStorage.getItem("username") // Fetch admin username from local storage
         );
-        getPendingRequests(); // Refresh the request list to reflect changes
+  
+        // Refresh the request list
+        getPendingRequests();
       } else {
         alert("Failed to deny the request.");
       }

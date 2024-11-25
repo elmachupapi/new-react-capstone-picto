@@ -19,90 +19,89 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../api";
 
 const RequestList = () => {
-  // Initial sample data for the request list
-  // const initialRequests = [
-  //   { itemName: "Laptop", RF_number: "REQ-001", dateRequested: "2024-10-10", status: "Approved" },
-  //   { itemName: "Mouse", RF_number: "REQ-002", dateRequested: "2024-10-11", status: "Pending" },
-  //   { itemName: "Printer", RF_number: "REQ-003", dateRequested: "2024-10-12", status: "Denied" },
-  //   { itemName: "Broom", RF_number: "REQ-004", dateRequested: "2024-10-13", status: "Pending" },
-  // ];
-
-  // // State for request data, search term, pagination, and confirmation modal
-  // const [requests, setRequests] = useState(initialRequests);
   const [requests, setRequests] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [requestToDelete, setRequestToDelete] = useState(null);
 
-  // Filter requests based on the search term
-  const filteredRequests = requests.filter(
-    request =>
-      request.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.RF_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.status.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Handle pagination change
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  // Fetch requests from the backend
+  const getRequests = () => {
+    api
+      .get("/api/requests/")
+      .then((res) => res.data)
+      .then((data) => setRequests(data))
+      .catch((err) => alert(err));
   };
 
-  // Handle rows per page change
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  useEffect(() => {
+    getRequests();
+  }, []);
 
-  // Open the confirmation modal
-  const handleOpenConfirmDelete = (RF_number) => {
-    setRequestToDelete(RF_number);
+  // Handle search input
+  const handleSearchChange = (e) => setSearchTerm(e.target.value);
+
+  // Handle delete confirmation modal
+  const handleOpenConfirmDelete = (request) => {
+    setRequestToDelete(request);
     setConfirmDeleteOpen(true);
   };
 
-  // Close the confirmation modal
   const handleCloseConfirmDelete = () => {
     setConfirmDeleteOpen(false);
     setRequestToDelete(null);
   };
 
-  // Handle delete action
-  const handleDelete = () => {
-    setRequests(requests.filter((request) => request.RF_number !== requestToDelete));
-    handleCloseConfirmDelete();
+  // Handle delete request
+  const handleDelete = async () => {
+    try {
+      const response = await api.delete(`/api/requests/delete/${requestToDelete.id}/`);
+      if (response.status === 204) {
+        alert("Request deleted successfully!");
+        setRequests((prevRequests) =>
+          prevRequests.filter((request) => request.id !== requestToDelete.id)
+        );
+        handleCloseConfirmDelete();
+      } else {
+        alert("Failed to delete the request.");
+      }
+    } catch (error) {
+      console.error("Error deleting request:", error);
+      alert("An error occurred while trying to delete the request.");
+    }
   };
 
-  useEffect(() => {
-    getRequests();
-  }, [])
+  // Filter requests based on search
+  const filteredRequests = requests.filter(
+    (request) =>
+      request.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.RF_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const getRequests = () => {
-    api
-      .get("/api/requests/")
-      .then((res) => res.data)
-      .then((data) => {setRequests(data); console.log(data)})
-      .catch((err) => alert(err));
-  }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toISOString().split("T")[0];
+  // Pagination controls
+  const handleChangePage = (event, newPage) => setPage(newPage);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
+
+  const formatDate = (dateString) => new Date(dateString).toISOString().split("T")[0];
 
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
       <Typography variant="h4" gutterBottom>
         Request List
       </Typography>
-      {/* Search Input */}
       <TextField
         label="Search by Item Name, Request Number, or Status"
         variant="outlined"
         fullWidth
         margin="normal"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        sx={{ width: '400px', mt: -1, backgroundColor: 'white' }}
+        onChange={handleSearchChange}
+        sx={{ width: "400px", mt: -1, backgroundColor: "white" }}
       />
       <TableContainer component={Paper}>
         <Table>
@@ -128,13 +127,12 @@ const RequestList = () => {
                   <TableCell>
                     <IconButton
                       color="error"
-                      onClick={() => handleOpenConfirmDelete(request.RF_number)}
+                      onClick={() => handleOpenConfirmDelete(request)}
                     >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    {/* Conditionally show the button if the status is "approved" */}
                     {request.status.toLowerCase() === "approved" && (
                       <Button
                         variant="contained"
@@ -150,7 +148,6 @@ const RequestList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* Pagination Component */}
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
@@ -160,19 +157,18 @@ const RequestList = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      {/* Confirmation Modal */}
       <Modal open={confirmDeleteOpen} onClose={handleCloseConfirmDelete}>
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
             width: 400,
-            bgcolor: 'background.paper',
+            bgcolor: "background.paper",
             boxShadow: 24,
             p: 4,
-            textAlign: 'center',
+            textAlign: "center",
           }}
         >
           <Typography variant="h6" gutterBottom>

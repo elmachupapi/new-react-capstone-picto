@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, serializers
-from .serializers import UserSerializer, RequestSerializer, ElectronicsSerializer, ITSuppliesSerializer, OfficeSerializer, JanitorialSerializer, RequestLogSerializer, ItemLogSerializer, ProfileSerializer
+from .serializers import UserSerializer, RequestSerializer, ElectronicsSerializer, ITSuppliesSerializer, OfficeSerializer, JanitorialSerializer, RequestLogSerializer, ItemLogSerializer, ProfileSerializer, UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Request, Electronics, ITSupplies, Office, Janitorial, RequestLogs, ItemLogs, Profile
 from rest_framework.response import Response
@@ -33,10 +33,18 @@ class RequestDelete(generics.DestroyAPIView):
         return Request.objects.filter(requestor = user)
 
 
-class CreateUserView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class CreateUserView(APIView):
     permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "User created successfully!"}, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
@@ -319,4 +327,27 @@ class DenyRequestView(APIView):
         request_obj.status = "Denied"
         request_obj.save()
 
+        # Create a request log
+        RequestLogs.objects.create(
+            item_name=request_obj.item_name,
+            requestor=request_obj.requestor.username,  # Assuming `requestor` is a User object
+            request_number=request_obj.RF_number,
+            action="Request Denied",
+            admin=request.user.username if request.user.is_authenticated else None,
+        )
+
         return Response({"message": "Request denied successfully!"})
+
+class UserProfileListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        profiles = Profile.objects.select_related('user')
+        serializer = UserProfileSerializer(profiles, many=True)
+        return Response(serializer.data)
+    
+class UserProfileUpdateView(generics.UpdateAPIView):
+    queryset = Profile.objects.select_related('user')
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'user__username'  # Allows us to filter by username

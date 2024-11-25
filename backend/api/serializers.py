@@ -5,12 +5,22 @@ from .models import Request, Electronics, ITSupplies, Office, Janitorial, Reques
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "password"]
-        extra_kwargs = {"password": {"write_only": True}}
+        fields = ["id", "username", "password", "first_name", "last_name", "email"]
+        extra_kwargs = {
+            "password": {"write_only": True},  # Hide password from responses
+        }
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
+        # Use `create_user` for proper password hashing
+        user = User.objects.create_user(
+            username=validated_data["username"],
+            password=validated_data["password"],
+            first_name=validated_data.get("first_name", ""),
+            last_name=validated_data.get("last_name", ""),
+            email=validated_data.get("email", ""),
+        )
         return user
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -85,5 +95,14 @@ class ItemLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemLogs
         fields = ["id", "item_name", "date", "action", "current_quantity"]
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    name = serializers.CharField(source='user.get_full_name', read_only=True)
+    
+    class Meta:
+        model = Profile
+        fields = ['username', 'name', 'role']
 
 

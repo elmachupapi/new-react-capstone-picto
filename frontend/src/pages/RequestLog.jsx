@@ -74,7 +74,8 @@ const RequestLog = () => {
           <TableHead>
             <TableRow>
               <TableCell>Requestor</TableCell>
-              <TableCell>Request Number</TableCell>
+              <TableCell>RF Number</TableCell>
+              <TableCell>Item Description</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Action</TableCell>
               <TableCell>Admin</TableCell>
@@ -84,9 +85,10 @@ const RequestLog = () => {
             {filteredLogs
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((log) => (
-                <TableRow key={log.request_number}>
+                <TableRow key={log.id}>
                   <TableCell>{log.requestor}</TableCell>
                   <TableCell>{log.request_number}</TableCell>
+                  <TableCell>{log.item_name}</TableCell>
                   <TableCell>
                     {new Date(log.date).toISOString().split("T")[0]} {/* Format date */}
                   </TableCell>

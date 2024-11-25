@@ -1,30 +1,45 @@
-import { Box, Card, CardContent, Grid, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Grid,
+  Card,
+  CardContent,
+} from "@mui/material";
 import ListIcon from "@mui/icons-material/List";
-import CableIcon from '@mui/icons-material/Cable';
-import ComputerIcon from '@mui/icons-material/Computer';
+import CableIcon from "@mui/icons-material/Cable";
+import ComputerIcon from "@mui/icons-material/Computer";
 import CreateIcon from "@mui/icons-material/Create";
-import PrintIcon from '@mui/icons-material/Print';
-import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
-import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
-import { Link } from 'react-router-dom';
-import { useState, useEffect } from "react";
+import PrintIcon from "@mui/icons-material/Print";
+import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
+import ChecklistRtlIcon from "@mui/icons-material/ChecklistRtl";
+import { Link } from "react-router-dom";
 import api from "../api";
 
 const Dashboard = () => {
   const requestCards = [
     {
       title: "Request Item",
-      icon: <CreateIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6 }} />,
+      icon: <CreateIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "/request",
     },
     {
       title: "Request List",
-      icon: <ListIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px",opacity:0.6  }} />,
+      icon: <ListIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "/request/list",
     },
+  ];
+
+  const adminRequestCards = [
     {
       title: ["List of Requests", "from Users"],
-      icon: <ChecklistRtlIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
+      icon: <ChecklistRtlIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "/request/approvals",
     },
   ];
@@ -32,63 +47,72 @@ const Dashboard = () => {
   const itemCards = [
     {
       title: "Electronics",
-      icon: <CableIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
+      icon: <CableIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "item/electronics",
     },
     {
       title: "IT Supplies",
-      icon: <ComputerIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
+      icon: <ComputerIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "item/itsupplies",
     },
     {
       title: "Office Supplies",
-      icon: <PrintIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
+      icon: <PrintIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "/item/office",
     },
     {
       title: "Janitorial Supplies",
-      icon: <CleaningServicesIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity:0.6  }} />,
+      icon: <CleaningServicesIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "/item/janitorial",
     },
   ];
 
-  const requestsList = [
-    { name: "Laptop", number: "REQ-001", date: "2024-10-10" },
-    { name: "Mouse", number: "REQ-002", date: "2024-10-11" },
-    { name: "Printer", number: "REQ-003", date: "2024-10-12" },
-    { name: "Broom", number: "REQ-004", date: "2024-10-13" },
-  ];
-
-  // Low quantity items data
-  const lowQuantityItems = [
-    { name: "Keyboard", quantity: 5 },
-    { name: "Stapler", quantity: 2 },
-    { name: "Notebook", quantity: 1 },
-  ];
-
   const [requests, setRequests] = useState([]);
+  const [lowQuantityItems, setLowQuantityItems] = useState([]);
+  const [outOfStockItems, setOutOfStockItems] = useState([]);
+  const [userRole, setUserRole] = useState("viewer"); // Default role
 
   useEffect(() => {
-    getRequests();
-  }, [])
+    const role = localStorage.getItem("role") || "viewer";
+    setUserRole(role);
+    fetchRequests();
+    fetchLowQuantityItems();
+    fetchOutOfStockItems();
+  }, []);
 
-  const getRequests = () => {
+  const fetchRequests = () => {
     api
       .get("/api/requests/")
       .then((res) => res.data)
-      .then((data) => {setRequests(data); console.log(data)})
+      .then((data) => setRequests(data))
       .catch((err) => alert(err));
-  }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toISOString().split("T")[0];
   };
+
+  const fetchLowQuantityItems = () => {
+    api
+      .get("api/item/dashboard/lowquantity/")
+      .then((res) => res.data)
+      .then((data) => setLowQuantityItems(data))
+      .catch((err) => alert(err));
+  };
+
+  const fetchOutOfStockItems = () => {
+    api
+      .get("api/item/dashboard/zeroquantity/")
+      .then((res) => res.data)
+      .then((data) => setOutOfStockItems(data))
+      .catch((err) => alert(err));
+  };
+
+  const formatDate = (dateString) => new Date(dateString).toISOString().split("T")[0];
 
   return (
     <Box sx={{ mt: 8 }}>
       <Typography variant="h5" gutterBottom>
         Request List
       </Typography>
+
+      {/* Request Cards */}
       <Grid container spacing={2}>
         {requestCards.map((card, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
@@ -106,36 +130,21 @@ const Dashboard = () => {
               >
                 <CardContent>
                   <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Box>
-                      {Array.isArray(card.title) ? (
-                        card.title.map((line, i) => (
-                          <Typography key={i} variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
-                            {line}
-                          </Typography>
-                        ))
-                      ) : (
-                        <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
-                          {card.title}
-                        </Typography>
-                      )}
-                    </Box>
+                    <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
+                      {card.title}
+                    </Typography>
                     {card.icon}
                   </Box>
-                  <Typography variant="h4" sx={{ fontSize: "1rem" }}>{card.value}</Typography>
                 </CardContent>
               </Card>
             </Link>
           </Grid>
         ))}
-      </Grid>
 
-      <Typography variant="h5" sx={{ mt: 4 }}>
-        Item List
-      </Typography>
-      <Grid container spacing={2} sx={{ mt: .5 }}>
-        {itemCards.map((card, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <Link to={card.link || "#"} style={{ textDecoration: "none" }}>
+        {/* Admin-Specific Request Cards */}
+        {userRole !== "viewer" && adminRequestCards.map((card, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Link to={card.link} style={{ textDecoration: "none" }}>
               <Card
                 sx={{
                   height: "150px",
@@ -149,30 +158,19 @@ const Dashboard = () => {
               >
                 <CardContent>
                   <Box display="flex" justifyContent="space-between" alignItems="center">
-                    {card.title === "Office Supplies" || card.title === "Janitorial Supplies" ? (
-                      <Box>
-                        <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
-                          {card.title.split(" ")[0]}
+                    {Array.isArray(card.title) ? (
+                      card.title.map((line, i) => (
+                        <Typography key={i} variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
+                          {line}
                         </Typography>
-                        <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
-                          {card.title.split(" ")[1]}
-                        </Typography>
-                      </Box>
+                      ))
                     ) : (
-                      <Typography
-                        variant="subtitle1"
-                        sx={{
-                          fontSize: (
-                            card.title === "Electronics" || card.title === "IT Supplies"
-                          ) ? "1.7rem" : "1rem"
-                        }}
-                      >
+                      <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
                         {card.title}
                       </Typography>
                     )}
                     {card.icon}
                   </Box>
-                  <Typography variant="h4" sx={{ fontSize: "1rem" }}>{card.value}</Typography>
                 </CardContent>
               </Card>
             </Link>
@@ -180,6 +178,47 @@ const Dashboard = () => {
         ))}
       </Grid>
 
+      {/* Item Cards */}
+      {userRole !== "viewer" && (
+        <>
+          <Typography variant="h5" sx={{ mt: 4 }}>
+            Item List
+          </Typography>
+          <Grid container spacing={2} sx={{ mt: 0.5 }}>
+            {itemCards.map((card, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Link to={card.link || "#"} style={{ textDecoration: "none" }}>
+                  <Card
+                    sx={{
+                      height: "150px",
+                      position: "relative",
+                      transition: "0.3s ease",
+                      "&:hover": {
+                        boxShadow: 3,
+                        transform: "scale(1.05)",
+                      },
+                    }}
+                  >
+                    <CardContent>
+                      <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <Typography
+                          variant="subtitle1"
+                          sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}
+                        >
+                          {card.title}
+                        </Typography>
+                        {card.icon}
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      )}
+
+      {/* Request Lists Section */}
       <Typography variant="h5" sx={{ mt: 4 }}>
         Request Lists
       </Typography>
@@ -188,8 +227,8 @@ const Dashboard = () => {
         sx={{
           mt: 2,
           borderRadius: "8px",
-          overflow: "auto", // Enable scrolling
-          maxHeight: "320px", // Adjust this value based on row height to fit ~5 rows
+          overflow: "auto",
+          maxHeight: "320px",
           backgroundColor: "white",
         }}
       >
@@ -213,68 +252,75 @@ const Dashboard = () => {
         </Table>
       </TableContainer>
 
+      {/* Low Quantity Items */}
+      {userRole !== "viewer" && (
+        <>
+          <Typography variant="h5" sx={{ mt: 4 }}>
+            Low Quantity Items
+          </Typography>
+          <TableContainer
+            component={Box}
+            sx={{
+              mt: 2,
+              borderRadius: "8px",
+              overflow: "auto",
+              maxHeight: "320px",
+              backgroundColor: "white",
+            }}
+          >
+            <Table sx={{ borderRadius: "8px" }}>
+              <TableHead sx={{ backgroundColor: "#e9b90b" }}>
+                <TableRow>
+                  <TableCell sx={{ color: "white" }}>Item Description</TableCell>
+                  <TableCell sx={{ color: "white" }}>Quantity</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {lowQuantityItems.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{item.item_name}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      )}
 
-      {/* Low Quantity Items Section */}
-      <Typography variant="h5" sx={{ mt: 4 }}>
-        Low Quantity Items
-      </Typography>
-      <TableContainer
-        component={Box}
-        sx={{
-          mt: 2,
-          borderRadius: "8px",
-          overflow: "auto", // Enable scrolling
-          maxHeight: "320px", // Adjust this value based on row height to fit ~5 rows
-          backgroundColor: "white",
-        }}
-      >
-        <Table sx={{ borderRadius: "8px" }}>
-          <TableHead sx={{ backgroundColor: "#e9b90b" }}>
-            <TableRow>
-              <TableCell sx={{ color: "white" }}>Item Description</TableCell>
-              <TableCell sx={{ color: "white" }}>Quantity</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {lowQuantityItems.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* Out of stock Items Section */}
-      <Typography variant="h5" sx={{ mt: 4 }}>
-        Out of Stock Items
-      </Typography>
-      <TableContainer
-        component={Box}
-        sx={{
-          mt: 2,
-          borderRadius: "8px",
-          overflow: "auto", // Enable scrolling
-          maxHeight: "320px", // Adjust this value based on row height to fit ~5 rows
-          backgroundColor: "white",
-        }}
-      >
-        <Table sx={{ borderRadius: "8px" }}>
-          <TableHead sx={{ backgroundColor: "#DC4C64" }}>
-            <TableRow>
-              <TableCell sx={{ color: "white" }}>Item Description</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {lowQuantityItems.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell>{item.name}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {/* Out of Stock Items */}
+      {userRole !== "viewer" && (
+        <>
+          <Typography variant="h5" sx={{ mt: 4 }}>
+            Out of Stock Items
+          </Typography>
+          <TableContainer
+            component={Box}
+            sx={{
+              mt: 2,
+              borderRadius: "8px",
+              overflow: "auto",
+              maxHeight: "320px",
+              backgroundColor: "white",
+            }}
+          >
+            <Table sx={{ borderRadius: "8px" }}>
+              <TableHead sx={{ backgroundColor: "#DC4C64" }}>
+                <TableRow>
+                  <TableCell sx={{ color: "white" }}>Item Description</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {outOfStockItems.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{item.item_name}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      )}
     </Box>
   );
 };

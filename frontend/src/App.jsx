@@ -75,7 +75,7 @@ function App() {
               <Route path="/request/approvals" element={<ProtectedRoute><UserRequest /></ProtectedRoute>} />
               <Route path="/logs/request" element={<ProtectedRoute><RequestLog /></ProtectedRoute>} />
               <Route path="/logs/item" element={<ProtectedRoute><ItemLog /></ProtectedRoute>} />
-              <Route path="/accounts" element={<ProtectedRoute></ProtectedRoute>} />
+              <Route path="/accounts" element={<ProtectedRoute><Accounts /></ProtectedRoute>} />
               <Route path="/signup" element={<SignupAndLogout />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

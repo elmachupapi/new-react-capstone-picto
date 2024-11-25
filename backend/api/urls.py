@@ -31,7 +31,10 @@ urlpatterns = [
     path("item/dashboard/lowquantity/", views.ListCombinedLowItems.as_view(), name = "low-items"),
     path("item/dashboard/zeroquantity/", views.ListZeroItems.as_view(), name = "zero-items"),
 
-     path('profile/', views.ProfileDetailView.as_view(), name='profile-detail'),
-     path('profile/view/', views.ProfileListView.as_view(), name='profile-list'),
+    path('profile/', views.ProfileDetailView.as_view(), name='profile-detail'),
+    path('profile/view/', views.ProfileListView.as_view(), name='profile-list'),
+
+    path('accounts/', views.UserProfileListView.as_view(), name='accounts-list'),
+    path('accounts/<str:user__username>/', views.UserProfileUpdateView.as_view(), name='user-profile-update'),
 
 ]
