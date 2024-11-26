@@ -9,6 +9,7 @@ import {
   Box,
   ListItemIcon,
   Collapse,
+  Badge,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import SpeedIcon from "@mui/icons-material/Speed";
@@ -19,16 +20,30 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HistoryIcon from "@mui/icons-material/History";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import logo from "./PGC logo.png";
+import api from "../api";
 
 const Sidebar = ({ drawerWidth }) => {
   const [openSection, setOpenSection] = useState(null);
   const [role, setRole] = useState(null); // Store the user's role
+  const [pendingCount, setPendingCount] = useState(0); // Store the pending requests count
 
   useEffect(() => {
     // Retrieve the role from localStorage
     const userRole = localStorage.getItem("role");
     setRole(userRole);
+
+    // Fetch the number of pending requests
+    fetchPendingCount();
   }, []);
+
+  const fetchPendingCount = async () => {
+    try {
+      const response = await api.get("/api/requests/list/pending/");
+      setPendingCount(response.data.length); // Update the count based on the array length
+    } catch (error) {
+      console.error("Error fetching pending requests:", error);
+    }
+  };
 
   const handleToggle = (section) => {
     setOpenSection((prevOpenSection) =>
@@ -95,56 +110,58 @@ const Sidebar = ({ drawerWidth }) => {
           <ListItemText primary="Dashboard" sx={{ ml: -2, color: "gray" }} />
         </ListItem>
 
-        {/* Show Requests Section if not "viewer" */}
-        {(role === "viewer" || role !== null) && (
-          <>
-            <ListItem button onClick={() => handleToggle("requests")}>
-              <ListItemIcon>
-                <RequestPageIcon />
-              </ListItemIcon>
-              <ListItemText primary="Requests" sx={{ ml: -2, color: "gray" }} />
-              {openSection === "requests" ? (
-                <ExpandLessIcon sx={{ color: "gray" }} />
-              ) : (
-                <ExpandMoreIcon sx={{ color: "gray" }} />
-              )}
+        {/* Show Requests Section */}
+        <ListItem button onClick={() => handleToggle("requests")}>
+          <ListItemIcon>
+            <RequestPageIcon />
+          </ListItemIcon>
+          <ListItemText primary="Requests" sx={{ ml: -2, color: "gray" }} />
+          {openSection === "requests" ? (
+            <ExpandLessIcon sx={{ color: "gray" }} />
+          ) : (
+            <ExpandMoreIcon sx={{ color: "gray" }} />
+          )}
+        </ListItem>
+        <Collapse
+          in={openSection === "requests"}
+          timeout="auto"
+          unmountOnExit
+        >
+          <List component="div" disablePadding>
+            <ListItem button component={Link} to="/request" sx={{ pl: 7 }}>
+              <ListItemText primary="Request Item" sx={{ color: "gray" }} />
             </ListItem>
-            <Collapse
-              in={openSection === "requests"}
-              timeout="auto"
-              unmountOnExit
+            <ListItem
+              button
+              component={Link}
+              to="/request/list"
+              sx={{ pl: 7 }}
             >
-              <List component="div" disablePadding>
-                <ListItem button component={Link} to="/request" sx={{ pl: 7 }}>
-                  <ListItemText primary="Request Item" sx={{ color: "gray" }} />
-                </ListItem>
-                <ListItem
-                  button
-                  component={Link}
-                  to="/request/list"
-                  sx={{ pl: 7 }}
+              <ListItemText primary="Request List" sx={{ color: "gray" }} />
+            </ListItem>
+            {role !== "viewer" && (
+              <ListItem
+                button
+                component={Link}
+                to="/request/approvals"
+                sx={{ pl: 7 }}
+              >
+                <Badge
+                  badgeContent={pendingCount}
+                  color="error"
+                  sx={{ "& .MuiBadge-badge": { right: -75, top: 13 } }} // Adjust badge position
                 >
-                  <ListItemText primary="Request List" sx={{ color: "gray" }} />
-                </ListItem>
-                {role !== "viewer" && (
-                  <ListItem
-                    button
-                    component={Link}
-                    to="/request/approvals"
-                    sx={{ pl: 7 }}
-                  >
-                    <ListItemText
-                      primary="Approvals"
-                      sx={{ color: "gray" }}
-                    />
-                  </ListItem>
-                )}
-              </List>
-            </Collapse>
-          </>
-        )}
+                  <ListItemText
+                    primary="Approvals"
+                    sx={{ color: "gray" }}
+                  />
+                </Badge>
+              </ListItem>
+            )}
+          </List>
+        </Collapse>
 
-        {/* Show Items Section if not "viewer" */}
+        {/* Show Items Section */}
         {role !== "viewer" && (
           <>
             <ListItem button onClick={() => handleToggle("items")}>
@@ -200,7 +217,7 @@ const Sidebar = ({ drawerWidth }) => {
           </>
         )}
 
-        {/* Show Logs Section if not "viewer" */}
+        {/* Show Logs Section */}
         {role !== "viewer" && (
           <>
             <ListItem button onClick={() => handleToggle("logs")}>
@@ -240,7 +257,7 @@ const Sidebar = ({ drawerWidth }) => {
           </>
         )}
 
-        {/* Show Accounts Section if not "viewer" */}
+        {/* Show Accounts Section */}
         {role === "superadmin" && (
           <ListItem button component={Link} to="/accounts">
             <ListItemIcon>
