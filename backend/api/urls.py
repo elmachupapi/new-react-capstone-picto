@@ -37,4 +37,6 @@ urlpatterns = [
     path('accounts/', views.UserProfileListView.as_view(), name='accounts-list'),
     path('accounts/<str:user__username>/', views.UserProfileUpdateView.as_view(), name='user-profile-update'),
 
+    path('reports/total-vs-approved-vs-pending/', views.InventoryComparisonView.as_view(), name='report-total-vs-approved-vs-pending'),
+
 ]

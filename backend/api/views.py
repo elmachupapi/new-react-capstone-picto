@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Sum
 from django.contrib.auth.models import User
 from rest_framework import generics, serializers
 from .serializers import UserSerializer, RequestSerializer, ElectronicsSerializer, ITSuppliesSerializer, OfficeSerializer, JanitorialSerializer, RequestLogSerializer, ItemLogSerializer, ProfileSerializer, UserProfileSerializer
@@ -351,3 +352,64 @@ class UserProfileUpdateView(generics.UpdateAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = 'user__username'  # Allows us to filter by username
+
+class InventoryComparisonView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, *args, **kwargs):
+        # Electronics Quantity Aggregation
+        electronics_quantity = Electronics.objects.values('item_name').annotate(current_quantity=Sum('quantity'))
+        electronics_approved_requests = Request.objects.filter(status="Approved", category="Electronics").values('item_name').annotate(approved_request_count=Sum('quantity'))
+        electronics_pending_requests = Request.objects.filter(status="Pending", category="Electronics").values('item_name').annotate(pending_request_count=Sum('quantity'))
+
+        # IT Supplies Quantity Aggregation
+        it_supplies_quantity = ITSupplies.objects.values('item_name').annotate(current_quantity=Sum('quantity'))
+        it_supplies_approved_requests = Request.objects.filter(status="Approved", category="IT Supplies").values('item_name').annotate(approved_request_count=Sum('quantity'))
+        it_supplies_pending_requests = Request.objects.filter(status="Pending", category="IT Supplies").values('item_name').annotate(pending_request_count=Sum('quantity'))
+
+        # Office Supplies Quantity Aggregation
+        office_supplies_quantity = Office.objects.values('item_name').annotate(current_quantity=Sum('quantity'))
+        office_supplies_approved_requests = Request.objects.filter(status="Approved", category="Office Supplies").values('item_name').annotate(approved_request_count=Sum('quantity'))
+        office_supplies_pending_requests = Request.objects.filter(status="Pending", category="Office Supplies").values('item_name').annotate(pending_request_count=Sum('quantity'))
+
+        # Janitorial Supplies Quantity Aggregation
+        janitorial_supplies_quantity = Janitorial.objects.values('item_name').annotate(current_quantity=Sum('quantity'))
+        janitorial_supplies_approved_requests = Request.objects.filter(status="Approved", category="Janitorial Supplies").values('item_name').annotate(approved_request_count=Sum('quantity'))
+        janitorial_supplies_pending_requests = Request.objects.filter(status="Pending", category="Janitorial Supplies").values('item_name').annotate(pending_request_count=Sum('quantity'))
+
+        # Combine results for each category
+        def get_item_comparison(item_quantity, approved_requests, pending_requests):
+            comparison = []
+            for item in item_quantity:
+                # Get approved and pending request counts for each item
+                approved_for_item = next((request for request in approved_requests if request['item_name'] == item['item_name']), None)
+                pending_for_item = next((request for request in pending_requests if request['item_name'] == item['item_name']), None)
+
+                # The total quantity is current quantity + approved requests
+                item['total_quantity'] = item['current_quantity'] + (approved_for_item['approved_request_count'] if approved_for_item else 0)
+                
+                # Remaining quantity is just the current quantity
+                item['remaining_quantity'] = item['current_quantity']
+                
+                # Number of pending requests
+                item['pending_requests'] = pending_for_item['pending_request_count'] if pending_for_item else 0
+
+                comparison.append(item)
+            return comparison
+
+        # Get the combined data for each category
+        electronics_comparison = get_item_comparison(electronics_quantity, electronics_approved_requests, electronics_pending_requests)
+        it_supplies_comparison = get_item_comparison(it_supplies_quantity, it_supplies_approved_requests, it_supplies_pending_requests)
+        office_supplies_comparison = get_item_comparison(office_supplies_quantity, office_supplies_approved_requests, office_supplies_pending_requests)
+        janitorial_supplies_comparison = get_item_comparison(janitorial_supplies_quantity, janitorial_supplies_approved_requests, janitorial_supplies_pending_requests)
+
+        # Prepare the response data
+        response_data = {
+            "electronics": electronics_comparison,
+            "it_supplies": it_supplies_comparison,
+            "office_supplies": office_supplies_comparison,
+            "janitorial_supplies": janitorial_supplies_comparison
+        }
+
+        # Return the data as a response
+        return Response(response_data, status=status.HTTP_200_OK)
+
