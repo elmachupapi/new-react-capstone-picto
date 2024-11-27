@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";  // Import your axios instance with interceptor
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from "@mui/material";
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, MenuItem, Select, FormControl, InputLabel, CircularProgress } from "@mui/material";
 import { jsPDF } from "jspdf";  // Import jsPDF for PDF generation
 
 const InventoryComparison = () => {
   const [inventoryData, setInventoryData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState("");  // State to store selected item name
+  const [filteredData, setFilteredData] = useState({
+    electronics: [],
+    it_supplies: [],
+    office_supplies: [],
+    janitorial_supplies: [],
+  });  // State to store filtered inventory data based on selected item
+  const [itemsList, setItemsList] = useState([]);  // List of all items to populate the select dropdown
 
   useEffect(() => {
     // Fetch data using the API instance with interceptors
@@ -14,12 +22,51 @@ const InventoryComparison = () => {
       .then((response) => {
         setInventoryData(response.data);
         setLoading(false);
+        
+        // Collect all unique item names across all categories
+        const allItems = [
+          ...response.data.electronics,
+          ...response.data.it_supplies,
+          ...response.data.office_supplies,
+          ...response.data.janitorial_supplies,
+        ];
+        const itemNames = [...new Set(allItems.map((item) => item.item_name))];  // Remove duplicates
+        setItemsList(itemNames);
+
+        // Filter data initially when the page loads (if needed)
+        filterDataByItem("");  // Initially, show all items (empty filter)
       })
       .catch((error) => {
         console.error("Error fetching inventory data:", error);
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    // Every time the selectedItem changes, filter the data
+    filterDataByItem(selectedItem);
+  }, [selectedItem]);
+
+  const filterDataByItem = (itemName) => {
+    if (!itemName) {
+      // If no item is selected, display all items
+      setFilteredData({
+        electronics: inventoryData?.electronics || [],
+        it_supplies: inventoryData?.it_supplies || [],
+        office_supplies: inventoryData?.office_supplies || [],
+        janitorial_supplies: inventoryData?.janitorial_supplies || [],
+      });
+    } else {
+      // Filter data for the selected item
+      const filterItems = (categoryItems) => categoryItems.filter(item => item.item_name === itemName);
+      setFilteredData({
+        electronics: filterItems(inventoryData?.electronics || []),
+        it_supplies: filterItems(inventoryData?.it_supplies || []),
+        office_supplies: filterItems(inventoryData?.office_supplies || []),
+        janitorial_supplies: filterItems(inventoryData?.janitorial_supplies || []),
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -43,19 +90,24 @@ const InventoryComparison = () => {
               <TableCell align="right">Current Quantity</TableCell>
               <TableCell align="right">Total Quantity</TableCell>
               <TableCell align="right">Pending Requests</TableCell>
+              <TableCell align="right">Total Requests</TableCell> {/* Added the column for Total Requests */}
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.item_name}>
-                <TableCell component="th" scope="row">
-                  {item.item_name}
-                </TableCell>
-                <TableCell align="right">{item.remaining_quantity}</TableCell>
-                <TableCell align="right">{item.total_quantity}</TableCell>
-                <TableCell align="right">{item.pending_requests}</TableCell>
-              </TableRow>
-            ))}
+            {items.map((item) => {
+              const totalRequests = item.pending_requests + (item.approved_requests || 0);  // Calculate total requests
+              return (
+                <TableRow key={item.item_name}>
+                  <TableCell component="th" scope="row">
+                    {item.item_name}
+                  </TableCell>
+                  <TableCell align="right">{item.remaining_quantity}</TableCell>
+                  <TableCell align="right">{item.total_quantity}</TableCell>
+                  <TableCell align="right">{item.pending_requests}</TableCell>
+                  <TableCell align="right">{totalRequests}</TableCell> {/* Display the total requests */}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -83,35 +135,38 @@ const InventoryComparison = () => {
       doc.text("Current Quantity", 120, yOffset);
       doc.text("Total Quantity", 180, yOffset);
       doc.text("Pending Requests", 250, yOffset);
+      doc.text("Total Requests", 320, yOffset);  // Added Total Requests to the header
       yOffset += 10;
 
       // Table content
       doc.setFont("Helvetica", 10);
       items.forEach((item) => {
+        const totalRequests = item.pending_requests + (item.approved_requests || 0);  // Calculate total requests
         doc.text(item.item_name, 20, yOffset);
         doc.text(String(item.remaining_quantity), 120, yOffset);
         doc.text(String(item.total_quantity), 180, yOffset);
         doc.text(String(item.pending_requests), 250, yOffset);
+        doc.text(String(totalRequests), 320, yOffset);  // Display Total Requests in PDF
         yOffset += 10;
       });
     };
 
     // Add tables for each category
-    if (inventoryData.electronics) {
-      drawTable("Electronics", inventoryData.electronics);
+    if (filteredData.electronics.length > 0) {
+      drawTable("Electronics", filteredData.electronics);
     }
-    if (inventoryData.it_supplies) {
-      drawTable("IT Supplies", inventoryData.it_supplies);
+    if (filteredData.it_supplies.length > 0) {
+      drawTable("IT Supplies", filteredData.it_supplies);
     }
-    if (inventoryData.office_supplies) {
-      drawTable("Office Supplies", inventoryData.office_supplies);
+    if (filteredData.office_supplies.length > 0) {
+      drawTable("Office Supplies", filteredData.office_supplies);
     }
-    if (inventoryData.janitorial_supplies) {
-      drawTable("Janitorial Supplies", inventoryData.janitorial_supplies);
+    if (filteredData.janitorial_supplies.length > 0) {
+      drawTable("Janitorial Supplies", filteredData.janitorial_supplies);
     }
 
     // Save the PDF to the client's browser
-    doc.save("inventory_comparison_report.pdf");
+    doc.save(`${selectedItem}_inventory_comparison_report.pdf`);
   };
 
   return (
@@ -120,16 +175,33 @@ const InventoryComparison = () => {
         Inventory Comparison Report
       </Typography>
 
+      {/* Dropdown to select item */}
+      <FormControl fullWidth sx={{ marginBottom: "20px" }}>
+        <InputLabel>Choose Item</InputLabel>
+        <Select
+          value={selectedItem}
+          label="Choose Item"
+          onChange={(e) => setSelectedItem(e.target.value)}
+        >
+          <MenuItem value="">All Items</MenuItem>
+          {itemsList.map((itemName) => (
+            <MenuItem key={itemName} value={itemName}>
+              {itemName}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       {/* Export to PDF Button */}
       <Button variant="contained" color="primary" onClick={exportToPDF} sx={{ marginBottom: "20px" }}>
         Export to PDF
       </Button>
 
-      {/* Render tables for each category */}
-      {inventoryData.electronics && renderTable("Electronics", inventoryData.electronics)}
-      {inventoryData.it_supplies && renderTable("IT Supplies", inventoryData.it_supplies)}
-      {inventoryData.office_supplies && renderTable("Office Supplies", inventoryData.office_supplies)}
-      {inventoryData.janitorial_supplies && renderTable("Janitorial Supplies", inventoryData.janitorial_supplies)}
+      {/* Render filtered tables for each category */}
+      {filteredData.electronics.length > 0 && renderTable("Electronics", filteredData.electronics)}
+      {filteredData.it_supplies.length > 0 && renderTable("IT Supplies", filteredData.it_supplies)}
+      {filteredData.office_supplies.length > 0 && renderTable("Office Supplies", filteredData.office_supplies)}
+      {filteredData.janitorial_supplies.length > 0 && renderTable("Janitorial Supplies", filteredData.janitorial_supplies)}
     </Box>
   );
 };
