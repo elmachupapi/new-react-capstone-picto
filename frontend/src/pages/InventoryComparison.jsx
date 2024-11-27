@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../api";  // Import your axios instance with interceptor
+import api from "../api"; // Import your axios instance with interceptor
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 
 const InventoryComparison = () => {
@@ -42,6 +42,7 @@ const InventoryComparison = () => {
               <TableCell align="right">Current Quantity</TableCell>
               <TableCell align="right">Total Quantity</TableCell>
               <TableCell align="right">Pending Requests</TableCell>
+              <TableCell align="right">Total Requests</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -53,6 +54,7 @@ const InventoryComparison = () => {
                 <TableCell align="right">{item.remaining_quantity}</TableCell>
                 <TableCell align="right">{item.total_quantity}</TableCell>
                 <TableCell align="right">{item.pending_requests}</TableCell>
+                <TableCell align="right">{item.request_count}</TableCell> {/* Total requests including all statuses */}
               </TableRow>
             ))}
           </TableBody>
