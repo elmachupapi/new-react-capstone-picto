@@ -22,6 +22,7 @@ const InventoryComparison = () => {
       .then((response) => {
         setInventoryData(response.data);
         setLoading(false);
+        console.log(response.data);
         
         // Collect all unique item names across all categories
         const allItems = [
@@ -104,7 +105,7 @@ const InventoryComparison = () => {
                   <TableCell align="right">{item.remaining_quantity}</TableCell>
                   <TableCell align="right">{item.total_quantity}</TableCell>
                   <TableCell align="right">{item.pending_requests}</TableCell>
-                  <TableCell align="right">{totalRequests}</TableCell> {/* Display the total requests */}
+                  <TableCell align="right">{item.request_count}</TableCell> {/* Display the total requests */}
                 </TableRow>
               );
             })}
@@ -116,42 +117,67 @@ const InventoryComparison = () => {
 
   // Function to export the data to PDF
   const exportToPDF = () => {
-    const doc = new jsPDF();
-
-    doc.setFont("Helvetica-Bold", 16);
-    doc.text("Inventory Comparison Report", 20, 20);
-
-    let yOffset = 30;  // Starting position for the tables
-
+    const doc = new jsPDF("landscape");  // Set the orientation to landscape
+    const pageWidth = doc.internal.pageSize.width; // Get the page width (landscape orientation)
+    const pageHeight = doc.internal.pageSize.height; // Get the page height
+    let yOffset = 30; // Starting position for the first table
+    
+    doc.setFont("helvetica", "bold"); // Using Helvetica with bold style
+    doc.setFontSize(16);
+    doc.text("Inventory Comparison Report", 20, yOffset);
+    yOffset += 20;  // Adding space below the title
+  
     // Function to add a table to the PDF
     const drawTable = (category, items) => {
-      doc.setFont("Helvetica-Bold", 12);
+      // Add category header
+      doc.setFont("helvetica", "bold"); // Ensure bold font for headers
+      doc.setFontSize(12);
       doc.text(category, 20, yOffset);
       yOffset += 10;
-
-      // Table header
-      doc.setFont("Helvetica-Bold", 10);
+  
+      // Table headers
+      doc.setFont("helvetica", "normal");  // Use normal font for table content
+      doc.setFontSize(10);
       doc.text("Item Name", 20, yOffset);
       doc.text("Current Quantity", 120, yOffset);
       doc.text("Total Quantity", 180, yOffset);
-      doc.text("Pending Requests", 250, yOffset);
+      doc.text("Pending Requests", 240, yOffset);
       doc.text("Total Requests", 320, yOffset);  // Added Total Requests to the header
       yOffset += 10;
-
+  
       // Table content
-      doc.setFont("Helvetica", 10);
+      doc.setFont("helvetica", "normal"); // Use normal font for table content
+      doc.setFontSize(10);
       items.forEach((item) => {
-        const totalRequests = item.pending_requests + (item.approved_requests || 0);  // Calculate total requests
+        const totalRequests = item.pending_requests + (item.approved_requests || 0);
+  
+        // Add each row of the table
         doc.text(item.item_name, 20, yOffset);
-        doc.text(String(item.remaining_quantity), 120, yOffset);
-        doc.text(String(item.total_quantity), 180, yOffset);
-        doc.text(String(item.pending_requests), 250, yOffset);
-        doc.text(String(totalRequests), 320, yOffset);  // Display Total Requests in PDF
-        yOffset += 10;
+        doc.text(String(item.remaining_quantity), 120, yOffset, { align: "right" });
+        doc.text(String(item.total_quantity), 180, yOffset, { align: "right" });
+        doc.text(String(item.pending_requests), 240, yOffset, { align: "right" });
+        doc.text(String(totalRequests), 320, yOffset, { align: "right" });
+        
+        yOffset += 8;  // Move to next row
+  
+        // Check if the current content overflows the page, if so, add a new page
+        if (yOffset > pageHeight - 20) {  // Add 20px margin for footer
+          doc.addPage();
+          yOffset = 20;  // Reset Y offset to start at the top of the next page
+          // Re-add headers to the new page
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.text("Item Name", 20, yOffset);
+          doc.text("Current Quantity", 120, yOffset);
+          doc.text("Total Quantity", 180, yOffset);
+          doc.text("Pending Requests", 240, yOffset);
+          doc.text("Total Requests", 320, yOffset);
+          yOffset += 10;
+        }
       });
     };
-
-    // Add tables for each category
+  
+    // Add tables for each category (only if there is data to show)
     if (filteredData.electronics.length > 0) {
       drawTable("Electronics", filteredData.electronics);
     }
@@ -164,10 +190,10 @@ const InventoryComparison = () => {
     if (filteredData.janitorial_supplies.length > 0) {
       drawTable("Janitorial Supplies", filteredData.janitorial_supplies);
     }
-
+  
     // Save the PDF to the client's browser
     doc.save(`${selectedItem}_inventory_comparison_report.pdf`);
-  };
+  };  
 
   return (
     <Box sx={{ padding: "20px" }}>

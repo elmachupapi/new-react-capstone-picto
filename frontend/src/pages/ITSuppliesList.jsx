@@ -155,7 +155,7 @@ const ITSuppliesList = () => {
   
         const sanitizedPayload = sanitizePayload(payload);
   
-        const res = await api.put(`/api/item/janitorial/update/${editItem.id}/`, sanitizedPayload);
+        const res = await api.put(`/api/item/itsupplies/update/${editItem.id}/`, sanitizedPayload);
         if (res.status === 200) {
           alert("Item updated successfully!");
           // Add a log for the update action
@@ -184,7 +184,7 @@ const ITSuppliesList = () => {
   
         const sanitizedPayload = sanitizePayload(payload);
   
-        const res = await api.post("/api/item/janitorial/", sanitizedPayload);
+        const res = await api.post("/api/item/itsupplies/", sanitizedPayload);
         if (res.status === 201) {
           alert("Item added successfully!");
           // Add a log for the add action

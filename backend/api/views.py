@@ -315,6 +315,10 @@ class ApproveRequestView(APIView):
         request_obj.status = "Approved"
         request_obj.save()
 
+        # Track the quantity of the approved request for future aggregation
+        # This ensures that the request's quantity is included in the total request count
+        Request.objects.filter(pk=pk).update(status="Approved", approved_request_count=request_obj.quantity)
+
         return Response({"message": "Request approved and inventory updated successfully"})
     
 class DenyRequestView(APIView):
@@ -359,36 +363,40 @@ class InventoryComparisonView(APIView):
     def get(self, request, *args, **kwargs):
         # Electronics Quantity Aggregation
         electronics_quantity = Electronics.objects.values('item_name').annotate(current_quantity=Sum('quantity'))
-        electronics_approved_requests = Request.objects.filter(status="Approved", category="Electronics").values('item_name').annotate(approved_request_count=Sum('quantity'))
-        electronics_total_requests = Request.objects.filter(category="Electronics").values('item_name').annotate(request_count=Sum('quantity'))
-        electronics_pending_requests = Request.objects.filter(status="Pending", category="Electronics").values('item_name').annotate(pending_request_count=Sum('quantity'))
+        electronics_approved_requests = Request.objects.filter(status="Approved", category="electronics").values('item_name').annotate(approved_request_count=Sum('quantity'))
+        electronics_total_requests = Request.objects.filter(category="electronics").values('item_name').annotate(request_count=Sum('quantity'))
+        electronics_pending_requests = Request.objects.filter(status="Pending", category="electronics").values('item_name').annotate(pending_request_count=Sum('quantity'))
 
         # IT Supplies Quantity Aggregation
         it_supplies_quantity = ITSupplies.objects.values('item_name').annotate(current_quantity=Sum('quantity'))
-        it_supplies_approved_requests = Request.objects.filter(status="Approved", category="IT Supplies").values('item_name').annotate(approved_request_count=Sum('quantity'))
-        it_supplies_total_requests = Request.objects.filter(category="IT Supplies").values('item_name').annotate(request_count=Sum('quantity'))
-        it_supplies_pending_requests = Request.objects.filter(status="Pending", category="IT Supplies").values('item_name').annotate(pending_request_count=Sum('quantity'))
+        it_supplies_approved_requests = Request.objects.filter(status="Approved", category="it supplies").values('item_name').annotate(approved_request_count=Sum('quantity'))
+        it_supplies_total_requests = Request.objects.filter(category="it supplies").values('item_name').annotate(request_count=Sum('quantity'))
+        it_supplies_pending_requests = Request.objects.filter(status="Pending", category="it supplies").values('item_name').annotate(pending_request_count=Sum('quantity'))
 
         # Office Supplies Quantity Aggregation
         office_supplies_quantity = Office.objects.values('item_name').annotate(current_quantity=Sum('quantity'))
-        office_supplies_approved_requests = Request.objects.filter(status="Approved", category="Office Supplies").values('item_name').annotate(approved_request_count=Sum('quantity'))
-        office_supplies_total_requests = Request.objects.filter(category="Office Supplies").values('item_name').annotate(request_count=Sum('quantity'))
-        office_supplies_pending_requests = Request.objects.filter(status="Pending", category="Office Supplies").values('item_name').annotate(pending_request_count=Sum('quantity'))
+        office_supplies_approved_requests = Request.objects.filter(status="Approved", category="office supplies").values('item_name').annotate(approved_request_count=Sum('quantity'))
+        office_supplies_total_requests = Request.objects.filter(category="office supplies").values('item_name').annotate(request_count=Sum('quantity'))
+        office_supplies_pending_requests = Request.objects.filter(status="Pending", category="office supplies").values('item_name').annotate(pending_request_count=Sum('quantity'))
 
         # Janitorial Supplies Quantity Aggregation
         janitorial_supplies_quantity = Janitorial.objects.values('item_name').annotate(current_quantity=Sum('quantity'))
-        janitorial_supplies_approved_requests = Request.objects.filter(status="Approved", category="Janitorial Supplies").values('item_name').annotate(approved_request_count=Sum('quantity'))
-        janitorial_supplies_total_requests = Request.objects.filter(category="Janitorial Supplies").values('item_name').annotate(request_count=Sum('quantity'))
-        janitorial_supplies_pending_requests = Request.objects.filter(status="Pending", category="Janitorial Supplies").values('item_name').annotate(pending_request_count=Sum('quantity'))
+        janitorial_supplies_approved_requests = Request.objects.filter(status="Approved", category="janitorial supplies").values('item_name').annotate(approved_request_count=Sum('quantity'))
+        janitorial_supplies_total_requests = Request.objects.filter(category="janitorial supplies").values('item_name').annotate(request_count=Sum('quantity'))
+        janitorial_supplies_pending_requests = Request.objects.filter(status="Pending", category="janitorial supplies").values('item_name').annotate(pending_request_count=Sum('quantity'))
 
         # Function to combine and compare the data for each item
         def get_item_comparison(item_quantity, approved_requests, total_requests, pending_requests):
             comparison = []
             for item in item_quantity:
+                # Convert item_name to lowercase for case-insensitive comparison
+                item_name_lower = item['item_name'].lower()
+
                 # Get the approved, total, and pending request counts for each item
-                approved_for_item = next((request for request in approved_requests if request['item_name'] == item['item_name']), None)
-                total_for_item = next((request for request in total_requests if request['item_name'] == item['item_name']), None)
-                pending_for_item = next((request for request in pending_requests if request['item_name'] == item['item_name']), None)
+                approved_for_item = next((request for request in approved_requests if request['item_name'].lower() == item_name_lower), None)
+                total_for_item = next((request for request in total_requests if request['item_name'].lower() == item_name_lower), None)
+                pending_for_item = next((request for request in pending_requests if request['item_name'].lower() == item_name_lower), None)
+
 
                 # The total quantity is current quantity + approved requests
                 item['total_quantity'] = item['current_quantity'] + (approved_for_item['approved_request_count'] if approved_for_item else 0)
@@ -399,8 +407,8 @@ class InventoryComparisonView(APIView):
                 # Number of pending requests
                 item['pending_requests'] = pending_for_item['pending_request_count'] if pending_for_item else 0
                 
-                # Total number of requests for the item (including all statuses)
-                item['request_count'] = total_for_item['request_count'] if total_for_item else 0
+                # Total number of requests for the item (including all statuses: approved + pending + others)
+                item['request_count'] = (total_for_item['request_count'] if total_for_item else 0) + (approved_for_item['approved_request_count'] if approved_for_item else 0)
 
                 comparison.append(item)
             return comparison
@@ -421,4 +429,3 @@ class InventoryComparisonView(APIView):
 
         # Return the data as a response
         return Response(response_data, status=status.HTTP_200_OK)
-

@@ -31,7 +31,10 @@ const RequestList = () => {
     api
       .get("/api/requests/")
       .then((res) => res.data)
-      .then((data) => setRequests(data))
+      .then((data) => {
+        setRequests(data);
+        console.log(data);
+      })
       .catch((err) => alert(err));
   };
 
