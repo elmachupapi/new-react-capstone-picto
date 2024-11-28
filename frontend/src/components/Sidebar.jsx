@@ -19,6 +19,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HistoryIcon from "@mui/icons-material/History";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import InsertChartIcon from "@mui/icons-material/InsertChart";  // Import for Reports icon
 import logo from "./PGC logo.png";
 import api from "../api";
 
@@ -264,6 +265,16 @@ const Sidebar = ({ drawerWidth }) => {
               <PeopleAltIcon />
             </ListItemIcon>
             <ListItemText primary="Accounts" sx={{ ml: -2, color: "gray" }} />
+          </ListItem>
+        )}
+
+        {/* Show Reports Section */}
+        {role !== "viewer" && (
+          <ListItem button component={Link} to="/report/inventorycomparison">
+            <ListItemIcon>
+              <InsertChartIcon />  {/* Icon for Reports */}
+            </ListItemIcon>
+            <ListItemText primary="Reports" sx={{ ml: -2, color: "gray" }} />
           </ListItem>
         )}
       </List>

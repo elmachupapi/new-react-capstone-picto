@@ -171,7 +171,7 @@ const InventoryComparison = () => {
 
   return (
     <Box sx={{ padding: "20px" }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom sx={{ mt: 4 }}>
         Inventory Comparison Report
       </Typography>
 

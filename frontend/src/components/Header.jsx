@@ -5,7 +5,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Header = ({ drawerWidth }) => {
-  const username =localStorage.getItem("username"); // Sample username
+  const username = localStorage.getItem("username"); // Sample username
+  const role = localStorage.getItem("role"); // Get the role from localStorage
 
   // State for handling dropdown menu
   const [anchorEl, setAnchorEl] = useState(null);
@@ -27,9 +28,23 @@ const Header = ({ drawerWidth }) => {
     // Handle logout functionality here
     console.log("User logged out");
 
-    // Close the menu and navigate to the login page
+    // Close the menu and navigate to the logout page
     handleMenuClose();
     navigate("/logout"); // Redirect to the login page
+  };
+
+  // Set the appropriate title based on the role
+  const getRoleTitle = () => {
+    switch (role) {
+      case "admin":
+        return "Admin Dashboard";
+      case "superadmin":
+        return "Super Admin Dashboard";
+      case "viewer":
+        return "Viewer Dashboard";
+      default:
+        return "Dashboard";
+    }
   };
 
   return (
@@ -47,7 +62,7 @@ const Header = ({ drawerWidth }) => {
       <Toolbar>
         <Box sx={{ flexGrow: 1 }}>
           <Typography variant="h6" noWrap component="div">
-            Admin Dashboard
+            {getRoleTitle()}
           </Typography>
         </Box>
 
