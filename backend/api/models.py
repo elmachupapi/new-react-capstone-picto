@@ -59,7 +59,7 @@ class Janitorial(models.Model):
 class RequestLogs(models.Model):
     item_name = models.CharField(max_length=100)
     requestor = models.CharField(max_length=50)
-    request_number = models.IntegerField()
+    request_number = models.CharField(max_length=50)
     date = models.DateTimeField(auto_now_add=True)
     action = models.CharField(max_length=50)
     admin = models.CharField(max_length=50, null=True, blank=True)

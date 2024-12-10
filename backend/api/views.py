@@ -317,7 +317,7 @@ class ApproveRequestView(APIView):
 
         # Track the quantity of the approved request for future aggregation
         # This ensures that the request's quantity is included in the total request count
-        Request.objects.filter(pk=pk).update(status="Approved", approved_request_count=request_obj.quantity)
+        Request.objects.filter(pk=pk).update(status="Approved")
 
         return Response({"message": "Request approved and inventory updated successfully"})
     

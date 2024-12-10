@@ -60,9 +60,10 @@ const UserRequest = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const addRequestLog = async (itemName, requestNumber, action, admin = null) => {
+  const addRequestLog = async (requestor, itemName, requestNumber, action, admin = null) => {
     try {
       const logPayload = {
+        requestor: requestor,
         item_name: itemName,
         request_number: requestNumber,
         action: action,
@@ -83,6 +84,7 @@ const UserRequest = () => {
       if (response.status === 200) {
         alert("Request approved successfully!");
         await addRequestLog(
+          request.requestor_username,
           request.item_name,
           request.RF_number,
           "Request Approved",
@@ -165,12 +167,13 @@ const UserRequest = () => {
         alert("Request denied successfully!");
   
         // Add a log for the denied request
-        await addRequestLog(
-          request.item_name,             // Item name
-          request.RF_number,             // Request number
-          "Request Denied",              // Action
-          localStorage.getItem("username") // Fetch admin username from local storage
-        );
+        // await addRequestLog(
+        //   request.requestor_username,
+        //   request.item_name,             // Item name
+        //   request.RF_number,             // Request number
+        //   "Request Denied",              // Action
+        //   localStorage.getItem("username") // Fetch admin username from local storage
+        // );
   
         // Refresh the request list
         getPendingRequests();

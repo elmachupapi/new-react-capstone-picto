@@ -29,9 +29,24 @@ class ProfileSerializer(serializers.ModelSerializer):
         extra_kwargs = {"user": {"read_only": True}}
 
 class RequestSerializer(serializers.ModelSerializer):
+    requestor_username = serializers.CharField(source="requestor.username", read_only=True)
+
     class Meta:
         model = Request
-        fields = ["id", "category", "item_name", "quantity", "unit", "RF_number", "date_created", "status", "serial_number", "requestor"]
+        fields = [
+            "id",
+            "category",
+            "item_name",
+            "quantity",
+            "unit",
+            "RF_number",
+            "date_created",
+            "status",
+            "serial_number",
+            "requestor",  # Keeps the ID of the requestor
+            "requestor_username",  # Includes the username of the requestor
+        ]
+
         extra_kwargs = {"requestor": {"read_only": True}}
 
 
