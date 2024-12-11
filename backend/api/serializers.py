@@ -53,7 +53,7 @@ class RequestSerializer(serializers.ModelSerializer):
 class ElectronicsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Electronics
-        fields = ["id", "item_name", "quantity", "unit", "date_added", "PO_number", "year_quarter", "serial_number", "obsolete"]
+        fields = ["id", "item_name", "quantity", "unit", "date_added", "PO_number", "year", "quarter", "serial_number", "obsolete", "brand", "model"]
 
     def create(self, validated_data):
         if isinstance(validated_data, list):
@@ -65,7 +65,7 @@ class ElectronicsSerializer(serializers.ModelSerializer):
 class ITSuppliesSerializer(serializers.ModelSerializer):
     class Meta:
         model = ITSupplies
-        fields = ["id", "item_name", "quantity", "unit", "date_added", "PO_number", "year_quarter", "serial_number", "obsolete"]
+        fields = ["id", "item_name", "quantity", "unit", "date_added", "PO_number", "year", "quarter", "serial_number", "obsolete", "brand", "model"]
 
     def create(self, validated_data):
         if isinstance(validated_data, list):
@@ -77,7 +77,7 @@ class ITSuppliesSerializer(serializers.ModelSerializer):
 class OfficeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Office
-        fields = ["id", "item_name", "quantity", "unit", "date_added", "PO_number", "year_quarter", "serial_number", "obsolete"]
+        fields = ["id", "item_name", "quantity", "unit", "date_added", "PO_number", "year", "quarter", "serial_number", "obsolete", "brand", "model"]
 
     def create(self, validated_data):
         if isinstance(validated_data, list):
@@ -89,7 +89,7 @@ class OfficeSerializer(serializers.ModelSerializer):
 class JanitorialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Janitorial
-        fields = ["id", "item_name", "quantity", "unit", "date_added", "PO_number", "year_quarter", "serial_number", "obsolete"]
+        fields = ["id", "item_name", "quantity", "unit", "date_added", "PO_number", "year", "quarter", "serial_number", "obsolete", "brand", "model"]
     
     def create(self, validated_data):
         # Check if the input is a list (batch creation)

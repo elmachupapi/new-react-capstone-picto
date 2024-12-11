@@ -287,7 +287,8 @@ const ElectronicsList = () => {
               <TableCell>Unit</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>PO Number</TableCell>
-              <TableCell>Year-Quarter</TableCell>
+              <TableCell>Year</TableCell>
+              <TableCell>Quarter</TableCell>
               <TableCell>Serial Number</TableCell>
               <TableCell>Obsolete</TableCell>
               <TableCell>Delete</TableCell>
