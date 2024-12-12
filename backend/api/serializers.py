@@ -45,6 +45,7 @@ class RequestSerializer(serializers.ModelSerializer):
             "serial_number",
             "requestor",  # Keeps the ID of the requestor
             "requestor_username",  # Includes the username of the requestor
+            "date_received"
         ]
 
         extra_kwargs = {"requestor": {"read_only": True}}
@@ -109,7 +110,7 @@ class RequestLogSerializer(serializers.ModelSerializer):
 class ItemLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemLogs
-        fields = ["id", "item_name", "date", "action", "current_quantity"]
+        fields = ["id", "item_name", "date", "action", "current_quantity", "admin"]
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

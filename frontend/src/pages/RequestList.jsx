@@ -83,6 +83,36 @@ const RequestList = () => {
     }
   };
 
+  const handleMarkAsReceived = async (request) => {
+    try {
+      // Prepare the updated data
+      const updatedData = {
+        status: "received",
+        date_received: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD format
+      };
+  
+      // Send PATCH request to update the request
+      const response = await api.patch(`/api/requests/update/${request.id}/`, updatedData);
+  
+      if (response.status === 200) {
+        alert("Request marked as received!");
+        
+        // Update the state with the modified request
+        setRequests((prevRequests) =>
+          prevRequests.map((req) =>
+            req.id === request.id ? { ...req, ...updatedData } : req
+          )
+        );
+      } else {
+        alert("Failed to update the request.");
+      }
+    } catch (error) {
+      console.error("Error updating request:", error);
+      alert("An error occurred while trying to update the request.");
+    }
+  };
+  
+
   // Filter requests based on search and status
   const filteredRequests = requests.filter(
     (request) =>
@@ -100,6 +130,7 @@ const RequestList = () => {
   };
 
   const formatDate = (dateString) => new Date(dateString).toISOString().split("T")[0];
+
 
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
@@ -161,14 +192,18 @@ const RequestList = () => {
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    {request.status.toLowerCase() === "approved" && (
+                    {request.status.toLowerCase() === "received" ? (
+                      <Typography>{formatDate(request.date_received)}</Typography>
+                    ) : request.status.toLowerCase() === "approved" ? (
                       <Button
                         variant="contained"
                         color="success"
-                        onClick={() => alert(`Request ${request.RF_number} button clicked!`)}
+                        onClick={() => handleMarkAsReceived(request)}
                       >
                         Received
                       </Button>
+                    ) : (
+                      ""
                     )}
                   </TableCell>
                 </TableRow>

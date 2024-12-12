@@ -30,11 +30,14 @@ const ElectronicsList = () => {
   const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({
     item_name: "",
+    brand: "",
+    model: "",
     quantity: "",
     unit: "",
     date_added: "",
     PO_number: "",
-    year_quarter: "",
+    year: "",
+    quarter: "",
     serial_number: "",
     obsolete: ""
   });
@@ -47,11 +50,14 @@ const ElectronicsList = () => {
     setEditItem(null);  // Reset edit mode
     setNewItem({
       item_name: "",
+      brand: "",
+      model: "",
       quantity: "",
       unit: "",
       date_added: "",
       PO_number: "",
-      year_quarter: "",
+      year: "",
+      quarter: "",
       serial_number: "",
       obsolete: ""
     });
@@ -98,7 +104,7 @@ const ElectronicsList = () => {
         alert("Item deleted successfully!");
   
         // Add a log for the delete action
-        await addLog(itemToDelete.item_name, "Item Deleted", itemToDelete.quantity);
+        await addLog(itemToDelete.item_name, "Item Deleted", itemToDelete.quantity, localStorage.getItem("username"));
   
         setElectronics((prevData) => prevData.filter((item) => item.id !== itemToDelete.id));
       } else {
@@ -116,12 +122,13 @@ const ElectronicsList = () => {
     setConfirmDeleteOpen(true); // Open delete confirmation modal
   };
 
-  const addLog = async (itemName, action, currentQuantity) => {
+  const addLog = async (itemName, action, currentQuantity, admin) => {
     try {
       const logPayload = {
         item_name: itemName,
         action: action, // Specify the action (e.g., "Item Added", "Item Updated")
         current_quantity: currentQuantity,
+        admin: admin
       };
       await api.post("/api/logs/item/", logPayload);
       alert("Log added successfully!");
@@ -145,11 +152,14 @@ const ElectronicsList = () => {
       try {
         const payload = {
           item_name: newItem.item_name,
+          brand: newItem.brand,
+          model: newItem.model,
           quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number or null
           unit: newItem.unit,
           date_added: newItem.date_added,
           PO_number: newItem.PO_number,
-          year_quarter: newItem.year_quarter,
+          year: newItem.year,
+          quarter: newItem.quarter,
           serial_number: newItem.serial_number,
           obsolete: newItem.obsolete,
         };
@@ -160,7 +170,7 @@ const ElectronicsList = () => {
         if (res.status === 200) {
           alert("Item updated successfully!");
           // Add a log for the update action
-          await addLog(newItem.item_name, "Item Updated", parseInt(newItem.quantity, 10));
+          await addLog(newItem.item_name, "Item Updated", parseInt(newItem.quantity, 10), localStorage.getItem("username"));
           getElectronics(); // Refresh the list
         } else {
           alert("Failed to update the item.");
@@ -174,11 +184,14 @@ const ElectronicsList = () => {
       try {
         const payload = {
           item_name: newItem.item_name,
+          brand: newItem.brand,
+          model: newItem.model,
           quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number or null
           unit: newItem.unit,
           date_added: newItem.date_added,
           PO_number: newItem.PO_number,
-          year_quarter: newItem.year_quarter,
+          year: newItem.year,
+          quarter: newItem.quarter,
           serial_number: newItem.serial_number,
           obsolete: newItem.obsolete,
         };
@@ -189,7 +202,7 @@ const ElectronicsList = () => {
         if (res.status === 201) {
           alert("Item added successfully!");
           // Add a log for the add action
-          await addLog(newItem.item_name, "Item Added", parseInt(newItem.quantity, 10));
+          await addLog(newItem.item_name, "Item Added", parseInt(newItem.quantity, 10), localStorage.getItem("username"));
           getElectronics(); // Refresh the list
         } else {
           alert("Error: Item not added.");
@@ -378,10 +391,10 @@ const ElectronicsList = () => {
                   <TextField fullWidth name="item_name" value={newItem.item_name} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Item Description"}/>
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="model" value={newItem.brand} onChange={handleInputChange} placeholder={editItem ? "" : "Enter model"}/>
+                  <TextField fullWidth name="model" value={newItem.model} onChange={handleInputChange} placeholder={editItem ? "" : "Enter model"}/>
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="brand" value={newItem.model} onChange={handleInputChange} placeholder={editItem ? "" : "Enter brand"}/>
+                  <TextField fullWidth name="brand" value={newItem.brand} onChange={handleInputChange} placeholder={editItem ? "" : "Enter brand"}/>
                 </TableCell>
                 <TableCell>
                   <TextField fullWidth name="serial_number" value={newItem.serial_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Serial Number"}/>

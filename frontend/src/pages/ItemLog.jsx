@@ -87,6 +87,7 @@ const ItemLog = () => {
               <TableCell>Date</TableCell>
               <TableCell>Action</TableCell>
               <TableCell>Quantity</TableCell>
+              <TableCell>Admin</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -96,6 +97,7 @@ const ItemLog = () => {
                 <TableCell>{formatDate(log.date)}</TableCell>
                 <TableCell>{log.action}</TableCell>
                 <TableCell>{log.current_quantity}</TableCell>
+                <TableCell>{log.admin}</TableCell>
               </TableRow>
             ))}
           </TableBody>

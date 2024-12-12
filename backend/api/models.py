@@ -9,6 +9,7 @@ class Request(models.Model):
     purpose = models.TextField(null = True)
     RF_number = models.CharField(max_length=20)
     date_created = models.DateTimeField(auto_now_add=True)
+    date_received = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=50)
     serial_number = models.CharField(max_length=50, default= '', null=True, blank=True)
     requestor = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "requests")
@@ -81,6 +82,7 @@ class ItemLogs(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     action = models.CharField(max_length=50)
     current_quantity = models.IntegerField()
+    admin = models.CharField(max_length=50, null=True, blank=True)
 
 class Profile(models.Model):
     ROLE_CHOICES = [
