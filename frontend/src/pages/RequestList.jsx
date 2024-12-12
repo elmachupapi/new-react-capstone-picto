@@ -14,6 +14,10 @@ import {
   IconButton,
   Button,
   Modal,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import api from "../api";
@@ -21,6 +25,7 @@ import api from "../api";
 const RequestList = () => {
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -44,6 +49,9 @@ const RequestList = () => {
 
   // Handle search input
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
+
+  // Handle dropdown filter change
+  const handleStatusFilterChange = (e) => setStatusFilter(e.target.value);
 
   // Handle delete confirmation modal
   const handleOpenConfirmDelete = (request) => {
@@ -75,12 +83,13 @@ const RequestList = () => {
     }
   };
 
-  // Filter requests based on search
+  // Filter requests based on search and status
   const filteredRequests = requests.filter(
     (request) =>
-      request.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.RF_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.status.toLowerCase().includes(searchTerm.toLowerCase())
+      (statusFilter === "all" || request.status.toLowerCase() === statusFilter) &&
+      (request.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        request.RF_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        request.status.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   // Pagination controls
@@ -97,15 +106,31 @@ const RequestList = () => {
       <Typography variant="h4" gutterBottom>
         Request List
       </Typography>
-      <TextField
-        label="Search by Item Name, Request Number, or Status"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        sx={{ width: "400px", mt: -1, backgroundColor: "white" }}
-      />
+      <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
+        <TextField
+          label="Search by Item Name, Request Number, or Status"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{ width: "400px", backgroundColor: "white" }}
+        />
+        <FormControl sx={{ width: 200 }}>
+          <InputLabel>Status Filter</InputLabel>
+          <Select
+            value={statusFilter}
+            onChange={handleStatusFilterChange}
+            label="Status Filter"
+          >
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="approved">Approved</MenuItem>
+            <MenuItem value="denied">Denied</MenuItem>
+            <MenuItem value="received">Received</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
