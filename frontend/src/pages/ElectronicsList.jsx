@@ -283,15 +283,18 @@ const ElectronicsList = () => {
             <TableRow>
               <TableCell>Edit</TableCell>
               <TableCell>Item Description</TableCell>
+              <TableCell>Brand</TableCell>
+              <TableCell>Model</TableCell>
+              <TableCell>Serial Number</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Unit</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>PO Number</TableCell>
               <TableCell>Year</TableCell>
               <TableCell>Quarter</TableCell>
-              <TableCell>Serial Number</TableCell>
               <TableCell>Obsolete</TableCell>
               <TableCell>Delete</TableCell>
+              
             </TableRow>
           </TableHead>
           <TableBody>
@@ -303,12 +306,15 @@ const ElectronicsList = () => {
                   </IconButton>
                 </TableCell>
                 <TableCell>{item.item_name}</TableCell>
+                <TableCell>{item.brand}</TableCell>
+                <TableCell>{item.model}</TableCell>
+                <TableCell>{item.serial_number}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>{item.unit}</TableCell>
                 <TableCell>{item.date_added}</TableCell>
                 <TableCell>{item.PO_number}</TableCell>
-                <TableCell>{item.year_quarter}</TableCell>
-                <TableCell>{item.serial_number}</TableCell>
+                <TableCell>{item.year}</TableCell>
+                <TableCell>{item.quarter}</TableCell>
                 <TableCell>{item.obsolete}</TableCell>
                 <TableCell>
                   <IconButton color="error" onClick={() => handleDeleteClick(item)}>
@@ -354,12 +360,15 @@ const ElectronicsList = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Item Description</TableCell>
+                <TableCell>Brand</TableCell>
+                <TableCell>Model</TableCell>
+                <TableCell>Serial Number</TableCell>
                 <TableCell>Quantity</TableCell>
                 <TableCell>Unit</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>PO Number</TableCell>
-                <TableCell>Year-Quarter</TableCell>
-                <TableCell>Serial Number</TableCell>
+                <TableCell>Year</TableCell>
+                <TableCell>Quarter</TableCell>
                 <TableCell sx={{width: "150px"}}>Obsolete</TableCell>
               </TableRow>
             </TableHead>
@@ -367,6 +376,15 @@ const ElectronicsList = () => {
               <TableRow>
                 <TableCell>
                   <TextField fullWidth name="item_name" value={newItem.item_name} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Item Description"}/>
+                </TableCell>
+                <TableCell>
+                  <TextField fullWidth name="model" value={newItem.brand} onChange={handleInputChange} placeholder={editItem ? "" : "Enter model"}/>
+                </TableCell>
+                <TableCell>
+                  <TextField fullWidth name="brand" value={newItem.model} onChange={handleInputChange} placeholder={editItem ? "" : "Enter brand"}/>
+                </TableCell>
+                <TableCell>
+                  <TextField fullWidth name="serial_number" value={newItem.serial_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Serial Number"}/>
                 </TableCell>
                 <TableCell>
                   <TextField fullWidth name="quantity" type="number" value={newItem.quantity} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Quantity"} />
@@ -381,10 +399,10 @@ const ElectronicsList = () => {
                   <TextField fullWidth name="PO_number" value={newItem.PO_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter PO Number"}/>
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="year_quarter" value={newItem.year_quarter} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Year-Quarter"}/>
+                  <TextField fullWidth name="year" value={newItem.year} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Year"}/>
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="serial_number" value={newItem.serial_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Serial Number"}/>
+                  <TextField fullWidth name="quarter" value={newItem.quarter} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Quarter"}/>
                 </TableCell>
                 <TableCell>
                   <TextField
