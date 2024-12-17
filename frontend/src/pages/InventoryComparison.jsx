@@ -117,93 +117,112 @@ const InventoryComparison = () => {
 
   // Function to export the data to PDF
   const exportToPDF = () => {
-    const doc = new jsPDF("landscape");  // Set the orientation to landscape
-    const pageWidth = doc.internal.pageSize.width; // Get the page width (landscape orientation)
-    const pageHeight = doc.internal.pageSize.height; // Get the page height (landscape orientation)
-    let yOffset = 30; // Starting position for the first table
-
-    doc.setFont("helvetica", "bold"); // Using Helvetica with bold style
-    doc.setFontSize(16);
-    doc.text("Inventory Comparison Report", 20, yOffset);
-    yOffset += 20;  // Adding space below the title
-
-    // Function to add a table to the PDF
+    const doc = new jsPDF("landscape");
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+  
+    let yOffset = 20; // Starting Y position
+  
+    // Add Report Title with Styling
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.text("Inventory Comparison Report", pageWidth / 2, yOffset, { align: "center" });
+    yOffset += 10;
+  
+    // Add a date for report generation
+    doc.setFontSize(10);
+    const now = new Date();
+    const reportDate = `Generated on: ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}`;
+    doc.text(reportDate, pageWidth - 30, yOffset, { align: "right" });
+    yOffset += 10;
+  
+    // Function to draw a clean table with shaded rows
     const drawTable = (category, items) => {
-        // Add category header
-        doc.setFont("helvetica", "bold"); // Ensure bold font for headers
-        doc.setFontSize(12);
-        doc.text(category, 20, yOffset);
-        yOffset += 10;
-
-        // Table headers
-        doc.setFont("helvetica", "normal");  // Use normal font for table content
-        doc.setFontSize(10);
-        
-        // Adjusted column widths to fit content
-        const columnWidths = {
-            itemName: 50, // Reduced width for "Item Name"
-            currentQuantity: 40,
-            totalQuantity: 40,
-            pendingRequests: 40,
-            totalRequests: 40,  // All columns reduced to fit within landscape mode
-        };
-
-        doc.text("Item Name", 20, yOffset);
-        doc.text("Current Quantity", 20 + columnWidths.itemName, yOffset);
-        doc.text("Total Quantity", 20 + columnWidths.itemName + columnWidths.currentQuantity, yOffset);
-        doc.text("Pending Requests", 20 + columnWidths.itemName + columnWidths.currentQuantity + columnWidths.totalQuantity, yOffset);
-        doc.text("Total Requests", 20 + columnWidths.itemName + columnWidths.currentQuantity + columnWidths.totalQuantity + columnWidths.pendingRequests, yOffset);
-        yOffset += 10;
-
-        // Table content
-        doc.setFont("helvetica", "normal"); // Use normal font for table content
-        doc.setFontSize(10);
-        items.forEach((item) => {
-            const totalRequests = item.pending_requests + (item.approved_requests || 0);
-
-            // Add each row of the table
-            doc.text(item.item_name, 20, yOffset);
-            doc.text(String(item.remaining_quantity), 20 + columnWidths.itemName, yOffset, { align: "right" });
-            doc.text(String(item.total_quantity), 20 + columnWidths.itemName + columnWidths.currentQuantity, yOffset, { align: "right" });
-            doc.text(String(item.pending_requests), 20 + columnWidths.itemName + columnWidths.currentQuantity + columnWidths.totalQuantity, yOffset, { align: "right" });
-            doc.text(String(totalRequests), 20 + columnWidths.itemName + columnWidths.currentQuantity + columnWidths.totalQuantity + columnWidths.pendingRequests, yOffset, { align: "right" });
-
-            yOffset += 8;  // Move to next row
-
-            // Check if the current content overflows the page, if so, add a new page
-            if (yOffset > pageHeight - 20) {  // Add 20px margin for footer
-                doc.addPage();
-                yOffset = 20;  // Reset Y offset to start at the top of the next page
-                // Re-add headers to the new page
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(10);
-                doc.text("Item Name", 20, yOffset);
-                doc.text("Current Quantity", 20 + columnWidths.itemName, yOffset);
-                doc.text("Total Quantity", 20 + columnWidths.itemName + columnWidths.currentQuantity, yOffset);
-                doc.text("Pending Requests", 20 + columnWidths.itemName + columnWidths.currentQuantity + columnWidths.totalQuantity, yOffset);
-                doc.text("Total Requests", 20 + columnWidths.itemName + columnWidths.currentQuantity + columnWidths.totalQuantity + columnWidths.pendingRequests, yOffset);
-                yOffset += 10;
-            }
+      // Section Header
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text(category, 20, yOffset);
+      yOffset += 8;
+  
+      // Table Headers
+      const columnHeaders = ["Item Name", "Current Qty", "Total Qty", "Pending Req.", "Total Req."];
+      const columnWidths = [60, 40, 40, 40, 40];
+      let xPos = 20;
+  
+      doc.setFontSize(10);
+      doc.setFillColor(220, 220, 220); // Light gray for header
+      doc.rect(xPos, yOffset - 5, pageWidth - 40, 8, "F"); // Header background
+      columnHeaders.forEach((header, i) => {
+        doc.text(header, xPos + 5, yOffset);
+        xPos += columnWidths[i];
+      });
+      yOffset += 10;
+  
+      // Table Rows
+      let rowIndex = 0;
+      items.forEach((item) => {
+        const totalRequests = item.pending_requests + (item.approved_requests || 0);
+        xPos = 20;
+  
+        // Alternate row color
+        if (rowIndex % 2 === 0) {
+          doc.setFillColor(240, 240, 240); // Very light gray for alternate rows
+          doc.rect(20, yOffset - 5, pageWidth - 40, 8, "F");
+        }
+  
+        // Add row data
+        doc.setFont("helvetica", "normal");
+        const rowData = [
+          item.item_name,
+          String(item.remaining_quantity),
+          String(item.total_quantity),
+          String(item.pending_requests),
+          String(totalRequests),
+        ];
+  
+        rowData.forEach((data, i) => {
+          doc.text(data, xPos + 5, yOffset);
+          xPos += columnWidths[i];
         });
+  
+        yOffset += 8;
+        rowIndex++;
+  
+        // Check for page overflow
+        if (yOffset > pageHeight - 20) {
+          doc.addPage();
+          yOffset = 20; // Reset for new page
+        }
+      });
+  
+      yOffset += 10; // Add space after table
     };
-
-    // Add tables for each category (only if there is data to show)
-    if (filteredData.electronics.length > 0) {
-        drawTable("Electronics", filteredData.electronics);
+  
+    // Draw tables for each category if data exists
+    if (filteredData.electronics.length) drawTable("Electronics", filteredData.electronics);
+    if (filteredData.it_supplies.length) drawTable("IT Supplies", filteredData.it_supplies);
+    if (filteredData.office_supplies.length) drawTable("Office Supplies", filteredData.office_supplies);
+    if (filteredData.janitorial_supplies.length) drawTable("Janitorial Supplies", filteredData.janitorial_supplies);
+  
+    // Add Footer with Page Number
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.text(
+        `Page ${i} of ${pageCount}`,
+        pageWidth / 2,
+        pageHeight - 10,
+        { align: "center" }
+      );
     }
-    if (filteredData.it_supplies.length > 0) {
-        drawTable("IT Supplies", filteredData.it_supplies);
-    }
-    if (filteredData.office_supplies.length > 0) {
-        drawTable("Office Supplies", filteredData.office_supplies);
-    }
-    if (filteredData.janitorial_supplies.length > 0) {
-        drawTable("Janitorial Supplies", filteredData.janitorial_supplies);
-    }
-
-    // Save the PDF to the client's browser
-    doc.save(`${selectedItem}_inventory_comparison_report.pdf`);
-};
+  
+    // Save PDF
+    const fileName = selectedItem ? `${selectedItem}_inventory_report.pdf` : "inventory_report.pdf";
+    doc.save(fileName);
+  };  
+  
+  
 
   return (
     <Box sx={{ padding: "20px" }}>
