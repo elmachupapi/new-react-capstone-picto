@@ -298,9 +298,6 @@ const Sidebar = ({ drawerWidth }) => {
                 <ListItem button component={Link} to="/report/items" sx={{ pl: 7 }}>
                   <ListItemText primary="Items Report" sx={{ color: "gray" }} />
                 </ListItem>
-                <ListItem button component={Link} to="/report/requests" sx={{ pl: 7 }}>
-                  <ListItemText primary="Requests Report" sx={{ color: "gray" }} />
-                </ListItem>
               </List>
             </Collapse>
           </>

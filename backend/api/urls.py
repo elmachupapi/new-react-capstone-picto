@@ -42,6 +42,5 @@ urlpatterns = [
     path('itsupplies-by-year-quarter/', views.ITSuppliesDataView.as_view(), name='itsupplies-data'),
     path('office-by-year-quarter/', views.OfficeDataView.as_view(), name='office-data'),
     path('janitorial-by-year-quarter/', views.JanitorialDataView.as_view(), name='janitorial-data'),
-    path('reports/requests/', views.RequestsStatsView.as_view(), name='report-requests'),
 
 ]
