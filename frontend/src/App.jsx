@@ -15,8 +15,11 @@ import RequestLog from "./pages/RequestLog";
 import ItemLog from "./pages/ItemLog";
 import Accounts from "./pages/Accounts";
 import InventoryComparison from "./pages/InventoryComparison";
+<<<<<<< HEAD
 import ItemsReport from "./pages/ItemsReport";
 import RequestsReport from "./pages/RequestsReport";
+=======
+>>>>>>> parent of 31b9e62 (reports for item)
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Box, CssBaseline, createTheme, ThemeProvider } from "@mui/material";
 import Sidebar from "./components/Sidebar";
@@ -80,8 +83,11 @@ function App() {
               <Route path="/logs/item" element={<ProtectedRoute><ItemLog /></ProtectedRoute>} />
               <Route path="/accounts" element={<ProtectedRoute><Accounts /></ProtectedRoute>} />
               <Route path="/report/inventorycomparison" element = {<InventoryComparison />} />
+<<<<<<< HEAD
               <Route path="/report/items" element = {<ItemsReport />} />
               <Route path="/report/requests" element = {<RequestsReport />} />
+=======
+>>>>>>> parent of 31b9e62 (reports for item)
               <Route path="/signup" element={<SignupAndLogout />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

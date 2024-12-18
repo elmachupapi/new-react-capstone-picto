@@ -19,7 +19,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HistoryIcon from "@mui/icons-material/History";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import InsertChartIcon from "@mui/icons-material/InsertChart"; // Icon for Reports
+import InsertChartIcon from "@mui/icons-material/InsertChart";  // Import for Reports icon
 import logo from "./PGC logo.png";
 import api from "../api";
 
@@ -270,6 +270,7 @@ const Sidebar = ({ drawerWidth }) => {
 
         {/* Show Reports Section */}
         {role !== "viewer" && (
+<<<<<<< HEAD
           <>
             <ListItem button onClick={() => handleToggle("reports")}>
               <ListItemIcon>
@@ -304,6 +305,14 @@ const Sidebar = ({ drawerWidth }) => {
               </List>
             </Collapse>
           </>
+=======
+          <ListItem button component={Link} to="/report/inventorycomparison">
+            <ListItemIcon>
+              <InsertChartIcon />  {/* Icon for Reports */}
+            </ListItemIcon>
+            <ListItemText primary="Reports" sx={{ ml: -2, color: "gray" }} />
+          </ListItem>
+>>>>>>> parent of 31b9e62 (reports for item)
         )}
       </List>
     </Drawer>

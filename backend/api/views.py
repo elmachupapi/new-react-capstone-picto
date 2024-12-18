@@ -436,6 +436,7 @@ class InventoryComparisonView(APIView):
 
         # Return the data as a response
         return Response(response_data, status=status.HTTP_200_OK)
+<<<<<<< HEAD
 
 
 class ItemDataByYearQuarterView(APIView):
@@ -497,3 +498,5 @@ class RequestsStatsView(APIView):
         ).order_by('year', 'month')
 
         return JsonResponse(list(requests_data), safe=False)
+=======
+>>>>>>> parent of 31b9e62 (reports for item)
