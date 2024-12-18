@@ -435,3 +435,43 @@ class InventoryComparisonView(APIView):
 
         # Return the data as a response
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class ItemDataByYearQuarterView(APIView):
+    permission_classes = [AllowAny]
+    model = None  # To be overridden by subclasses
+
+    def get(self, request, *args, **kwargs):
+        if not self.model:
+            return Response(
+                {"error": "Model not specified."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            data = (
+                self.model.objects.values('year', 'quarter')
+                .annotate(total_items=Sum('quantity'))
+                .order_by('year', 'quarter')
+            )
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+class ElectronicsDataView(ItemDataByYearQuarterView):
+    model = Electronics
+
+
+class ITSuppliesDataView(ItemDataByYearQuarterView):
+    model = ITSupplies
+
+
+class OfficeDataView(ItemDataByYearQuarterView):
+    model = Office
+
+
+class JanitorialDataView(ItemDataByYearQuarterView):
+    model = Janitorial

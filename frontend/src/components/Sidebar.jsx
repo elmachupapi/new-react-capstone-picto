@@ -19,7 +19,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HistoryIcon from "@mui/icons-material/History";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import InsertChartIcon from "@mui/icons-material/InsertChart";  // Import for Reports icon
+import InsertChartIcon from "@mui/icons-material/InsertChart"; // Icon for Reports
 import logo from "./PGC logo.png";
 import api from "../api";
 
@@ -270,12 +270,37 @@ const Sidebar = ({ drawerWidth }) => {
 
         {/* Show Reports Section */}
         {role !== "viewer" && (
-          <ListItem button component={Link} to="/report/inventorycomparison">
-            <ListItemIcon>
-              <InsertChartIcon />  {/* Icon for Reports */}
-            </ListItemIcon>
-            <ListItemText primary="Reports" sx={{ ml: -2, color: "gray" }} />
-          </ListItem>
+          <>
+            <ListItem button onClick={() => handleToggle("reports")}>
+              <ListItemIcon>
+                <InsertChartIcon /> {/* Icon for Reports */}
+              </ListItemIcon>
+              <ListItemText primary="Reports" sx={{ ml: -2, color: "gray" }} />
+              {openSection === "reports" ? (
+                <ExpandLessIcon sx={{ color: "gray" }} />
+              ) : (
+                <ExpandMoreIcon sx={{ color: "gray" }} />
+              )}
+            </ListItem>
+            <Collapse in={openSection === "reports"} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  component={Link}
+                  to="/report/inventorycomparison"
+                  sx={{ pl: 7 }}
+                >
+                  <ListItemText
+                    primary="Inventory Comparison"
+                    sx={{ color: "gray" }}
+                  />
+                </ListItem>
+                <ListItem button component={Link} to="/report/items" sx={{ pl: 7 }}>
+                  <ListItemText primary="Items Report" sx={{ color: "gray" }} />
+                </ListItem>
+              </List>
+            </Collapse>
+          </>
         )}
       </List>
     </Drawer>

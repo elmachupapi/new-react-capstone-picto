@@ -38,5 +38,9 @@ urlpatterns = [
     path('accounts/<str:user__username>/', views.UserProfileUpdateView.as_view(), name='user-profile-update'),
 
     path('reports/total-vs-approved-vs-pending/', views.InventoryComparisonView.as_view(), name='report-total-vs-approved-vs-pending'),
+    path('electronics-by-year-quarter/', views.ElectronicsDataView.as_view(), name='electronics-data'),
+    path('itsupplies-by-year-quarter/', views.ITSuppliesDataView.as_view(), name='itsupplies-data'),
+    path('office-by-year-quarter/', views.OfficeDataView.as_view(), name='office-data'),
+    path('janitorial-by-year-quarter/', views.JanitorialDataView.as_view(), name='janitorial-data'),
 
 ]
