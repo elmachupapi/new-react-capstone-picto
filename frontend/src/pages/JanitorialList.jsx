@@ -79,7 +79,11 @@ const JanitorialSupplies = () => {
   };
 
   const filteredJanitorialData = janitorialData.filter((item) =>
-    item.item_name.toLowerCase().includes(searchQuery.toLowerCase())
+    (item.item_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     item.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     item.model?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     item.serial_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     item.year?.toString().includes(searchQuery))
   );
 
   const handleChangePage = (event, newPage) => {
@@ -285,7 +289,7 @@ const JanitorialSupplies = () => {
 
       <Box sx={{ display: "flex", alignItems: "center", mt: 1, mb: 2 }}>
         <TextField
-          label="Search"
+          label="Search item description, brand, model, serial number, year"
           variant="outlined"
           size="small"
           value={searchQuery}
@@ -345,6 +349,7 @@ const JanitorialSupplies = () => {
             </TableCell>
             <TableCell>Quarter</TableCell>
             <TableCell>Obsolete</TableCell>
+            <TableCell>Delete</TableCell>
           </TableRow>
         </TableHead>
           <TableBody>
