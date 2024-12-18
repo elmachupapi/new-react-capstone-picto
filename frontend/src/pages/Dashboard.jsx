@@ -25,12 +25,24 @@ import api from "../api";
 const Dashboard = () => {
   const requestCards = [
     {
-      title: "Request Item",
+      title: (
+        <>
+          <Typography sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
+            Request Item
+          </Typography>
+        </>
+      ),
       icon: <CreateIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "/request",
     },
     {
-      title: "Request List",
+      title: (
+        <>
+          <Typography sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
+            Request List
+          </Typography>
+        </>
+      ),
       icon: <ListIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "/request/list",
     },
@@ -46,22 +58,37 @@ const Dashboard = () => {
 
   const itemCards = [
     {
-      title: "Electronics",
+      title: (
+        <>
+          <Typography sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
+            Electronics
+          </Typography>
+        </>
+      ),
       icon: <CableIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "item/electronics",
     },
     {
-      title: "IT Supplies",
+      title: (
+        <>
+          <Typography sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
+            IT
+          </Typography>
+          <Typography sx={{ fontSize: "1.9rem", lineHeight: "1.2", marginTop: 0.5 }}>
+            Supplies
+          </Typography>
+        </>
+      ),
       icon: <ComputerIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "item/itsupplies",
     },
     {
       title: (
         <>
-          <Typography variant="subtitle1" sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
+          <Typography sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
             Office
           </Typography>
-          <Typography variant="subtitle2" sx={{ fontSize: "1.9rem", lineHeight: "1.2", marginTop: 0.5 }}>
+          <Typography sx={{ fontSize: "1.9rem", lineHeight: "1.2", marginTop: 0.5 }}>
             Supplies
           </Typography>
         </>
@@ -72,10 +99,10 @@ const Dashboard = () => {
     {
       title: (
         <>
-          <Typography variant="subtitle1" sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
+          <Typography sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
             Janitorial
           </Typography>
-          <Typography variant="subtitle2" sx={{ fontSize: "1.9rem", lineHeight: "1.2", marginTop: 0.5 }}>
+          <Typography sx={{ fontSize: "1.9rem", lineHeight: "1.2", marginTop: 0.5 }}>
             Supplies
           </Typography>
         </>
@@ -126,7 +153,7 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ mt: 8 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" gutterBottom sx={{ fontSize: "1.9rem"}}>
         Request List
       </Typography>
 
@@ -199,7 +226,7 @@ const Dashboard = () => {
       {/* Item Cards */}
       {userRole !== "viewer" && (
         <>
-          <Typography variant="h5" sx={{ mt: 4 }}>
+          <Typography variant="h5" sx={{ mt: 4, fontSize: "1.9rem"}}>
             Item List
           </Typography>
           <Grid container spacing={2} sx={{ mt: 0.5 }}>
@@ -237,8 +264,8 @@ const Dashboard = () => {
       )}
 
       {/* Request Lists Section */}
-      <Typography variant="h5" sx={{ mt: 4 }}>
-        Request Lists
+      <Typography variant="h5" sx={{ mt: 4, fontSize: "1.9rem"}}>
+        Request List Items
       </Typography>
       <TableContainer
         component={Box}
@@ -251,11 +278,11 @@ const Dashboard = () => {
         }}
       >
         <Table sx={{ borderRadius: "8px" }}>
-          <TableHead sx={{ backgroundColor: "#474647" }}>
+          <TableHead>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>Item Description</TableCell>
-              <TableCell sx={{ color: "white" }}>RF Number</TableCell>
-              <TableCell sx={{ color: "white" }}>Date Requested</TableCell>
+              <TableCell sx={{ color: "white", position: "sticky", top: 0, zIndex: 1, backgroundColor: "#474647" }}>Item Description</TableCell>
+              <TableCell sx={{ color: "white", position: "sticky", top: 0, zIndex: 1, backgroundColor: "#474647" }}>RF Number</TableCell>
+              <TableCell sx={{ color: "white", position: "sticky", top: 0, zIndex: 1, backgroundColor: "#474647" }}>Date Requested</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -287,10 +314,10 @@ const Dashboard = () => {
             }}
           >
             <Table sx={{ borderRadius: "8px" }}>
-              <TableHead sx={{ backgroundColor: "#e9b90b" }}>
+              <TableHead>
                 <TableRow>
-                  <TableCell sx={{ color: "white" }}>Item Description</TableCell>
-                  <TableCell sx={{ color: "white" }}>Quantity</TableCell>
+                  <TableCell sx={{ color: "white", position: "sticky", top: 0, zIndex: 1, backgroundColor: "#e9b90b"}}>Item Description</TableCell>
+                  <TableCell sx={{ color: "white", position: "sticky", top: 0, zIndex: 1, backgroundColor: "#e9b90b"}}>Quantity</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -323,9 +350,9 @@ const Dashboard = () => {
             }}
           >
             <Table sx={{ borderRadius: "8px" }}>
-              <TableHead sx={{ backgroundColor: "#DC4C64" }}>
+              <TableHead>
                 <TableRow>
-                  <TableCell sx={{ color: "white" }}>Item Description</TableCell>
+                  <TableCell sx={{ color: "white", position: "sticky", top: 0, zIndex: 1, backgroundColor: "#DC4C64"}}>Item Description</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

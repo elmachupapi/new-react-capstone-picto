@@ -424,8 +424,8 @@ const JanitorialSupplies = () => {
                 <TableCell>Date</TableCell>
                 <TableCell>PO Number</TableCell>
                 <TableCell>Year</TableCell>
-                <TableCell>Quarter</TableCell>
-                <TableCell>Obsolete</TableCell>
+                <TableCell sx={{width: "100px"}}>Quarter</TableCell>
+                <TableCell sx={{width: "100px"}}>Obsolete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -514,12 +514,21 @@ const JanitorialSupplies = () => {
                 </TableCell>
                 <TableCell>
                   <TextField
+                    select
                     fullWidth
-                    name="qaurter"
-                    value={newItem.quarter}
-                    onChange={handleInputChange}
-                    placeholder={editItem ? "" : "Enter Quarter"}
-                  />
+                    name="quarter" 
+                    value={newItem.quarter || ""} 
+                    onChange={handleInputChange} 
+                    label="Enter Quarter" 
+                  >
+                    <MenuItem value="" disabled>
+                      Select Quarter
+                    </MenuItem>
+                    <MenuItem value="1">1</MenuItem>
+                    <MenuItem value="2">2</MenuItem>
+                    <MenuItem value="3">3</MenuItem>
+                    <MenuItem value="4">4</MenuItem>
+                  </TextField>
                 </TableCell>
                 <TableCell>
                   <TextField
