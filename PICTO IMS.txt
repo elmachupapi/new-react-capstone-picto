@@ -1,0 +1,6 @@
+@echo off
+REM Navigate to the frontend directory
+cd pathtoyourfrontenddirectory
+
+REM Run the frontend development server
+npm run dev

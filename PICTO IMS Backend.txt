@@ -1,0 +1,9 @@
+@echo off
+REM Activate the Python virtual environment
+call path\to\your\venv\Scripts\activate.bat
+
+REM Navigate to the backend directory
+cd path\to\your\backend\directory
+
+REM Run the Django development server
+py manage.py runserver
