@@ -29,11 +29,14 @@ const OfficeList = () => {
   const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({
     item_name: "",
+    brand: "",
+    model: "",
     quantity: "",
     unit: "",
     date_added: "",
     PO_number: "",
-    year_quarter: "",
+    year: "",
+    quarter: "",
     serial_number: "",
     obsolete: "",
   });
@@ -46,11 +49,14 @@ const OfficeList = () => {
     setEditItem(null); // Reset edit mode
     setNewItem({
       item_name: "",
+      brand: "",
+      model: "",
       quantity: "",
       unit: "",
       date_added: "",
       PO_number: "",
-      year_quarter: "",
+      year: "",
+      quarter: "",
       serial_number: "",
       obsolete: "",
     });
@@ -102,7 +108,7 @@ const OfficeList = () => {
         alert("Item deleted successfully!");
   
         // Add a log for the delete action
-        await addLog(itemToDelete.item_name, "Item Deleted", itemToDelete.quantity);
+        await addLog(itemToDelete.item_name, "Item Deleted", itemToDelete.quantity, localStorage.getItem("username"));
   
         setOfficeData((prevData) => prevData.filter((item) => item.id !== itemToDelete.id));
       } else {
@@ -115,12 +121,13 @@ const OfficeList = () => {
     setConfirmDeleteOpen(false);
   };
 
-  const addLog = async (itemName, action, currentQuantity) => {
+  const addLog = async (itemName, action, currentQuantity, admin) => {
     try {
       const logPayload = {
         item_name: itemName,
         action: action, // Specify the action (e.g., "Item Added", "Item Updated")
         current_quantity: currentQuantity,
+        admin: admin
       };
       await api.post("/api/logs/item/", logPayload);
       alert("Log added successfully!");
@@ -144,11 +151,14 @@ const OfficeList = () => {
       try {
         const payload = {
           item_name: newItem.item_name,
+          brand: newItem.brand,
+          model: newItem.model,
           quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number or null
           unit: newItem.unit,
           date_added: newItem.date_added,
           PO_number: newItem.PO_number,
-          year_quarter: newItem.year_quarter,
+          year: newItem.year,
+          quarter: newItem.quarter,
           serial_number: newItem.serial_number,
           obsolete: newItem.obsolete,
         };
@@ -159,7 +169,7 @@ const OfficeList = () => {
         if (res.status === 200) {
           alert("Item updated successfully!");
           // Add a log for the update action
-          await addLog(newItem.item_name, "Item Updated", parseInt(newItem.quantity, 10));
+          await addLog(newItem.item_name, "Item Updated", parseInt(newItem.quantity, 10), localStorage.getItem("username"));
           getOfficeData(); // Refresh the list
         } else {
           alert("Failed to update the item.");
@@ -173,11 +183,14 @@ const OfficeList = () => {
       try {
         const payload = {
           item_name: newItem.item_name,
+          brand: newItem.brand,
+          model: newItem.model,
           quantity: parseInt(newItem.quantity, 10), // Ensure quantity is a number or null
           unit: newItem.unit,
           date_added: newItem.date_added,
           PO_number: newItem.PO_number,
-          year_quarter: newItem.year_quarter,
+          year: newItem.year,
+          quarter: newItem.quarter,
           serial_number: newItem.serial_number,
           obsolete: newItem.obsolete,
         };
@@ -188,7 +201,7 @@ const OfficeList = () => {
         if (res.status === 201) {
           alert("Item added successfully!");
           // Add a log for the add action
-          await addLog(newItem.item_name, "Item Added", parseInt(newItem.quantity, 10));
+          await addLog(newItem.item_name, "Item Added", parseInt(newItem.quantity, 10), localStorage.getItem("username"));
           getOfficeData(); // Refresh the list
         } else {
           alert("Error: Item not added.");
@@ -212,8 +225,7 @@ const OfficeList = () => {
       .get("/api/item/office/")
       .then((res) => res.data)
       .then((data) => {
-        setOfficeData(data);
-      })
+        setOfficeData(data); console.log(data)})
       .catch((err) => alert(err));
   };
 
@@ -245,12 +257,15 @@ const OfficeList = () => {
             <TableRow>
               <TableCell>Edit</TableCell>
               <TableCell>Item Description</TableCell>
+              <TableCell>Brand</TableCell>
+              <TableCell>Model</TableCell>
+              <TableCell>Serial Number</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Unit</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>PO Number</TableCell>
-              <TableCell>Year-Quarter</TableCell>
-              <TableCell>Serial Number</TableCell>
+              <TableCell>Year</TableCell>
+              <TableCell>Quarter</TableCell>
               <TableCell>Obsolete</TableCell>
               <TableCell>Delete</TableCell>
             </TableRow>
@@ -264,12 +279,15 @@ const OfficeList = () => {
                   </IconButton>
                 </TableCell>
                 <TableCell>{item.item_name}</TableCell>
+                <TableCell>{item.brand}</TableCell>
+                <TableCell>{item.model}</TableCell>
+                <TableCell>{item.serial_number}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>{item.unit}</TableCell>
                 <TableCell>{item.date_added}</TableCell>
                 <TableCell>{item.PO_number}</TableCell>
-                <TableCell>{item.year_quarter}</TableCell>
-                <TableCell>{item.serial_number}</TableCell>
+                <TableCell>{item.year}</TableCell>
+                <TableCell>{item.quarter}</TableCell>
                 <TableCell>{item.obsolete}</TableCell>
                 <TableCell>
                   <IconButton color="error" onClick={() => handleDeleteClick(item)}>
@@ -299,7 +317,7 @@ const OfficeList = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 1400,
+            width: 1500,
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 4,
@@ -315,14 +333,17 @@ const OfficeList = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Item Name</TableCell>
-                <TableCell>Quantity</TableCell>
+                <TableCell>Item Description</TableCell>
+                <TableCell>Brand</TableCell>
+                <TableCell>Model</TableCell>
+                <TableCell>Serial Number</TableCell>
+                <TableCell sx={{width: "120px"}}>Quantity</TableCell>
                 <TableCell>Unit</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>PO Number</TableCell>
-                <TableCell>Year-Quarter</TableCell>
-                <TableCell>Serial Number</TableCell>
-                <TableCell sx={{width: "150px"}}>Obsolete</TableCell>
+                <TableCell>Year</TableCell>
+                <TableCell>Quarter</TableCell>
+                <TableCell>Obsolete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -334,6 +355,33 @@ const OfficeList = () => {
                     value={newItem.item_name}
                     onChange={handleInputChange}
                     placeholder={editItem ? "" : "Enter Item Description"}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    fullWidth
+                    name="brand"
+                    value={newItem.brand}
+                    onChange={handleInputChange}
+                    placeholder={editItem ? "" : "Enter brand"}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    fullWidth
+                    name="model"
+                    value={newItem.model}
+                    onChange={handleInputChange}
+                    placeholder={editItem ? "" : "Enter model"}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    fullWidth
+                    name="serial_number"
+                    value={newItem.serial_number}
+                    onChange={handleInputChange}
+                    placeholder={editItem ? "" : "Enter Serial Number"}
                   />
                 </TableCell>
                 <TableCell>
@@ -376,19 +424,19 @@ const OfficeList = () => {
                 <TableCell>
                   <TextField
                     fullWidth
-                    name="year_quarter"
-                    value={newItem.year_quarter}
+                    name="year"
+                    value={newItem.year}
                     onChange={handleInputChange}
-                    placeholder={editItem ? "" : "Enter Year-Quarter"}
+                    placeholder={editItem ? "" : "Enter Year"}
                   />
                 </TableCell>
                 <TableCell>
                   <TextField
                     fullWidth
-                    name="serial_number"
-                    value={newItem.serial_number}
+                    name="qaurter"
+                    value={newItem.quarter}
                     onChange={handleInputChange}
-                    placeholder={editItem ? "" : "Enter Serial Number"}
+                    placeholder={editItem ? "" : "Enter Quarter"}
                   />
                 </TableCell>
                 <TableCell>
@@ -410,7 +458,7 @@ const OfficeList = () => {
               </TableRow>
             </TableBody>
           </Table>
-          <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ mt: 2 }}>
+          <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ mt: 2 }}>
             {editItem ? "Update Item" : "Add Item"}
           </Button>
         </Box>

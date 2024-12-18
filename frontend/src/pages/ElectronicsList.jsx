@@ -357,7 +357,7 @@ const ElectronicsList = () => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 1400,
+          width: 1500,
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4
@@ -376,13 +376,13 @@ const ElectronicsList = () => {
                 <TableCell>Brand</TableCell>
                 <TableCell>Model</TableCell>
                 <TableCell>Serial Number</TableCell>
-                <TableCell>Quantity</TableCell>
+                <TableCell sx={{width: "120px"}}>Quantity</TableCell>
                 <TableCell>Unit</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>PO Number</TableCell>
                 <TableCell>Year</TableCell>
                 <TableCell>Quarter</TableCell>
-                <TableCell sx={{width: "150px"}}>Obsolete</TableCell>
+                <TableCell>Obsolete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -391,10 +391,10 @@ const ElectronicsList = () => {
                   <TextField fullWidth name="item_name" value={newItem.item_name} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Item Description"}/>
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="model" value={newItem.model} onChange={handleInputChange} placeholder={editItem ? "" : "Enter model"}/>
+                  <TextField fullWidth name="brand" value={newItem.brand} onChange={handleInputChange} placeholder={editItem ? "" : "Enter brand"}/>
                 </TableCell>
                 <TableCell>
-                  <TextField fullWidth name="brand" value={newItem.brand} onChange={handleInputChange} placeholder={editItem ? "" : "Enter brand"}/>
+                  <TextField fullWidth name="model" value={newItem.model} onChange={handleInputChange} placeholder={editItem ? "" : "Enter model"}/>
                 </TableCell>
                 <TableCell>
                   <TextField fullWidth name="serial_number" value={newItem.serial_number} onChange={handleInputChange} placeholder={editItem ? "" : "Enter Serial Number"}/>

@@ -68,11 +68,10 @@ const Header = ({ drawerWidth }) => {
 
         {/* User section with Avatar and Dropdown */}
         <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleMenuOpen}>
-          <Avatar sx={{ mr: 1 }}>MK</Avatar>
           <Typography variant="body1" sx={{ color: 'white' }}>
             {username}
           </Typography>
-          <ArrowDropDownIcon sx={{ color: 'white', ml: 0.5 }} />
+          <ArrowDropDownIcon sx={{ color: 'white', ml: .5 }} />
         </Box>
 
         {/* Dropdown Menu */}
