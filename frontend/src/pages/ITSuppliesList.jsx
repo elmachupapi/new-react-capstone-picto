@@ -265,7 +265,7 @@ const ITSuppliesList = () => {
   };
 
   const getHoverStyle = (column) => ({
-    backgroundColor: hoveredColumn === column ? "#e0f7fa" : "transparent",
+    backgroundColor: hoveredColumn === column ? "#baf7ff" : "transparent",
     transition: "background-color 0.3s ease",
     cursor: "pointer",
   });

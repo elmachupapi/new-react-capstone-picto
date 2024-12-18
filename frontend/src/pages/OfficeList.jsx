@@ -25,6 +25,7 @@ const OfficeList = () => {
   const [officeData, setOfficeData] = useState([]);
   const [open, setOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [hoveredColumn, setHoveredColumn] = useState(null);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [editItem, setEditItem] = useState(null);
   const [newItem, setNewItem] = useState({
@@ -229,6 +230,47 @@ const OfficeList = () => {
       .catch((err) => alert(err));
   };
 
+
+//for sorting
+  const [sortConfig, setSortConfig] = useState({ key: "item_name", direction: "asc" });
+
+  const handleSort = (key) => {
+    setSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+  
+  const sortedOfficeData = [...filteredOfficeData].sort((a, b) => {
+    const aValue = sortConfig.key === "date_added" ? new Date(a[sortConfig.key]) : a[sortConfig.key];
+    const bValue = sortConfig.key === "date_added" ? new Date(b[sortConfig.key]) : b[sortConfig.key];
+  
+    if (aValue < bValue) {
+      return sortConfig.direction === "asc" ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortConfig.direction === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+
+
+  //for hover
+  const handleMouseEnter = (column) => {
+    setHoveredColumn(column);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredColumn(null);
+  };
+
+  const getHoverStyle = (column) => ({
+    backgroundColor: hoveredColumn === column ? "#baf7ff" : "transparent",
+    transition: "background-color 0.3s ease",
+    cursor: "pointer",
+  });
+
+  
   return (
     <Box sx={{ p: 3, backgroundColor: "#f0f4f4", minHeight: "100vh", mt: 5 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
@@ -253,25 +295,59 @@ const OfficeList = () => {
 
       <TableContainer component={Paper}>
         <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Edit</TableCell>
-              <TableCell>Item Description</TableCell>
-              <TableCell>Brand</TableCell>
-              <TableCell>Model</TableCell>
-              <TableCell>Serial Number</TableCell>
-              <TableCell>Quantity</TableCell>
-              <TableCell>Unit</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>PO Number</TableCell>
-              <TableCell>Year</TableCell>
-              <TableCell>Quarter</TableCell>
-              <TableCell>Obsolete</TableCell>
-              <TableCell>Delete</TableCell>
-            </TableRow>
-          </TableHead>
+        <TableHead>
+          <TableRow>
+            <TableCell>Edit</TableCell>
+            <TableCell
+              onClick={() => handleSort("item_name")}
+              onMouseEnter={() => handleMouseEnter("item_name")}
+              onMouseLeave={handleMouseLeave}
+              style={getHoverStyle("item_name")}
+            >
+              Item Description {sortConfig.key === "item_name" && (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </TableCell>
+            <TableCell
+              onClick={() => handleSort("brand")}
+              onMouseEnter={() => handleMouseEnter("brand")}
+              onMouseLeave={handleMouseLeave}
+              style={getHoverStyle("brand")}
+            >
+              Brand {sortConfig.key === "brand" && (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </TableCell>
+            <TableCell>Model</TableCell>
+            <TableCell>Serial Number</TableCell>
+            <TableCell
+              onClick={() => handleSort("quantity")}
+              onMouseEnter={() => handleMouseEnter("quantity")}
+              onMouseLeave={handleMouseLeave}
+              style={getHoverStyle("quantity")}
+            >
+              Quantity {sortConfig.key === "quantity" && (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </TableCell>
+            <TableCell>Unit</TableCell>
+            <TableCell
+              onClick={() => handleSort("date_added")}
+              onMouseEnter={() => handleMouseEnter("date_added")}
+              onMouseLeave={handleMouseLeave}
+              style={getHoverStyle("date_added")}
+            >
+              Date {sortConfig.key === "date_added" && (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </TableCell>
+            <TableCell>PO Number</TableCell>
+            <TableCell
+              onClick={() => handleSort("year")}
+              onMouseEnter={() => handleMouseEnter("year")}
+              onMouseLeave={handleMouseLeave}
+              style={getHoverStyle("year")}
+            >
+              Year {sortConfig.key === "year" && (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </TableCell>
+            <TableCell>Quarter</TableCell>
+            <TableCell>Obsolete</TableCell>
+          </TableRow>
+        </TableHead>
           <TableBody>
-            {filteredOfficeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
+            {sortedOfficeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
               <TableRow key={index}>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEdit(item)}>
