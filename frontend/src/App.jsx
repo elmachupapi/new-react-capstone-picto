@@ -16,6 +16,7 @@ import ItemLog from "./pages/ItemLog";
 import Accounts from "./pages/Accounts";
 import InventoryComparison from "./pages/InventoryComparison";
 import ItemsReport from "./pages/ItemsReport";
+import RequestsReport from "./pages/RequestsReport";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Box, CssBaseline, createTheme, ThemeProvider } from "@mui/material";
 import Sidebar from "./components/Sidebar";
@@ -80,6 +81,7 @@ function App() {
               <Route path="/accounts" element={<ProtectedRoute><Accounts /></ProtectedRoute>} />
               <Route path="/report/inventorycomparison" element = {<InventoryComparison />} />
               <Route path="/report/items" element = {<ItemsReport />} />
+              <Route path="/report/requests" element = {<RequestsReport />} />
               <Route path="/signup" element={<SignupAndLogout />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

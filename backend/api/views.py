@@ -1,5 +1,6 @@
+from django.http import JsonResponse
 from django.shortcuts import render
-from django.db.models import Sum
+from django.db.models import Sum, Count, Q, functions as F
 from django.contrib.auth.models import User
 from rest_framework import generics, serializers
 from .serializers import UserSerializer, RequestSerializer, ElectronicsSerializer, ITSuppliesSerializer, OfficeSerializer, JanitorialSerializer, RequestLogSerializer, ItemLogSerializer, ProfileSerializer, UserProfileSerializer
@@ -475,3 +476,24 @@ class OfficeDataView(ItemDataByYearQuarterView):
 
 class JanitorialDataView(ItemDataByYearQuarterView):
     model = Janitorial
+
+
+class RequestsStatsView(APIView):
+    def get(self, request):
+        year = request.GET.get('year')  # Filter by year, if provided
+
+        # Default queryset for all requests grouped by month
+        requests_by_month = Request.objects.annotate(
+            year=F.ExtractYear('date_created'),
+            month=F.ExtractMonth('date_created')
+        )
+        
+        if year:
+            requests_by_month = requests_by_month.filter(year=year)
+        
+        requests_data = requests_by_month.values('year', 'month').annotate(
+            total_requests=Count('id'),
+            received_requests=Count('id', filter=Q(date_received__isnull=False))
+        ).order_by('year', 'month')
+
+        return JsonResponse(list(requests_data), safe=False)
