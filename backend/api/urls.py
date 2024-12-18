@@ -43,8 +43,11 @@ urlpatterns = [
     path('itsupplies-by-year-quarter/', views.ITSuppliesDataView.as_view(), name='itsupplies-data'),
     path('office-by-year-quarter/', views.OfficeDataView.as_view(), name='office-data'),
     path('janitorial-by-year-quarter/', views.JanitorialDataView.as_view(), name='janitorial-data'),
+<<<<<<< HEAD
     path('reports/requests/', views.RequestsStatsView.as_view(), name='report-requests'),
 =======
 >>>>>>> parent of 31b9e62 (reports for item)
+=======
+>>>>>>> parent of f50394e (requests reports)
 
 ]

@@ -17,9 +17,12 @@ import Accounts from "./pages/Accounts";
 import InventoryComparison from "./pages/InventoryComparison";
 <<<<<<< HEAD
 import ItemsReport from "./pages/ItemsReport";
+<<<<<<< HEAD
 import RequestsReport from "./pages/RequestsReport";
 =======
 >>>>>>> parent of 31b9e62 (reports for item)
+=======
+>>>>>>> parent of f50394e (requests reports)
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Box, CssBaseline, createTheme, ThemeProvider } from "@mui/material";
 import Sidebar from "./components/Sidebar";
@@ -85,9 +88,12 @@ function App() {
               <Route path="/report/inventorycomparison" element = {<InventoryComparison />} />
 <<<<<<< HEAD
               <Route path="/report/items" element = {<ItemsReport />} />
+<<<<<<< HEAD
               <Route path="/report/requests" element = {<RequestsReport />} />
 =======
 >>>>>>> parent of 31b9e62 (reports for item)
+=======
+>>>>>>> parent of f50394e (requests reports)
               <Route path="/signup" element={<SignupAndLogout />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

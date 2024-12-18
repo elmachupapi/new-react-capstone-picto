@@ -1,6 +1,5 @@
-from django.http import JsonResponse
 from django.shortcuts import render
-from django.db.models import Sum, Count, Q, functions as F
+from django.db.models import Sum
 from django.contrib.auth.models import User
 from rest_framework import generics, serializers
 from .serializers import UserSerializer, RequestSerializer, ElectronicsSerializer, ITSuppliesSerializer, OfficeSerializer, JanitorialSerializer, RequestLogSerializer, ItemLogSerializer, ProfileSerializer, UserProfileSerializer
@@ -477,6 +476,7 @@ class OfficeDataView(ItemDataByYearQuarterView):
 
 class JanitorialDataView(ItemDataByYearQuarterView):
     model = Janitorial
+<<<<<<< HEAD
 
 
 class RequestsStatsView(APIView):
@@ -500,3 +500,5 @@ class RequestsStatsView(APIView):
         return JsonResponse(list(requests_data), safe=False)
 =======
 >>>>>>> parent of 31b9e62 (reports for item)
+=======
+>>>>>>> parent of f50394e (requests reports)
