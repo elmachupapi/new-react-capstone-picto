@@ -61,17 +61,20 @@ const Header = ({ drawerWidth }) => {
     >
       <Toolbar>
         <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div"   
+            sx={{ 
+              fontSize: '1.3rem', // Adjust this value to make the font larger
+            }}>
             {getRoleTitle()}
           </Typography>
         </Box>
 
-        {/* User section with Avatar and Dropdown */}
+        {/* User section with Name and Dropdown */}
         <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleMenuOpen}>
-          <Typography variant="body1" sx={{ color: 'white' }}>
+          <Typography variant="body1" sx={{ color: 'white', fontSize: '1.2rem' }}>
             {username}
           </Typography>
-          <ArrowDropDownIcon sx={{ color: 'white', ml: .5 }} />
+          <ArrowDropDownIcon sx={{ color: 'white', ml: .5, fontSize: '1.7rem'  }} />
         </Box>
 
         {/* Dropdown Menu */}

@@ -56,12 +56,30 @@ const Dashboard = () => {
       link: "item/itsupplies",
     },
     {
-      title: "Office Supplies",
+      title: (
+        <>
+          <Typography variant="subtitle1" sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
+            Office
+          </Typography>
+          <Typography variant="subtitle2" sx={{ fontSize: "1.9rem", lineHeight: "1.2", marginTop: 0.5 }}>
+            Supplies
+          </Typography>
+        </>
+      ),
       icon: <PrintIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "/item/office",
     },
     {
-      title: "Janitorial Supplies",
+      title: (
+        <>
+          <Typography variant="subtitle1" sx={{ fontSize: "1.9rem", lineHeight: "1.2" }}>
+            Janitorial
+          </Typography>
+          <Typography variant="subtitle2" sx={{ fontSize: "1.9rem", lineHeight: "1.2", marginTop: 0.5 }}>
+            Supplies
+          </Typography>
+        </>
+      ),
       icon: <CleaningServicesIcon sx={{ fontSize: "6.5rem", color: "gray", position: "absolute", top: "20px", right: "10px", opacity: 0.6 }} />,
       link: "/item/janitorial",
     },
@@ -157,20 +175,20 @@ const Dashboard = () => {
                 }}
               >
                 <CardContent>
-                  <Box display="flex" justifyContent="space-between" alignItems="center">
-                    {Array.isArray(card.title) ? (
-                      card.title.map((line, i) => (
-                        <Typography key={i} variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
-                          {line}
-                        </Typography>
-                      ))
-                    ) : (
-                      <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
-                        {card.title}
+                <Box display="flex" flexDirection="column" alignItems="flex-start">
+                  {Array.isArray(card.title) ? (
+                    card.title.map((line, i) => (
+                      <Typography key={i} variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2", mt: i === 1 ? 0.5 : 0 }}>
+                        {line}
                       </Typography>
-                    )}
-                    {card.icon}
-                  </Box>
+                    ))
+                  ) : (
+                    <Typography variant="subtitle1" sx={{ fontSize: "1.7rem", lineHeight: "1.2" }}>
+                      {card.title}
+                    </Typography>
+                  )}
+                  {card.icon}
+                </Box>
                 </CardContent>
               </Card>
             </Link>

@@ -147,7 +147,7 @@ const RequestList = () => {
           onChange={handleSearchChange}
           sx={{ width: "400px", backgroundColor: "white" }}
         />
-        <FormControl sx={{ width: 200 }}>
+        <FormControl sx={{ width: 200, backgroundColor: "white" }}>
           <InputLabel>Status Filter</InputLabel>
           <Select
             value={statusFilter}
