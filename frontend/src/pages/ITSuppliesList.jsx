@@ -509,7 +509,7 @@ const ITSuppliesList = () => {
                 <TableCell>
                   <TextField
                     fullWidth
-                    name="qaurter"
+                    name="quarter"
                     value={newItem.quarter}
                     onChange={handleInputChange}
                     placeholder={editItem ? "" : "Enter Quarter"}
