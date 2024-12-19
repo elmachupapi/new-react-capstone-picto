@@ -1,0 +1,13 @@
+python -m venv env
+.\env\Scripts\Activate
+ - if this does not work:
+ - Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+pip install -r requirements.txt 
+
+python manage.py makemigrations
+python manage.py migrate
+py manage.py runserver
+
+cd frontend
+npm install axios react-router-dom jwt-decode @mui/material @emotion/react @emotion/styled chart.js react-chartjs-2 jspdf
